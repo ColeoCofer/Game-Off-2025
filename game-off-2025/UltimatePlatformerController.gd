@@ -177,7 +177,7 @@ var latchHold
 var dashTap
 var rollTap
 var downTap
-var twirlTap
+#var twirlTap
 
 func _ready():
 	wasMovingR = true
@@ -342,7 +342,7 @@ func _physics_process(delta):
 	dashTap = Input.is_action_just_pressed("dash")
 	rollTap = Input.is_action_just_pressed("roll")
 	downTap = Input.is_action_just_pressed("down")
-	twirlTap = Input.is_action_just_pressed("twirl")
+	#twirlTap = Input.is_action_just_pressed("twirl")
 	
 	
 	#INFO Left and Right Movement

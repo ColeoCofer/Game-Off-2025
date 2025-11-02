@@ -2836,6 +2836,20 @@ animations = [{
 "texture": SubResource("AtlasTexture_svc64")
 }],
 "loop": true,
+"name": &"run",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ntmi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btcbx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_svc64")
+}],
+"loop": true,
 "name": &"walk",
 "speed": 5.0
 }]
@@ -2848,12 +2862,20 @@ height = 10.0
 script = ExtResource("1_4ntmi")
 PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
+maxSpeed = 226.214
+run = true
 walk = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_hqtel")
-animation = &"walk"
+animation = &"run"
+frame = 2
+frame_progress = 0.12770393
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("CapsuleShape2D_4iad6")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 1)
+zoom = Vector2(3.5, 3.5)

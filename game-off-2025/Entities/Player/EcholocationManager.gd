@@ -7,7 +7,7 @@ extends CanvasLayer
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 
 # Vision settings
-@export var vision_radius: float = 75.0
+@export var vision_radius: float = 75.
 @export var vision_fade_distance: float = 40.0  # How gradually the vision fades (higher = more gradual)
 @export var darkness_intensity: float = 0.95
 

@@ -39,9 +39,50 @@ func _physics_process(_delta):
 	if fall_distance > fall_death_distance:
 		trigger_fall_death()
 
+	# Check for hazard collisions (Physics Layer 1 - spikes, etc.)
+	_check_hazard_collision()
+
 func _on_hunger_depleted():
 	if not is_dead:
 		trigger_death()
+
+func _check_hazard_collision():
+	"""Check if player is colliding with hazard tiles (Physics Layer 1)"""
+	# Get the slide collision count
+	for i in range(player.get_slide_collision_count()):
+		var collision = player.get_slide_collision(i)
+		var collider = collision.get_collider()
+
+		# Check if colliding with a TileMapLayer (Godot 4.x uses TileMapLayer)
+		if collider is TileMapLayer:
+			# Check if this collision is on physics layer 1 (hazards)
+			# We need to check the tile at the collision position
+			var tile_pos = collider.local_to_map(collision.get_position())
+			var tile_data = collider.get_cell_tile_data(tile_pos)
+
+			if tile_data:
+				# Check if the tile has collision on layer 1 (hazards)
+				# Layer 1 corresponds to physics layer index 1
+				if tile_data.get_collision_polygons_count(1) > 0:
+					trigger_hazard_death()
+					return
+
+func trigger_hazard_death():
+	"""Called when player touches a hazard (spikes, etc.)"""
+	if is_dead:
+		return
+
+	is_dead = true
+	death_reason = "hazard"
+
+	# Disable player control
+	player.set_physics_process(false)
+
+	# Death shader
+	_apply_death_shader()
+
+	# Death animation
+	_play_death_animation()
 
 func trigger_fall_death():
 	"""Called when player falls too far"""

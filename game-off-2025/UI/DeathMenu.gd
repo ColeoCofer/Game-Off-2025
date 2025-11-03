@@ -21,7 +21,7 @@ func _ready():
 func show_menu(death_reason: String = "starvation"):
 	visible = true
 
-	# Set appropriate text based on death reason
+	# Death texts lmao
 	match death_reason:
 		"starvation":
 			title_label.text = "YOU STARVED"

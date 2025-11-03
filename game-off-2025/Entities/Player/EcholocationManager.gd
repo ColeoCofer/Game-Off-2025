@@ -28,6 +28,9 @@ var echo_pulses: Array = []  # Array of {position: Vector2, intensity: float, ra
 var shader_material: ShaderMaterial
 
 func _ready():
+	# Ensure darkness overlay is visible (in case it was disabled during level editing)
+	darkness_overlay.visible = true
+
 	# Create shader material
 	shader_material = ShaderMaterial.new()
 	shader_material.shader = load("res://Shaders/vision_shader.gdshader")

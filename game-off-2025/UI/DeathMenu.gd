@@ -35,6 +35,10 @@ func show_menu(death_reason: String = "starvation"):
 		"fall":
 			title_label.text = "YOU FELL"
 			subtitle_label.text = "The bat plummeted into the void..."
+		"success":
+			title_label.text = "LEVEL COMPLETE!"
+			title_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3, 1.0))
+			subtitle_label.text = "The bat found its way through the darkness!"
 		_:
 			title_label.text = "YOU DIED"
 			subtitle_label.text = "The bat has perished..."

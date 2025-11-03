@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://d0dm8g5325rmn"]
 
-[ext_resource type="Texture2D" uid="uid://hwdig6n5vs78" path="res://Assets/Butterfly_001 Spritesheet.png" id="2_1t72d"]
+[ext_resource type="Texture2D" uid="uid://hwdig6n5vs78" path="res://Assets/Art/Butterfly_001 Spritesheet.png" id="2_1t72d"]
 [ext_resource type="Script" uid="uid://c46n7mtrpde5r" path="res://Entities/Bugs/butterfly.gd" id="3_butterfly_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w03uv"]
@@ -73,6 +73,7 @@ height = 14.0
 
 [node name="Butterfly" type="Area2D"]
 script = ExtResource("3_butterfly_script")
+hunger_restore_amount = 40.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c761e")

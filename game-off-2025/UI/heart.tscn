@@ -1,0 +1,145 @@
+[gd_scene load_steps=22 format=3 uid="uid://dpmhxtjak45ff"]
+
+[ext_resource type="Script" uid="uid://djw5ux5qlitr7" path="res://UI/HeartUI.gd" id="1_heart_script"]
+[ext_resource type="Texture2D" uid="uid://d3mk6hdts35gs" path="res://Assets/Art/health.png" id="1_ukt74"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kav31"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1xnuq"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7do5j"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwq05"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_et7ra"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xale6"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3v3fw"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnkpe"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38181"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eyl8u"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsy1h"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r0mxh"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52a0t"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(64, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dr2ij"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(80, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eaivn"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(96, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmbot"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(112, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2pndc"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u617r"]
+atlas = ExtResource("1_ukt74")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_42i1q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kav31")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1xnuq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7do5j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iwq05")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_et7ra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xale6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v3fw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnkpe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38181")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eyl8u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsy1h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r0mxh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_52a0t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dr2ij")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eaivn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmbot")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2pndc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u617r")
+}],
+"loop": true,
+"name": &"heart",
+"speed": 5.0
+}]
+
+[node name="Heart" type="Node2D"]
+script = ExtResource("1_heart_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_42i1q")
+animation = &"heart"

@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
-[ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/monochrome_tilemap_packed.png" id="2_btcbx"]
-[ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/echo_sound.wav" id="3_echo"]
-[ext_resource type="AudioStream" uid="uid://ceet5aymc5bwd" path="res://Assets/flap.wav" id="4_flap"]
+[ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_btcbx"]
+[ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/Audio/echo_sound.wav" id="3_echo"]
+[ext_resource type="AudioStream" uid="uid://ceet5aymc5bwd" path="res://Assets/Audio/flap.wav" id="4_flap"]
 [ext_resource type="Script" uid="uid://dop4mxatdxsc3" path="res://Entities/Player/HungerManager.gd" id="5_hunger"]
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
 

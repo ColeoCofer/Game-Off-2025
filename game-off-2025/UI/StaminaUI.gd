@@ -4,7 +4,7 @@ extends HBoxContainer
 @export var bar_width: float = 150.0
 @export var bar_height: float = 12.0
 @export var bar_background_color: Color = Color(0.2, 0.2, 0.2, 0.8)
-@export var bar_fill_color: Color = Color(0.3, 0.8, 1.0, 1.0)  # Cyan/blue color
+@export var bar_fill_color: Color = Color(0.3, 0.8, 1.0, 1.0)  # Cyan/blue color (meh maybe change this)
 @export var bar_ready_color: Color = Color(0.2, 1.0, 0.3, 1.0)  # Green when ready
 
 # UI elements
@@ -12,7 +12,7 @@ var bar_background: ColorRect
 var bar_fill: ColorRect
 
 func _ready():
-	# Create background bar
+	# Background bar
 	bar_background = ColorRect.new()
 	bar_background.custom_minimum_size = Vector2(bar_width, bar_height)
 	bar_background.size_flags_vertical = Control.SIZE_SHRINK_BEGIN  # Don't expand vertically

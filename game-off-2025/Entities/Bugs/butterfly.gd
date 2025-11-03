@@ -6,6 +6,7 @@ signal bug_eaten()
 @export var hover_amplitude: float = 3.0
 @export var hover_speed: float = 2.0
 @export var fade_out_duration: float = 0.3
+@export var hunger_restore_amount: float = 20.0
 
 var time_passed: float = 0.0
 var initial_y: float = 0.0
@@ -19,7 +20,7 @@ func _ready():
 
 	# Play the animation
 	if has_node("AnimatedSprite2D"):
-		$AnimatedSprite2D.play("new_animation")
+		$AnimatedSprite2D.play("hover")
 
 func _process(delta):
 	# Create a gentle hovering/bobbing effect
@@ -29,6 +30,11 @@ func _process(delta):
 func _on_body_entered(body: Node2D):
 	# Check if the body that entered is the player
 	if body is PlatformerController2D:
+		# Restore hunger
+		var hunger_manager = body.get_node_or_null("HungerManager")
+		if hunger_manager:
+			hunger_manager.consume_food(hunger_restore_amount)
+
 		# Emit signal for game manager/UI to track collection
 		bug_eaten.emit()
 

@@ -1,13 +1,14 @@
-[gd_scene load_steps=10 format=4 uid="uid://de6p1l8qfd8pb"]
+[gd_scene load_steps=11 format=4 uid="uid://de6p1l8qfd8pb"]
 
-[ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/monochrome_tilemap_packed.png" id="2_3xsek"]
-[ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="3_3xsek"]
-[ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://EcholocationManager.gd" id="4_echolocation"]
-[ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_rxi77"]
-[ext_resource type="Script" uid="uid://ddjdewh07dgws" path="res://StaminaUI.gd" id="5_stamina_ui"]
+[ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/monochrome_tilemap_packed.png" id="1_0aets"]
+[ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="2_oxkis"]
+[ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="3_r041s"]
+[ext_resource type="Script" uid="uid://ddjdewh07dgws" path="res://UI/StaminaUI.gd" id="4_aoct0"]
+[ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
+[ext_resource type="Script" uid="uid://dgwf0i283c6ft" path="res://UI/HungerUI.gd" id="6_hunger_ui"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
-texture = ExtResource("2_3xsek")
+texture = ExtResource("1_0aets")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -413,7 +414,7 @@ texture = ExtResource("2_3xsek")
 sources/0 = SubResource("TileSetAtlasSource_6ps50")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_os6q4"]
-texture = ExtResource("2_3xsek")
+texture = ExtResource("1_0aets")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -836,13 +837,13 @@ position = Vector2(-1, 0)
 tile_map_data = PackedByteArray("AAADABgAAAAEAAMAAAAEABgAAAAFAAMAAAAFABgAAAAFAAMAAAAGABgAAAAFAAMAAAAHABgAAAAFAAMAAAAIABgAAAAFAAMAAAAJABgAAAAFAAMAAAAKABgAAAAFAAMAAAALABgAAAAFAAMAAAAMABgAAAAFAAMAAAANABgAAAAFAAMAAAAOABgAAAAGAAMAAAAUABgAAAADAAMAAAAZABUAAAAEAAMAAAAaABUAAAAFAAMAAAAbABUAAAAFAAMAAAAcABUAAAAFAAMAAAAdABUAAAAFAAMAAAAeABUAAAAFAAMAAAAfABUAAAAFAAMAAAAgABUAAAAGAAMAAAACABAAAAAEAAMAAAAEABAAAAAFAAMAAAADABAAAAAFAAMAAAAFABAAAAAFAAMAAAAGABAAAAAFAAMAAAAHABAAAAAFAAMAAAAIABAAAAAFAAMAAAAJABAAAAAFAAMAAAAKABAAAAAFAAMAAAALABAAAAAFAAMAAAAMABAAAAAGAAMAAAAUAAwAAAAEAAMAAAALAAYAAAAEAAMAAAAnAAgAAAAEAAMAAAAiABAAAAAEAAMAAAAjABAAAAAFAAMAAAAkABAAAAAFAAMAAAAlABAAAAAFAAMAAAAmABAAAAAFAAMAAAAnABAAAAAFAAMAAAAVAAwAAAAFAAMAAAAWAAwAAAAFAAMAAAAXAAwAAAAFAAMAAAAYAAwAAAAFAAMAAAAMAAYAAAAFAAMAAAANAAYAAAAFAAMAAAAOAAYAAAAFAAMAAAAoAAgAAAAFAAMAAAApAAgAAAAFAAMAAAAqAAgAAAAFAAMAAAArAAgAAAAFAAMAAAAsAAgAAAAFAAMAAAAoABAAAAAGAAMAAAAtAAgAAAAGAAMAAAAZAAwAAAAGAAMAAAAPAAYAAAAGAAMAAAAGAAoAAAADAAMAAAAgAAUAAAADAAMAAAAVABgAAAADAAMAAAAWABgAAAADAAMAAAAeAA0AAAADAAMAAAAfAA0AAAADAAMAAAANAAoAAAADAAMAAAAOAAoAAAADAAMAAAAPAAoAAAADAAMAAAAQAAoAAAADAAMAAAAXAAMAAAADAAMAAAAYAAMAAAADAAMAAAAZAAMAAAADAAMAAAAaAAMAAAADAAMAAAAhAAUAAAADAAMAAAAiAAUAAAADAAMAAAAjAAUAAAADAAMAAAAlAAsAAAADAAMAAAAmAAsAAAADAAMAAAAnAAsAAAADAAMAAAAoAAsAAAADAAMAAAAuAAoAAAADAAMAAAAvAAoAAAADAAMAAAAwAAoAAAADAAMAAAAxAAoAAAADAAMAAAAyAAoAAAADAAMAAAArABQAAAADAAMAAAAsABQAAAADAAMAAAAtABQAAAADAAMAAAAuABQAAAADAAMAAAAvABQAAAADAAMAAAA=")
 tile_set = SubResource("TileSet_rxi77")
 
-[node name="Player" parent="." instance=ExtResource("3_3xsek")]
+[node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(149, 353)
 maxSpeed = 210.446
 jumpHeight = 2.2
 
 [node name="EcholocationManager" type="CanvasLayer" parent="."]
-script = ExtResource("4_echolocation")
+script = ExtResource("3_r041s")
 vision_radius = 125.0
 vision_fade_distance = 0.0
 darkness_intensity = 1.0
@@ -861,15 +862,22 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 220.0
 offset_bottom = 60.0
-script = ExtResource("5_stamina_ui")
+script = ExtResource("4_aoct0")
+
+[node name="HungerUI" type="HBoxContainer" parent="EcholocationManager"]
+offset_left = 20.0
+offset_top = 40.0
+offset_right = 220.0
+offset_bottom = 80.0
+script = ExtResource("6_hunger_ui")
 
 [node name="Butterflies" type="Node" parent="."]
 
-[node name="Butterfly" parent="Butterflies" instance=ExtResource("5_rxi77")]
+[node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(465, 326)
 
-[node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_rxi77")]
+[node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(683, 117)
 
-[node name="Butterfly3" parent="Butterflies" instance=ExtResource("5_rxi77")]
+[node name="Butterfly3" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(110, 244)

@@ -1,16 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://d0dm8g5325rmn"]
+[gd_scene load_steps=13 format=3 uid="uid://d0dm8g5325rmn"]
 
-[ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/monochrome_tilemap_packed.png" id="1_sdtte"]
 [ext_resource type="Texture2D" uid="uid://hwdig6n5vs78" path="res://Assets/Butterfly_001 Spritesheet.png" id="2_1t72d"]
 [ext_resource type="Script" uid="uid://c46n7mtrpde5r" path="res://Entities/Bugs/butterfly.gd" id="3_butterfly_script"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hs7dx"]
-atlas = ExtResource("1_sdtte")
-region = Rect2(0, 304, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_q3ryj"]
-atlas = ExtResource("1_sdtte")
-region = Rect2(16, 304, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w03uv"]
 atlas = ExtResource("2_1t72d")
@@ -48,17 +39,6 @@ region = Rect2(56, 48, 8, 8)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hs7dx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_q3ryj")
-}],
-"loop": true,
-"name": &"hover",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_w03uv")
 }, {
 "duration": 1.0,
@@ -83,7 +63,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_uqgyg")
 }],
 "loop": true,
-"name": &"new_animation",
+"name": &"hover",
 "speed": 5.0
 }]
 
@@ -96,8 +76,7 @@ script = ExtResource("3_butterfly_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c761e")
-animation = &"new_animation"
-frame_progress = 0.49048468
+animation = &"hover"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_g6v7b")

@@ -1,9 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=19 format=3 uid="uid://d0gtwpl0brl74"]
 
-[ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://UltimatePlatformerController.gd" id="1_4ntmi"]
+[ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/monochrome_tilemap_packed.png" id="2_btcbx"]
-[ext_resource type="AudioStream" uid="uid://1m4xiwiu2lsy" path="res://Assets/echo_sound.wav" id="3_echo"]
+[ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/echo_sound.wav" id="3_echo"]
+[ext_resource type="AudioStream" uid="uid://ceet5aymc5bwd" path="res://Assets/flap.wav" id="4_flap"]
+[ext_resource type="Script" uid="uid://dop4mxatdxsc3" path="res://Entities/Player/HungerManager.gd" id="5_hunger"]
+[ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("1_btcbx")
@@ -100,10 +103,11 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_btcbx"]
 size = Vector2(8, 9)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerSprite", "PlayerCollider")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerSprite", "PlayerCollider", "FlapAudioPlayer") groups=["Player"]]
 script = ExtResource("1_4ntmi")
 PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
+FlapAudioPlayer = NodePath("FlapAudioPlayer")
 maxSpeed = 226.214
 run = true
 jump = true
@@ -127,4 +131,12 @@ zoom = Vector2(2.16, 2.16)
 
 [node name="EchoAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_echo")
-volume_db = 0.0
+
+[node name="FlapAudioPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_flap")
+
+[node name="HungerManager" type="Node" parent="."]
+script = ExtResource("5_hunger")
+
+[node name="DeathManager" type="Node" parent="."]
+script = ExtResource("6_death")

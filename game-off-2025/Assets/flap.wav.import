@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://xux8wqieklfg"
-path="res://.godot/imported/echo_sound.wav-501c6a72e69027bb4cb6024b53c9add4.sample"
+uid="uid://ceet5aymc5bwd"
+path="res://.godot/imported/flap.wav-0e34297817d589ea009c3ad3cb39f154.sample"
 
 [deps]
 
-source_file="res://Assets/echo_sound.wav"
-dest_files=["res://.godot/imported/echo_sound.wav-501c6a72e69027bb4cb6024b53c9add4.sample"]
+source_file="res://Assets/flap.wav"
+dest_files=["res://.godot/imported/flap.wav-0e34297817d589ea009c3ad3cb39f154.sample"]
 
 [params]
 

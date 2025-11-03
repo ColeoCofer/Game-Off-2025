@@ -14,14 +14,15 @@ extends CanvasLayer
 # Echolocation settings
 @export var echo_reveal_distance: float = 800.0
 @export var echo_fade_duration: float = 3.5  # seconds
+@export var echo_expansion_speed: float = 1200.0  # pixels per second (how fast the wave expands)
 @export var echolocation_cooldown: float = 5.0  # seconds for full recharge
 
 # Cooldown system
 var cooldown_timer: float = 0.0  # 0 = ready, increases to echolocation_cooldown
 var is_on_cooldown: bool = false
 
-# Echolocation pulses (position and intensity)
-var echo_pulses: Array = []  # Array of {position: Vector2, intensity: float}
+# Echolocation pulses (position, intensity, and expansion radius)
+var echo_pulses: Array = []  # Array of {position: Vector2, intensity: float, radius: float, age: float}
 
 # Shader material
 var shader_material: ShaderMaterial
@@ -76,7 +77,9 @@ func trigger_echolocation():
 	# Create new echolocation pulse at player position
 	var pulse = {
 		"position": player.global_position,
-		"intensity": 1.0
+		"intensity": 1.0,
+		"radius": 0.0,  # Starts at 0 and expands
+		"age": 0.0  # Track how long the pulse has existed
 	}
 	echo_pulses.append(pulse)
 
@@ -84,8 +87,15 @@ func trigger_echolocation():
 	cooldown_changed.emit(0.0, echolocation_cooldown)
 
 func update_echo_pulses(delta: float):
-	# Fade out pulses over time
+	# Update pulses: expand radius and fade over time
 	for i in range(echo_pulses.size() - 1, -1, -1):
+		# Increment age
+		echo_pulses[i].age += delta
+
+		# Expand the radius
+		echo_pulses[i].radius += echo_expansion_speed * delta
+
+		# Fade out intensity over time
 		echo_pulses[i].intensity -= delta / echo_fade_duration
 
 		# Remove fully faded pulses
@@ -109,19 +119,23 @@ func update_echo_shader_params():
 	# Prepare arrays for shader (up to 10 pulses)
 	var positions: Array = []
 	var intensities: Array = []
+	var radii: Array = []
 
 	for i in range(10):
 		if i < echo_pulses.size():
 			var screen_pos = get_screen_position(echo_pulses[i].position)
 			positions.append(screen_pos)
 			intensities.append(echo_pulses[i].intensity)
+			radii.append(echo_pulses[i].radius)
 		else:
 			positions.append(Vector2.ZERO)
 			intensities.append(0.0)
+			radii.append(0.0)
 
 	# Update shader parameters
 	shader_material.set_shader_parameter("echo_positions", positions)
 	shader_material.set_shader_parameter("echo_intensities", intensities)
+	shader_material.set_shader_parameter("echo_radii", radii)
 
 func get_screen_position(world_pos: Vector2) -> Vector2:
 	# Convert world position to screen position accounting for camera

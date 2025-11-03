@@ -12,6 +12,7 @@ class_name PlatformerController2D
 @export_category("Necesary Child Nodes")
 @export var PlayerSprite: AnimatedSprite2D
 @export var PlayerCollider: CollisionShape2D
+@export var FlapAudioPlayer: AudioStreamPlayer
 
 #INFO HORIZONTAL MOVEMENT 
 @export_category("L/R Movement")
@@ -601,6 +602,8 @@ func _jump():
 		velocity.y = -jumpMagnitude
 		jumpCount += -1
 		jumpWasPressed = false
+		if FlapAudioPlayer:
+			FlapAudioPlayer.play()
 		
 func _wallJump():
 	var horizontalWallKick = abs(jumpMagnitude * cos(wallKickAngle * (PI / 180)))

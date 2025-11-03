@@ -5,14 +5,20 @@ signal death_animation_complete
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
 @export var fall_speed: float = 100.0
+@export var fall_death_distance: float = 500.0  # If you fall too far then you die
 
 var is_dead: bool = false
 var player: CharacterBody2D
 var original_material: Material
 var death_material: ShaderMaterial
+var last_ground_y: float = 0.0
+var camera: Camera2D
+var death_reason: String = "starvation"  # Track how the player died
 
 func _ready():
 	player = get_parent() as CharacterBody2D
+	camera = player.get_node_or_null("Camera2D")
+	last_ground_y = player.position.y
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
@@ -20,14 +26,47 @@ func _ready():
 	if hunger_manager:
 		hunger_manager.hunger_depleted.connect(_on_hunger_depleted)
 
+func _physics_process(_delta):
+	if is_dead:
+		return
+
+	# Track the last ground position
+	if player.is_on_floor():
+		last_ground_y = player.position.y
+
+	# Check if player has fallen too far
+	var fall_distance = player.position.y - last_ground_y
+	if fall_distance > fall_death_distance:
+		trigger_fall_death()
+
 func _on_hunger_depleted():
 	if not is_dead:
 		trigger_death()
 
+func trigger_fall_death():
+	"""Called when player falls too far"""
+	if is_dead:
+		return
+
+	is_dead = true
+	death_reason = "fall"
+
+	# Stop camera from following player
+	if camera:
+		camera.enabled = false
+
+	# Disable player control
+	player.set_physics_process(false)
+
+	# Show death menu immediately after a brief delay
+	await get_tree().create_timer(0.5).timeout
+	_show_death_menu()
+
 func trigger_death():
 	is_dead = true
+	death_reason = "starvation"
 
-	# Disable player control 
+	# Disable player control
 	player.set_physics_process(false)
 
 	# Death shader
@@ -108,4 +147,4 @@ func _show_death_menu():
 		canvas_layer.add_child(death_menu)
 
 	if death_menu.has_method("show_menu"):
-		death_menu.show_menu()
+		death_menu.show_menu(death_reason)

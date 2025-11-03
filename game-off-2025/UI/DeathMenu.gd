@@ -6,13 +6,33 @@ signal exit_pressed
 @export var fade_in_duration: float = 0.5
 @export var fade_out_duration: float = 0.3
 
+var title_label: Label
+var subtitle_label: Label
+
 func _ready():
 	# Start invisible
 	modulate.a = 0.0
 	visible = false
 
-func show_menu():
+	# Get references to labels
+	title_label = get_node("CenterContainer/VBoxContainer/TitleLabel")
+	subtitle_label = get_node("CenterContainer/VBoxContainer/SubtitleLabel")
+
+func show_menu(death_reason: String = "starvation"):
 	visible = true
+
+	# Set appropriate text based on death reason
+	match death_reason:
+		"starvation":
+			title_label.text = "YOU STARVED"
+			subtitle_label.text = "The bat ran out of energy..."
+		"fall":
+			title_label.text = "YOU FELL"
+			subtitle_label.text = "The bat plummeted into the void..."
+		_:
+			title_label.text = "YOU DIED"
+			subtitle_label.text = "The bat has perished..."
+
 	# Fade in the menu
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, fade_in_duration)

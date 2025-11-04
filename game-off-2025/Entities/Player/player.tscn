@@ -182,6 +182,7 @@ PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
 FlapAudioPlayer = NodePath("FlapAudioPlayer")
 skidFriction = 0.384
+coyoteTime = 0.085
 run = true
 jump = true
 idle = true
@@ -192,7 +193,7 @@ skid = true
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
 animation = &"run"
-frame_progress = 0.46097302
+frame_progress = 0.54111034
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3.5)

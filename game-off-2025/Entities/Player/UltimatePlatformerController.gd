@@ -38,9 +38,9 @@ class_name PlatformerController2D
 ##The peak height of your player's jump
 @export_range(0, 20) var jumpHeight: float = 2.0
 ##Jump power multiplier when running at max speed (SMB3 style - faster speed = higher jump)
-@export_range(1.0, 1.8) var maxSpeedJumpBoost: float = 1.4
+@export_range(1.0, 1.8) var maxSpeedJumpBoost: float = 1.75
 ##Jump power multiplier when walking or standing still (base jump height)
-@export_range(1.0, 1.5) var walkJumpBoost: float = 1.2
+@export_range(1.0, 1.5) var walkJumpBoost: float = 1.5
 ##How many jumps your character can do before needing to touch the ground again. Giving more than 1 jump disables jump buffering and coyote time.
 @export_range(0, 4) var jumps: int = 1
 ##Jump gravity (SMB3 style - low gravity while ascending with button held)
@@ -90,6 +90,16 @@ class_name PlatformerController2D
 @export var middleRaycast: RayCast2D
 ##Raycast used for corner cutting calculations. Place above and to the right of the players head point up. ALL ARE NEEDED FOR IT TO WORK.
 @export var rightRaycast: RayCast2D
+@export_category("Wing Flap/Tail Whip")
+##Allows the player to flap wings in midair to slow descent (SMB3 tail whip style). Assign "flap" in project input settings.
+@export var canFlap: bool = true
+##How much upward velocity is added when flapping (negative fall speed)
+@export_range(0, 300) var flapLift: float = 100.0
+##Cooldown between flaps in seconds (prevents spamming)
+@export_range(0.0, 1.0) var flapCooldown: float = 0.25
+##If true, flapping resets a small amount of horizontal momentum (like SMB3)
+@export var flapAffectsHorizontalSpeed: bool = false
+
 @export_category("Down Input")
 ##Holding down will crouch the player. Crouching script may need to be changed depending on how your player's size proportions are. It is built for 32x player's sprites.
 @export var crouch: bool = false
@@ -175,6 +185,8 @@ var latched
 var wasLatched
 var crouching
 var groundPounding
+var canFlapNow: bool = true
+var isFlapping: bool = false
 
 var anim
 var col
@@ -196,6 +208,7 @@ var latchHold
 var dashTap
 var rollTap
 var downTap
+var flapTap
 #var twirlTap
 
 func _ready():
@@ -368,6 +381,7 @@ func _physics_process(delta):
 	dashTap = Input.is_action_just_pressed("dash")
 	rollTap = Input.is_action_just_pressed("roll")
 	downTap = Input.is_action_just_pressed("down")
+	flapTap = Input.is_action_just_pressed("flap")
 	#twirlTap = Input.is_action_just_pressed("twirl")
 	
 	
@@ -656,6 +670,15 @@ func _physics_process(delta):
 		if velocity.y < 0 and !leftRaycast.is_colliding() and rightRaycast.is_colliding() and !middleRaycast.is_colliding():
 			position.x -= correctionAmount
 			
+	#INFO Wing Flap (SMB3 Tail Whip Style)
+	if canFlap and flapTap and !is_on_floor() and !is_on_wall() and canFlapNow and velocity.y > 0:
+		_flap()
+
+	# Reset flap availability when grounded
+	if is_on_floor():
+		canFlapNow = true
+		isFlapping = false
+
 	#INFO Ground Pound
 	if groundPound and downTap and !is_on_floor() and !is_on_wall():
 		groundPounding = true
@@ -666,7 +689,7 @@ func _physics_process(delta):
 	if is_on_floor() and groundPounding:
 		_endGroundPound()
 	move_and_slide()
-	
+
 	if upToCancel and upHold and groundPound:
 		_endGroundPound()
 	
@@ -771,3 +794,26 @@ func _endGroundPound():
 
 func _placeHolder():
 	print("")
+
+func _flap():
+	# SMB3 tail whip style: reduces fall speed significantly
+	if velocity.y > 0:
+		velocity.y = -flapLift
+
+	# Optional: slight horizontal momentum adjustment like SMB3
+	if flapAffectsHorizontalSpeed:
+		velocity.x *= 0.9
+
+	# Play flap audio if available
+	if FlapAudioPlayer:
+		FlapAudioPlayer.play()
+
+	# Set flapping state and cooldown
+	isFlapping = true
+	canFlapNow = false
+	_flapCooldownReset()
+
+func _flapCooldownReset():
+	await get_tree().create_timer(flapCooldown).timeout
+	canFlapNow = true
+	isFlapping = false

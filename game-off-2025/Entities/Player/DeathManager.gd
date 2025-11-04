@@ -75,6 +75,10 @@ func trigger_hazard_death():
 	is_dead = true
 	death_reason = "hazard"
 
+	# Stop walking sound
+	if player.has_method("_stopWalkingSound"):
+		player._stopWalkingSound()
+
 	# Disable player control
 	player.set_physics_process(false)
 
@@ -92,6 +96,10 @@ func trigger_fall_death():
 	is_dead = true
 	death_reason = "fall"
 
+	# Stop walking sound
+	if player.has_method("_stopWalkingSound"):
+		player._stopWalkingSound()
+
 	# Stop camera from following player
 	if camera:
 		camera.enabled = false
@@ -106,6 +114,10 @@ func trigger_fall_death():
 func trigger_death():
 	is_dead = true
 	death_reason = "starvation"
+
+	# Stop walking sound
+	if player.has_method("_stopWalkingSound"):
+		player._stopWalkingSound()
 
 	# Disable player control
 	player.set_physics_process(false)

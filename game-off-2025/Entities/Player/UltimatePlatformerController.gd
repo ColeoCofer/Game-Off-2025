@@ -13,6 +13,7 @@ class_name PlatformerController2D
 @export var PlayerSprite: AnimatedSprite2D
 @export var PlayerCollider: CollisionShape2D
 @export var FlapAudioPlayer: AudioStreamPlayer
+@export var WalkingAudioPlayer: AudioStreamPlayer
 
 #INFO HORIZONTAL MOVEMENT
 @export_category("L/R Movement")
@@ -21,7 +22,7 @@ class_name PlatformerController2D
 ##Run speed (SMB3 style - faster speed when run button held)
 @export_range(100, 500) var runSpeed: float = 250.0
 ##How fast your player will reach max speed from rest (in seconds)
-@export_range(0, 4) var timeToReachMaxSpeed: float = 0.1
+@export_range(0, 4) var timeToReachMaxSpeed: float = 0.3
 ##How fast your player will reach zero speed from max speed (in seconds)
 @export_range(0, 4) var timeToReachZeroSpeed: float = 0.15
 ##Speed threshold for skidding when changing direction (units/sec)
@@ -187,6 +188,8 @@ var crouching
 var groundPounding
 var canFlapNow: bool = true
 var isFlapping: bool = false
+var walkingSoundTimer: float = 0.0
+var walkingSoundInterval: float = 0.3  # Time between footsteps
 
 var anim
 var col
@@ -286,6 +289,10 @@ func _updateData():
 
 func _process(_delta):
 	#INFO animations
+	#Update walking sound timer
+	if walkingSoundTimer > 0:
+		walkingSoundTimer -= _delta
+
 	#directions
 	if is_on_wall() and !is_on_floor() and latch and wallLatching and ((wallLatchingModifer and latchHold) or !wallLatchingModifer):
 		latched = true
@@ -299,18 +306,27 @@ func _process(_delta):
 	if leftHold and !latched:
 		anim.scale.x = animScaleLock.x * -1
 	
+	# Check if player is actually moving (has input)
+	var is_moving = (leftHold or rightHold) and is_on_floor() and !is_on_wall()
+
 	# SMB3 style skid animation (takes priority over other ground animations)
 	if skid and is_skidding and is_on_floor() and !dashing and !crouching:
 		anim.speed_scale = 1
 		anim.play("skid")
+		_stopWalkingSound()
 	#run
 	elif run and idle and !dashing and !crouching:
 		if abs(velocity.x) > 0.1 and is_on_floor() and !is_on_wall():
 			anim.speed_scale = abs(velocity.x / 150)
 			anim.play("run")
+			if is_moving:
+				_playWalkingSound()
+			else:
+				_stopWalkingSound()
 		elif abs(velocity.x) < 0.1 and is_on_floor():
 			anim.speed_scale = 1
 			anim.play("idle")
+			_stopWalkingSound()
 	elif run and idle and walk and !dashing and !crouching:
 		if abs(velocity.x) > 0.1 and is_on_floor() and !is_on_wall():
 			anim.speed_scale = abs(velocity.x / 150)
@@ -319,18 +335,25 @@ func _process(_delta):
 				anim.play("walk")
 			else:
 				anim.play("run")
+			if is_moving:
+				_playWalkingSound()
+			else:
+				_stopWalkingSound()
 		elif abs(velocity.x) < 0.1 and is_on_floor():
 			anim.speed_scale = 1
 			anim.play("idle")
+			_stopWalkingSound()
 		
 	#jump
 	if velocity.y < 0 and jump and !dashing:
 		anim.speed_scale = 1
 		anim.play("jump")
-		
+		_stopWalkingSound()
+
 	if velocity.y > 40 and falling and !dashing and !crouching:
 		anim.speed_scale = 1
 		anim.play("falling")
+		_stopWalkingSound()
 		
 	if latch and slide:
 		#wall slide and latch
@@ -817,3 +840,20 @@ func _flapCooldownReset():
 	await get_tree().create_timer(flapCooldown).timeout
 	canFlapNow = true
 	isFlapping = false
+
+func _playWalkingSound():
+	if WalkingAudioPlayer:
+		# Play footstep at regular intervals based on movement speed
+		if walkingSoundTimer <= 0:
+			WalkingAudioPlayer.play()
+			# Adjust interval based on speed - faster movement = faster footsteps
+			var speed_ratio = abs(velocity.x) / runSpeed
+			walkingSoundInterval = lerp(0.3, 0.2, speed_ratio)  # 0.35s when slow, 0.2s when fast
+			walkingSoundTimer = walkingSoundInterval
+
+func _stopWalkingSound():
+	# Reset the timer when stopping
+	walkingSoundTimer = 0.0
+	# Stop any currently playing footstep sound
+	if WalkingAudioPlayer and WalkingAudioPlayer.playing:
+		WalkingAudioPlayer.stop()

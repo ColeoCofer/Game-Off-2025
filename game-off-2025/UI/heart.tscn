@@ -141,5 +141,6 @@ animations = [{
 script = ExtResource("1_heart_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(2.5, 2.5)
 sprite_frames = SubResource("SpriteFrames_42i1q")
 animation = &"heart"

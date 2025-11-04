@@ -4,8 +4,8 @@ extends HBoxContainer
 @export var bar_width: float = 150.0
 @export var bar_height: float = 12.0
 @export var bar_background_color: Color = Color(0.2, 0.2, 0.2, 0.8)
-@export var bar_fill_color: Color = Color(0.3, 0.8, 1.0, 1.0)  # Cyan/blue color (meh maybe change this)
-@export var bar_ready_color: Color = Color(0.2, 1.0, 0.3, 1.0)  # Green when ready
+@export var bar_fill_color: Color = Color(0.239, 0.231, 0.149, 1.0)  # #3d3b26
+@export var bar_ready_color: Color = Color(0.380, 0.408, 0.329, 1.0)  # #616854
 
 # UI elements
 var bar_background: ColorRect

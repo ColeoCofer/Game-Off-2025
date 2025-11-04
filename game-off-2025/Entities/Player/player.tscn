@@ -192,6 +192,7 @@ jump = true
 idle = true
 walk = true
 skid = true
+slipperyFrictionMultiplier = 0.15000000000000002
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_btcbx")

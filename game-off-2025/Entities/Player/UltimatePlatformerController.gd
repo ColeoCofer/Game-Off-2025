@@ -191,6 +191,11 @@ var isFlapping: bool = false
 var walkingSoundTimer: float = 0.0
 var walkingSoundInterval: float = 0.3  # Time between footsteps
 
+# Tile-based friction system
+var is_on_slippery_surface: bool = false
+var friction_multiplier: float = 1.0
+@export_range(0.1, 1.0) var slipperyFrictionMultiplier: float = 0.3  # Adjust this value: lower = more slippery
+
 var anim
 var col
 var animScaleLock : Vector2
@@ -451,15 +456,19 @@ func _physics_process(delta):
 	else:
 		maxSpeed = runSpeed
 
+	# Detect ground friction from tiles
+	_detect_ground_friction()
+
 	# SMB3 style: Apply reduced acceleration and increased friction when skidding
-	var current_acceleration = acceleration
-	var current_deceleration = deceleration
+	# Also apply tile-based friction multiplier
+	var current_acceleration = acceleration * friction_multiplier
+	var current_deceleration = deceleration * friction_multiplier
 
 	if is_skidding:
 		# During skid: ONLY decelerate, don't accelerate in new direction yet
 		# This preserves momentum in the original direction
 		current_acceleration = 0  # No acceleration in new direction while skidding
-		current_deceleration = deceleration * skidFriction
+		current_deceleration = deceleration * skidFriction * friction_multiplier
 
 	if rightHold and leftHold and movementInputMonitoring:
 		if !instantStop:
@@ -857,3 +866,53 @@ func _stopWalkingSound():
 	# Stop any currently playing footstep sound
 	if WalkingAudioPlayer and WalkingAudioPlayer.playing:
 		WalkingAudioPlayer.stop()
+
+func _detect_ground_friction():
+	# Reset to normal friction if not on floor
+	if !is_on_floor():
+		friction_multiplier = 1.0
+		is_on_slippery_surface = false
+		return
+
+	# Find the TileMapLayer node - it's nested under TileMap/Ground
+	var tilemap = get_tree().current_scene.get_node_or_null("TileMap/Ground")
+	if !tilemap:
+		# Fallback: try direct parent
+		tilemap = get_parent().get_node_or_null("TileMap/Ground")
+
+	if !tilemap:
+		print("WARNING: Could not find Ground TileMapLayer!")
+		friction_multiplier = 1.0
+		is_on_slippery_surface = false
+		return
+
+	# Get the tile coordinates beneath the player
+	var tile_pos = tilemap.local_to_map(tilemap.to_local(global_position + Vector2(0, 10)))
+
+	# Get the tile data at this position
+	var tile_data = tilemap.get_cell_tile_data(tile_pos)
+
+	if tile_data:
+		# Check for custom data layer "is_slippery"
+		# This will be set up in the TileSet editor
+		var has_custom = tile_data.has_custom_data("is_slippery")
+		var is_slippery = false
+
+		if has_custom:
+			is_slippery = tile_data.get_custom_data("is_slippery")
+
+		# Debug: Print tile info when it changes
+		var current_state = is_on_slippery_surface
+		if is_slippery != current_state:
+			print("Tile at ", tile_pos, " - has_custom_data: ", has_custom, ", is_slippery: ", is_slippery)
+
+		if is_slippery:
+			friction_multiplier = slipperyFrictionMultiplier
+			is_on_slippery_surface = true
+		else:
+			friction_multiplier = 1.0
+			is_on_slippery_surface = false
+	else:
+		# No tile found, use normal friction
+		friction_multiplier = 1.0
+		is_on_slippery_surface = false

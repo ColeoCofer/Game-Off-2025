@@ -181,7 +181,6 @@ script = ExtResource("1_4ntmi")
 PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
 FlapAudioPlayer = NodePath("FlapAudioPlayer")
-skidFriction = 0.384
 coyoteTime = 0.085
 run = true
 jump = true

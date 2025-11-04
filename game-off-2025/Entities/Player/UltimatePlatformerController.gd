@@ -38,13 +38,15 @@ class_name PlatformerController2D
 ##The peak height of your player's jump
 @export_range(0, 20) var jumpHeight: float = 2.0
 ##Jump power multiplier when running at max speed (SMB3 style - faster speed = higher jump)
-@export_range(1.0, 1.5) var maxSpeedJumpBoost: float = 1.3
+@export_range(1.0, 1.8) var maxSpeedJumpBoost: float = 1.4
+##Jump power multiplier when walking or standing still (base jump height)
+@export_range(1.0, 1.5) var walkJumpBoost: float = 1.2
 ##How many jumps your character can do before needing to touch the ground again. Giving more than 1 jump disables jump buffering and coyote time.
 @export_range(0, 4) var jumps: int = 1
 ##Jump gravity (SMB3 style - low gravity while ascending with button held)
-@export_range(0, 50) var jumpGravity: float = 7.0
+@export_range(0, 50) var jumpGravity: float = 5.0
 ##Fall gravity (SMB3 style - higher gravity when falling for snappy landings)
-@export_range(0, 100) var fallGravity: float = 35.0
+@export_range(0, 100) var fallGravity: float = 25.0
 ##The fastest your player can fall
 @export_range(0, 1000) var terminalVelocity: float = 500.0
 ##Enabling this toggle makes it so that when the player releases the jump key while still ascending, their vertical velocity will cut in half, providing variable jump height.
@@ -680,12 +682,14 @@ func _coyoteTime():
 	
 func _jump():
 	if jumpCount > 0:
-		# SMB3 style: Jump power scales with horizontal speed
-		var speed_ratio = abs(velocity.x) / runSpeed
-		speed_ratio = clamp(speed_ratio, 0.0, 1.0)
+		# Jump power based on whether player is running or not
+		var jump_multiplier = walkJumpBoost
 
-		# Interpolate jump boost: 1.0x at standstill, maxSpeedJumpBoost at full run speed
-		var jump_multiplier = 1.0 + (speed_ratio * (maxSpeedJumpBoost - 1.0))
+		# If moving faster than walk speed, interpolate to running jump boost
+		if abs(velocity.x) > walkSpeed:
+			var run_speed_ratio = (abs(velocity.x) - walkSpeed) / (runSpeed - walkSpeed)
+			run_speed_ratio = clamp(run_speed_ratio, 0.0, 1.0)
+			jump_multiplier = walkJumpBoost + (run_speed_ratio * (maxSpeedJumpBoost - walkJumpBoost))
 
 		velocity.y = -jumpMagnitude * jump_multiplier
 		jumpCount += -1

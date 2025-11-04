@@ -14,31 +14,39 @@ class_name PlatformerController2D
 @export var PlayerCollider: CollisionShape2D
 @export var FlapAudioPlayer: AudioStreamPlayer
 
-#INFO HORIZONTAL MOVEMENT 
+#INFO HORIZONTAL MOVEMENT
 @export_category("L/R Movement")
-##The max speed your player will move
-@export_range(50, 500) var maxSpeed: float = 200.0
+##Walk speed (SMB3 style - slower speed when not running)
+@export_range(50, 300) var walkSpeed: float = 150.0
+##Run speed (SMB3 style - faster speed when run button held)
+@export_range(100, 500) var runSpeed: float = 250.0
 ##How fast your player will reach max speed from rest (in seconds)
-@export_range(0, 4) var timeToReachMaxSpeed: float = 0.2
+@export_range(0, 4) var timeToReachMaxSpeed: float = 0.1
 ##How fast your player will reach zero speed from max speed (in seconds)
-@export_range(0, 4) var timeToReachZeroSpeed: float = 0.2
+@export_range(0, 4) var timeToReachZeroSpeed: float = 0.15
+##Speed threshold for skidding when changing direction (units/sec)
+@export_range(50, 300) var skidThreshold: float = 100.0
+##Skid friction multiplier (higher = faster stopping during skid)
+@export_range(0.3, 3.0) var skidFriction: float = 0.5
 ##If true, player will instantly move and switch directions. Overrides the "timeToReach" variables, setting them to 0.
 @export var directionalSnap: bool = false
 ##If enabled, the default movement speed will by 1/2 of the maxSpeed and the player must hold a "run" button to accelerate to max speed. Assign "run" (case sensitive) in the project input settings.
-@export var runningModifier: bool = false
+@export var runningModifier: bool = true
 
-#INFO JUMPING 
+#INFO JUMPING
 @export_category("Jumping and Gravity")
 ##The peak height of your player's jump
 @export_range(0, 20) var jumpHeight: float = 2.0
+##Jump power multiplier when running at max speed (SMB3 style - faster speed = higher jump)
+@export_range(1.0, 1.5) var maxSpeedJumpBoost: float = 1.3
 ##How many jumps your character can do before needing to touch the ground again. Giving more than 1 jump disables jump buffering and coyote time.
 @export_range(0, 4) var jumps: int = 1
-##The strength at which your character will be pulled to the ground.
-@export_range(0, 100) var gravityScale: float = 20.0
+##Jump gravity (SMB3 style - low gravity while ascending with button held)
+@export_range(0, 50) var jumpGravity: float = 7.0
+##Fall gravity (SMB3 style - higher gravity when falling for snappy landings)
+@export_range(0, 100) var fallGravity: float = 35.0
 ##The fastest your player can fall
 @export_range(0, 1000) var terminalVelocity: float = 500.0
-##Your player will move this amount faster when falling providing a less floaty jump curve.
-@export_range(0.5, 3) var descendingGravityFactor: float = 1.3
 ##Enabling this toggle makes it so that when the player releases the jump key while still ascending, their vertical velocity will cut in half, providing variable jump height.
 @export var shortHopAkaVariableJumpHeight: bool = true
 ##How much extra time (in seconds) your player will be given to jump after falling off an edge. This is set to 0.2 seconds by default.
@@ -104,6 +112,8 @@ class_name PlatformerController2D
 @export var walk: bool
 ##Animations must be named "slide" all lowercase as the check box says
 @export var slide: bool
+##Animations must be named "skid" all lowercase as the check box says (SMB3 style turning skid)
+@export var skid: bool
 ##Animations must be named "latch" all lowercase as the check box says
 @export var latch: bool
 ##Animations must be named "falling" all lowercase as the check box says
@@ -119,6 +129,7 @@ class_name PlatformerController2D
 
 #Variables determined by the developer set ones.
 var appliedGravity: float
+var maxSpeed: float
 var maxSpeedLock: float
 var appliedTerminalVelocity: float
 
@@ -137,6 +148,11 @@ var gravityActive: bool = true
 var dashing: bool = false
 var dashCount: int
 var rolling: bool = false
+
+# SMB3 style movement states
+var is_skidding: bool = false
+var current_move_direction: int = 0  # -1 left, 0 none, 1 right
+var previous_move_direction: int = 0
 
 var twoWayDashHorizontal
 var twoWayDashVertical
@@ -188,16 +204,19 @@ func _ready():
 	_updateData()
 	
 func _updateData():
-	acceleration = maxSpeed / timeToReachMaxSpeed
-	deceleration = -maxSpeed / timeToReachZeroSpeed
-	
-	jumpMagnitude = (10.0 * jumpHeight) * gravityScale
+	# SMB3 style: Use run speed as base for calculations
+	maxSpeedLock = runSpeed
+
+	# Use runSpeed for acceleration calculation (constant acceleration rate)
+	acceleration = runSpeed / timeToReachMaxSpeed
+	deceleration = -runSpeed / timeToReachZeroSpeed
+
+	# SMB3 style: Base jump magnitude on jump gravity instead of old gravityScale
+	jumpMagnitude = (10.0 * jumpHeight) * jumpGravity
 	jumpCount = jumps
-	
-	dashMagnitude = maxSpeed * dashLength
+
+	dashMagnitude = runSpeed * dashLength
 	dashCount = dashes
-	
-	maxSpeedLock = maxSpeed
 	
 	animScaleLock = abs(anim.scale)
 	colliderScaleLockY = col.scale.y
@@ -265,8 +284,12 @@ func _process(_delta):
 	if leftHold and !latched:
 		anim.scale.x = animScaleLock.x * -1
 	
+	# SMB3 style skid animation (takes priority over other ground animations)
+	if skid and is_skidding and is_on_floor() and !dashing and !crouching:
+		anim.speed_scale = 1
+		anim.play("skid")
 	#run
-	if run and idle and !dashing and !crouching:
+	elif run and idle and !dashing and !crouching:
 		if abs(velocity.x) > 0.1 and is_on_floor() and !is_on_wall():
 			anim.speed_scale = abs(velocity.x / 150)
 			anim.play("run")
@@ -276,7 +299,8 @@ func _process(_delta):
 	elif run and idle and walk and !dashing and !crouching:
 		if abs(velocity.x) > 0.1 and is_on_floor() and !is_on_wall():
 			anim.speed_scale = abs(velocity.x / 150)
-			if abs(velocity.x) < (maxSpeedLock):
+			# SMB3 style: Use walk speed threshold instead of maxSpeedLock
+			if abs(velocity.x) < walkSpeed:
 				anim.play("walk")
 			else:
 				anim.play("run")
@@ -345,54 +369,106 @@ func _physics_process(delta):
 	#twirlTap = Input.is_action_just_pressed("twirl")
 	
 	
-	#INFO Left and Right Movement
-	
+	#INFO Left and Right Movement (SMB3 Style)
+
+	# Track current input direction
+	if rightHold and !leftHold:
+		current_move_direction = 1
+	elif leftHold and !rightHold:
+		current_move_direction = -1
+	else:
+		current_move_direction = 0
+
+	# SMB3 style: Detect skidding when changing direction at high speed
+	if is_on_floor() and !dashing and !rolling:
+		var velocity_direction = sign(velocity.x)
+
+		# Start skidding when trying to move opposite to current velocity at high speed
+		if current_move_direction != 0 and velocity_direction != 0:
+			if current_move_direction != velocity_direction and abs(velocity.x) > skidThreshold:
+				if !is_skidding:
+					print("SKID START! velocity.x: ", velocity.x, " direction: ", current_move_direction)
+				is_skidding = true
+
+		# Stop skidding when velocity is low enough (nearly stopped)
+		if is_skidding:
+			# End skid when you've slowed down to almost stopped
+			if abs(velocity.x) < 30.0:
+				print("SKID END! velocity.x: ", velocity.x)
+				is_skidding = false
+
+		# Stop skidding if no input
+		if current_move_direction == 0:
+			is_skidding = false
+	else:
+		is_skidding = false
+
+	# SMB3 style: Walk/Run speed states based on run button
+	if runningModifier:
+		if runHold and is_on_floor():
+			maxSpeed = runSpeed
+		else:
+			maxSpeed = walkSpeed
+	else:
+		maxSpeed = runSpeed
+
+	# SMB3 style: Apply reduced acceleration and increased friction when skidding
+	var current_acceleration = acceleration
+	var current_deceleration = deceleration
+
+	if is_skidding:
+		# During skid: ONLY decelerate, don't accelerate in new direction yet
+		# This preserves momentum in the original direction
+		current_acceleration = 0  # No acceleration in new direction while skidding
+		current_deceleration = deceleration * skidFriction
+
 	if rightHold and leftHold and movementInputMonitoring:
 		if !instantStop:
-			_decelerate(delta, false)
+			_decelerate_custom(delta, false, current_deceleration)
 		else:
 			velocity.x = -0.1
 	elif rightHold and movementInputMonitoring.x:
 		if velocity.x > maxSpeed or instantAccel:
 			velocity.x = maxSpeed
-		else:
-			velocity.x += acceleration * delta
-		if velocity.x < 0:
+		elif velocity.x < 0:
+			# Moving left but want to go right - apply deceleration
 			if !instantStop:
-				_decelerate(delta, false)
+				_decelerate_custom(delta, false, current_deceleration)
 			else:
 				velocity.x = -0.1
+		else:
+			# Already moving right - apply acceleration
+			velocity.x += current_acceleration * delta
 	elif leftHold and movementInputMonitoring.y:
 		if velocity.x < -maxSpeed or instantAccel:
 			velocity.x = -maxSpeed
-		else:
-			velocity.x -= acceleration * delta
-		if velocity.x > 0:
+		elif velocity.x > 0:
+			# Moving right but want to go left - apply deceleration
 			if !instantStop:
-				_decelerate(delta, false)
+				_decelerate_custom(delta, false, current_deceleration)
 			else:
 				velocity.x = 0.1
-				
+		else:
+			# Already moving left - apply acceleration
+			velocity.x -= current_acceleration * delta
+
 	if velocity.x > 0:
 		wasMovingR = true
 	elif velocity.x < 0:
 		wasMovingR = false
-		
+
 	if rightTap:
 		wasPressingR = true
 	if leftTap:
 		wasPressingR = false
-	
-	if runningModifier and !runHold:
-		maxSpeed = maxSpeedLock / 2
-	elif is_on_floor(): 
-		maxSpeed = maxSpeedLock
-	
+
 	if !(leftHold or rightHold):
 		if !instantStop:
-			_decelerate(delta, false)
+			_decelerate_custom(delta, false, current_deceleration)
 		else:
 			velocity.x = 0
+
+	previous_move_direction = current_move_direction
 			
 	#INFO Crouching
 	if crouch:
@@ -403,13 +479,13 @@ func _physics_process(delta):
 			
 	if !is_on_floor():
 		crouching = false
-			
+
 	if crouching:
-		maxSpeed = maxSpeedLock / 2
+		maxSpeed = walkSpeed / 2  # SMB3 style: Crouching uses even slower speed
 		col.scale.y = colliderScaleLockY / 2
 		col.position.y = colliderPosLockY + (8 * colliderScaleLockY)
 	else:
-		maxSpeed = maxSpeedLock
+		# Speed already set above based on run button
 		col.scale.y = colliderScaleLockY
 		col.position.y = colliderPosLockY
 		
@@ -433,11 +509,16 @@ func _physics_process(delta):
 		#if you want your player to become immune or do something else while rolling, add that here.
 		pass
 			
-	#INFO Jump and Gravity
+	#INFO Jump and Gravity (SMB3 Style)
+	# SMB3 style: Different gravity when falling vs jumping (5:1 ratio)
 	if velocity.y > 0:
-		appliedGravity = gravityScale * descendingGravityFactor
+		appliedGravity = fallGravity
 	else:
-		appliedGravity = gravityScale
+		# Use reduced gravity while ascending and jump button is held
+		if jumpTap or Input.is_action_pressed("jump"):
+			appliedGravity = jumpGravity
+		else:
+			appliedGravity = fallGravity
 	
 	if is_on_wall() and !groundPounding:
 		appliedTerminalVelocity = terminalVelocity / wallSliding
@@ -599,7 +680,14 @@ func _coyoteTime():
 	
 func _jump():
 	if jumpCount > 0:
-		velocity.y = -jumpMagnitude
+		# SMB3 style: Jump power scales with horizontal speed
+		var speed_ratio = abs(velocity.x) / runSpeed
+		speed_ratio = clamp(speed_ratio, 0.0, 1.0)
+
+		# Interpolate jump boost: 1.0x at standstill, maxSpeedJumpBoost at full run speed
+		var jump_multiplier = 1.0 + (speed_ratio * (maxSpeedJumpBoost - 1.0))
+
+		velocity.y = -jumpMagnitude * jump_multiplier
 		jumpCount += -1
 		jumpWasPressed = false
 		if FlapAudioPlayer:
@@ -637,6 +725,20 @@ func _decelerate(delta, vertical):
 			velocity.x -= deceleration * delta
 	elif vertical and velocity.y > 0:
 		velocity.y += deceleration * delta
+
+func _decelerate_custom(delta, vertical, custom_decel):
+	# SMB3 style: Custom deceleration for skidding
+	if !vertical:
+		if velocity.x > 0:
+			velocity.x += custom_decel * delta
+			if velocity.x < 0:
+				velocity.x = 0
+		elif velocity.x < 0:
+			velocity.x -= custom_decel * delta
+			if velocity.x > 0:
+				velocity.x = 0
+	elif vertical and velocity.y > 0:
+		velocity.y += custom_decel * delta
 
 
 func _pauseGravity(time):

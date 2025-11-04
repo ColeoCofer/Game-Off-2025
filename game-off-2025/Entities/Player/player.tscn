@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=26 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_btcbx"]
 [ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/Audio/echo_sound.wav" id="3_echo"]
+[ext_resource type="Texture2D" uid="uid://duol2vvpm3gku" path="res://Assets/Art/bat-walk.png" id="4_7a1se"]
 [ext_resource type="AudioStream" uid="uid://ceet5aymc5bwd" path="res://Assets/Audio/flap.wav" id="4_flap"]
 [ext_resource type="Script" uid="uid://dop4mxatdxsc3" path="res://Entities/Player/HungerManager.gd" id="5_hunger"]
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
@@ -32,6 +33,26 @@ region = Rect2(80, 192, 16, 16)
 atlas = ExtResource("2_btcbx")
 region = Rect2(80, 224, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_lub02"]
+atlas = ExtResource("4_7a1se")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1y6q"]
+atlas = ExtResource("4_7a1se")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ap3xn"]
+atlas = ExtResource("4_7a1se")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iplt1"]
+atlas = ExtResource("4_7a1se")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_owvpp"]
+atlas = ExtResource("4_7a1se")
+region = Rect2(64, 0, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_4ntmi"]
 atlas = ExtResource("2_btcbx")
 region = Rect2(16, 240, 16, 16)
@@ -43,6 +64,10 @@ region = Rect2(32, 240, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_svc64"]
 atlas = ExtResource("2_btcbx")
 region = Rect2(48, 240, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01a4e"]
+atlas = ExtResource("2_btcbx")
+region = Rect2(64, 208, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hqtel"]
 animations = [{
@@ -73,17 +98,23 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_4ntmi")
+"texture": SubResource("AtlasTexture_lub02")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_btcbx")
+"texture": SubResource("AtlasTexture_x1y6q")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_svc64")
+"texture": SubResource("AtlasTexture_ap3xn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iplt1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_owvpp")
 }],
 "loop": true,
 "name": &"run",
-"speed": 10.0
+"speed": 11.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -96,7 +127,49 @@ animations = [{
 "texture": SubResource("AtlasTexture_svc64")
 }],
 "loop": true,
+"name": &"run-old",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_01a4e")
+}],
+"loop": true,
+"name": &"skid",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lub02")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1y6q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ap3xn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iplt1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_owvpp")
+}],
+"loop": true,
 "name": &"walk",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ntmi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btcbx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_svc64")
+}],
+"loop": true,
+"name": &"walk-old",
 "speed": 5.0
 }]
 
@@ -108,18 +181,18 @@ script = ExtResource("1_4ntmi")
 PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
 FlapAudioPlayer = NodePath("FlapAudioPlayer")
-maxSpeed = 192.252
+skidFriction = 0.384
 run = true
 jump = true
 idle = true
 walk = true
+skid = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
-animation = &"idle"
-frame = 1
-frame_progress = 0.36158568
+animation = &"run"
+frame_progress = 0.46097302
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3.5)

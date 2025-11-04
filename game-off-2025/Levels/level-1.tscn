@@ -962,8 +962,8 @@ jumpHeight = 2.2
 
 [node name="EcholocationManager" type="CanvasLayer" parent="."]
 script = ExtResource("3_r041s")
-vision_radius = 100.0
-vision_fade_distance = 0.0
+vision_radius = 150.0
+vision_fade_distance = 100.0
 darkness_intensity = 1.0
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]

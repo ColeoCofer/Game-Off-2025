@@ -1,16 +1,17 @@
-[gd_scene load_steps=15 format=4 uid="uid://de6p1l8qfd8pb"]
+[gd_scene load_steps=16 format=4 uid="uid://de6p1l8qfd8pb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
 [ext_resource type="TileSet" uid="uid://b5w00fiw4f2v5" path="res://Levels/sona-sprite-sheet.tres" id="2_n4bx7"]
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="2_oxkis"]
 [ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="3_r041s"]
-[ext_resource type="Shader" uid="uid://hd08l03rvbgq" path="res://Shaders/darken_decor.gdshader" id="3_ys3un"]
+[ext_resource type="Shader" uid="uid://uacftcxjkp8x" path="res://Shaders/foliage_wind.gdshader" id="3_ys3un"]
 [ext_resource type="Script" uid="uid://ddjdewh07dgws" path="res://UI/StaminaUI.gd" id="4_aoct0"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
+[ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
 texture = ExtResource("1_0aets")
@@ -420,7 +421,14 @@ sources/0 = SubResource("TileSetAtlasSource_6ps50")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b6mne"]
 shader = ExtResource("3_ys3un")
-shader_parameter/brightness = 1.0
+shader_parameter/render_noise = false
+shader_parameter/noise_texture = ExtResource("14_wind_noise")
+shader_parameter/amplitude = 0.00999999977648
+shader_parameter/time_scale = 0.04
+shader_parameter/noise_scale = 0.0009999999747
+shader_parameter/rotation_strength = 1.0
+shader_parameter/rotation_pivot = Vector2(0.5, 1)
+shader_parameter/brightness = 0.6
 
 [node name="Level1" type="Node2D"]
 

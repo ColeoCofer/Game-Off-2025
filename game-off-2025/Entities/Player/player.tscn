@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=32 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://u13ebduwlg6s" path="res://Assets/Art/bat-idle.png" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://duol2vvpm3gku" path="res://Assets/Art/bat-walk.png" id="4_7a1se"]
 [ext_resource type="AudioStream" uid="uid://ceet5aymc5bwd" path="res://Assets/Audio/flap.wav" id="4_flap"]
+[ext_resource type="Texture2D" uid="uid://cp64h2jp4cdfe" path="res://Assets/Art/bat-jump.png" id="4_iplt1"]
 [ext_resource type="Texture2D" uid="uid://chv2asqut6056" path="res://Assets/Art/bat-running.png" id="5_ap3xn"]
 [ext_resource type="Script" uid="uid://dop4mxatdxsc3" path="res://Entities/Player/HungerManager.gd" id="5_hunger"]
 [ext_resource type="AudioStream" uid="uid://r857tja3822b" path="res://Assets/Audio/walking_dirt.wav" id="5_walking"]
@@ -29,7 +30,11 @@ atlas = ExtResource("3_x1y6q")
 region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r8fok"]
-atlas = ExtResource("4_7a1se")
+atlas = ExtResource("4_iplt1")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dv6dp"]
+atlas = ExtResource("4_iplt1")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pjcup"]
@@ -95,8 +100,11 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_r8fok")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dv6dp")
 }],
-"loop": true,
+"loop": false,
 "name": &"jump",
 "speed": 5.0
 }, {
@@ -171,7 +179,9 @@ skid = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
-animation = &"skid"
+animation = &"jump"
+frame = 1
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3.5)

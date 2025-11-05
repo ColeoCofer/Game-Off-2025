@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://b73psve87rk1g"]
+
+[ext_resource type="Script" uid="uid://bey3ap2akrt5c" path="res://Entities/Objects/moving_plank.gd" id="1_cc7ah"]
+[ext_resource type="Texture2D" uid="uid://bxq5p4pkbgne5" path="res://Assets/Art/sona-sprite-sheet.png" id="1_sddy6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4cv5g"]
+atlas = ExtResource("1_sddy6")
+region = Rect2(0, 48, 48, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sddy6"]
+size = Vector2(48, 11)
+
+[node name="MovingPlank" type="AnimatableBody2D"]
+script = ExtResource("1_cc7ah")
+sync_to_physics = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_4cv5g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_sddy6")

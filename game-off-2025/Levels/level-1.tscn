@@ -965,6 +965,8 @@ script = ExtResource("3_r041s")
 vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
+echo_fade_duration = 4.0
+echolocation_cooldown = 7.0
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false

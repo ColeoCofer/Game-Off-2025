@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=33 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
@@ -36,6 +36,10 @@ region = Rect2(0, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_dv6dp"]
 atlas = ExtResource("4_iplt1")
 region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01ng6"]
+atlas = ExtResource("4_iplt1")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pjcup"]
 atlas = ExtResource("5_ap3xn")
@@ -103,6 +107,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dv6dp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_01ng6")
 }],
 "loop": false,
 "name": &"jump",
@@ -180,7 +187,6 @@ skid = true
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
 animation = &"jump"
-frame = 1
 frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

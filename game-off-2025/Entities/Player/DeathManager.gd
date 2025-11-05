@@ -12,6 +12,7 @@ var player: CharacterBody2D
 var original_material: Material
 var death_material: ShaderMaterial
 var last_ground_y: float = 0.0
+var starting_position: Vector2  # Store the starting position for debug mode respawn
 var camera: Camera2D
 var death_reason: String = "starvation"  # Track how the player died
 
@@ -19,6 +20,7 @@ func _ready():
 	player = get_parent() as CharacterBody2D
 	camera = player.get_node_or_null("Camera2D")
 	last_ground_y = player.position.y
+	starting_position = player.position  # Store starting position for debug mode
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
@@ -102,7 +104,12 @@ func trigger_fall_death():
 	"""Called when player falls too far"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		print("DEBUG: Would have died from falling, but debug mode is enabled")
+		print("DEBUG: Would have died from falling, but debug mode is enabled - resetting position")
+		# Reset player to starting position
+		player.position = starting_position
+		player.velocity = Vector2.ZERO
+		# Reset last ground position to prevent immediate re-trigger
+		last_ground_y = starting_position.y
 		return
 
 	if is_dead:

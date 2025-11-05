@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvn8qg3xjvn4n"]
+
+[ext_resource type="Shader" path="res://Shaders/light_beam_simple.gdshader" id="1_simple"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_simple"]
+shader = ExtResource("1_simple")
+shader_parameter/beam_color = Color(1, 0.9, 0.5, 1)
+
+[node name="LightBeamSimple" type="ColorRect"]
+material = SubResource("ShaderMaterial_simple")
+offset_right = 100.0
+offset_bottom = 300.0
+color = Color(1, 1, 1, 0)

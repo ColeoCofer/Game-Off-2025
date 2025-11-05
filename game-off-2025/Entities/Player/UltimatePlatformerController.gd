@@ -405,9 +405,10 @@ func _physics_process(delta):
 	jumpTap = Input.is_action_just_pressed("jump")
 	jumpRelease = Input.is_action_just_released("jump")
 	runHold = Input.is_action_pressed("run")
-	latchHold = Input.is_action_pressed("latch")
-	dashTap = Input.is_action_just_pressed("dash")
-	rollTap = Input.is_action_just_pressed("roll")
+	# Disabled unimplemented features to avoid input errors
+	#latchHold = Input.is_action_pressed("latch")
+	#dashTap = Input.is_action_just_pressed("dash")
+	#rollTap = Input.is_action_just_pressed("roll")
 	downTap = Input.is_action_just_pressed("down")
 	flapTap = Input.is_action_just_pressed("flap")
 	#twirlTap = Input.is_action_just_pressed("twirl")

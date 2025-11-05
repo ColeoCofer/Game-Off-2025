@@ -43,11 +43,11 @@ func _input(event):
 
 	# Navigate between buttons with up/down or W/S
 	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
-		current_button_index = (current_button_index + 1) % 2
+		current_button_index = (current_button_index + 1) % 3
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
-		current_button_index = (current_button_index - 1) % 2
+		current_button_index = (current_button_index - 1 + 3) % 3
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
@@ -95,14 +95,20 @@ func _on_exit_button_pressed():
 func _update_button_focus():
 	if current_button_index == 0:
 		continue_button.grab_focus()
-	else:
+	elif current_button_index == 1:
 		exit_button.grab_focus()
+	else:
+		debug_toggle.grab_focus()
 
 func _activate_current_button():
 	if current_button_index == 0:
 		_on_continue_button_pressed()
-	else:
+	elif current_button_index == 1:
 		_on_exit_button_pressed()
+	else:
+		# Toggle the debug checkbox
+		debug_toggle.button_pressed = !debug_toggle.button_pressed
+		_on_debug_toggle_toggled(debug_toggle.button_pressed)
 
 func _on_debug_toggle_toggled(toggled_on: bool):
 	DebugManager.debug_mode = toggled_on

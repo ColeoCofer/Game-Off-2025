@@ -456,13 +456,13 @@ tile_set = ExtResource("2_n4bx7")
 [node name="Objects" type="Node" parent="."]
 
 [node name="MovingPlank" parent="Objects" instance=ExtResource("5_6p1x0")]
-position = Vector2(730, 268)
+position = Vector2(740, 268)
 
 [node name="MovingPlank2" parent="Objects" instance=ExtResource("5_6p1x0")]
-position = Vector2(865, 236)
+position = Vector2(865, 238)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(668, 269)
+position = Vector2(149, 372)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]
@@ -514,7 +514,6 @@ position = Vector2(1340, 364)
 position = Vector2(1598, 339)
 
 [node name="CaveParticles" parent="." instance=ExtResource("1_particles")]
-visible = false
 z_index = 10
 position = Vector2(297, 360)
 amount = 100

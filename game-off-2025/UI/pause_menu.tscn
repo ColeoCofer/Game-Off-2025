@@ -59,5 +59,15 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Exit"
 
+[node name="Spacer2" type="Control" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="DebugToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Debug Mode (Invincible)"
+
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ContinueButton" to="Control" method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ExitButton" to="Control" method="_on_exit_button_pressed"]
+[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/DebugToggle" to="Control" method="_on_debug_toggle_toggled"]

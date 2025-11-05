@@ -17,7 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-BackgroundMusic="*res://BackgroundMusic.gd"
+DebugManager="*res://DebugManager.gd"
+BackgroundMusic="*res://Common/Audio/BackgroundMusic.gd"
 PauseMenu="*res://UI/pause_menu.tscn"
 
 [display]

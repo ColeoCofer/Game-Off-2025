@@ -43,6 +43,11 @@ func _physics_process(_delta):
 	_check_hazard_collision()
 
 func _on_hunger_depleted():
+	# DEBUG MODE - TODO: Remove for production
+	if DebugManager.debug_mode:
+		print("DEBUG: Would have died from hunger, but debug mode is enabled")
+		return
+
 	if not is_dead:
 		trigger_death()
 
@@ -69,6 +74,11 @@ func _check_hazard_collision():
 
 func trigger_hazard_death():
 	"""Called when player touches a hazard (spikes, etc.)"""
+	# DEBUG MODE - TODO: Remove for production
+	if DebugManager.debug_mode:
+		print("DEBUG: Would have died from hazard, but debug mode is enabled")
+		return
+
 	if is_dead:
 		return
 
@@ -90,6 +100,11 @@ func trigger_hazard_death():
 
 func trigger_fall_death():
 	"""Called when player falls too far"""
+	# DEBUG MODE - TODO: Remove for production
+	if DebugManager.debug_mode:
+		print("DEBUG: Would have died from falling, but debug mode is enabled")
+		return
+
 	if is_dead:
 		return
 

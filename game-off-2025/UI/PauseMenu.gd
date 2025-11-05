@@ -9,6 +9,7 @@ signal exit_pressed
 var title_label: Label
 var continue_button: Button
 var exit_button: Button
+var debug_toggle: CheckButton
 var current_button_index: int = 0
 var is_paused: bool = false
 
@@ -22,6 +23,10 @@ func _ready():
 	title_label = get_node("CenterContainer/VBoxContainer/TitleLabel")
 	continue_button = get_node("CenterContainer/VBoxContainer/ContinueButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
+	debug_toggle = get_node("CenterContainer/VBoxContainer/DebugToggle")
+
+	# Set debug toggle state from DebugManager
+	debug_toggle.button_pressed = DebugManager.debug_mode
 
 func _input(event):
 	# Toggle pause menu when pause is pressed
@@ -98,3 +103,10 @@ func _activate_current_button():
 		_on_continue_button_pressed()
 	else:
 		_on_exit_button_pressed()
+
+func _on_debug_toggle_toggled(toggled_on: bool):
+	DebugManager.debug_mode = toggled_on
+	if DebugManager.debug_mode:
+		print("DEBUG MODE ENABLED - Player is invincible")
+	else:
+		print("DEBUG MODE DISABLED - Player can die normally")

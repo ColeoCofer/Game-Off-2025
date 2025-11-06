@@ -476,7 +476,7 @@ position = Vector2(865, 238)
 time_offset = 0.5
 
 [node name="MovingPlank3" parent="Objects" instance=ExtResource("5_6p1x0")]
-position = Vector2(1332, 198)
+position = Vector2(1295, 198)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(116, 367)
@@ -530,7 +530,7 @@ position = Vector2(832, 212)
 position = Vector2(1495, 70)
 
 [node name="LevelCompleteArea" parent="." instance=ExtResource("7_r041s")]
-position = Vector2(1862, 50)
+position = Vector2(3236, 63)
 
 [node name="CaveParticles" parent="." instance=ExtResource("1_particles")]
 visible = false

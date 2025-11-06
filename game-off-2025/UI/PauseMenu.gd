@@ -10,6 +10,9 @@ var title_label: Label
 var continue_button: Button
 var exit_button: Button
 var debug_toggle: CheckButton
+var music_toggle: CheckButton
+var volume_slider: HSlider
+var volume_value_label: Label
 var current_button_index: int = 0
 var is_paused: bool = false
 
@@ -24,9 +27,18 @@ func _ready():
 	continue_button = get_node("CenterContainer/VBoxContainer/ContinueButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 	debug_toggle = get_node("CenterContainer/VBoxContainer/DebugToggle")
+	music_toggle = get_node("CenterContainer/VBoxContainer/MusicToggle")
+	volume_slider = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeSlider")
+	volume_value_label = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeValueLabel")
 
-	# Set debug toggle state from DebugManager
-	debug_toggle.button_pressed = DebugManager.debug_mode
+	# Load settings from SaveManager
+	debug_toggle.button_pressed = SaveManager.get_debug_mode()
+	music_toggle.button_pressed = SaveManager.get_music_enabled()
+	volume_slider.value = SaveManager.get_music_volume()
+	_update_volume_label(SaveManager.get_music_volume())
+
+	# Sync with managers
+	DebugManager.debug_mode = SaveManager.get_debug_mode()
 
 func _input(event):
 	# Toggle pause menu when pause is pressed
@@ -43,11 +55,11 @@ func _input(event):
 
 	# Navigate between buttons with up/down or W/S
 	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
-		current_button_index = (current_button_index + 1) % 3
+		current_button_index = (current_button_index + 1) % 4
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
-		current_button_index = (current_button_index - 1 + 3) % 3
+		current_button_index = (current_button_index - 1 + 4) % 4
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
@@ -97,22 +109,48 @@ func _update_button_focus():
 		continue_button.grab_focus()
 	elif current_button_index == 1:
 		exit_button.grab_focus()
-	else:
+	elif current_button_index == 2:
 		debug_toggle.grab_focus()
+	else:
+		music_toggle.grab_focus()
 
 func _activate_current_button():
 	if current_button_index == 0:
 		_on_continue_button_pressed()
 	elif current_button_index == 1:
 		_on_exit_button_pressed()
-	else:
+	elif current_button_index == 2:
 		# Toggle the debug checkbox
 		debug_toggle.button_pressed = !debug_toggle.button_pressed
 		_on_debug_toggle_toggled(debug_toggle.button_pressed)
+	else:
+		# Toggle the music checkbox
+		music_toggle.button_pressed = !music_toggle.button_pressed
+		_on_music_toggle_toggled(music_toggle.button_pressed)
 
 func _on_debug_toggle_toggled(toggled_on: bool):
 	DebugManager.debug_mode = toggled_on
+	SaveManager.set_debug_mode(toggled_on)
 	if DebugManager.debug_mode:
 		print("DEBUG MODE ENABLED - Player is invincible")
 	else:
 		print("DEBUG MODE DISABLED - Player can die normally")
+
+func _on_music_toggle_toggled(toggled_on: bool):
+	BackgroundMusic.toggle_music(toggled_on)
+	SaveManager.set_music_enabled(toggled_on)
+	if toggled_on:
+		print("MUSIC ENABLED")
+	else:
+		print("MUSIC DISABLED")
+
+func _on_volume_slider_value_changed(value: float):
+	BackgroundMusic.set_volume(value)
+	SaveManager.set_music_volume(value)
+	_update_volume_label(value)
+
+func _update_volume_label(db_value: float):
+	# Convert dB to percentage (rough approximation)
+	# -30 dB = 0%, 0 dB = 100%
+	var percentage = int(((db_value + 30.0) / 30.0) * 100.0)
+	volume_value_label.text = str(percentage) + "%"

@@ -34,33 +34,33 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
 [node name="TitleLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 40
 text = "PAUSED"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="ContinueButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 50)
+custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 text = "Continue"
 
 [node name="ExitButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 50)
+custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 text = "Exit"
 
 [node name="Spacer2" type="Control" parent="Control/CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="DebugToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
@@ -68,6 +68,38 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Debug Mode (Invincible)"
 
+[node name="MusicToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+theme_override_font_sizes/font_size = 18
+text = "Music"
+
+[node name="VolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="VolumeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/VolumeContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Volume:"
+
+[node name="VolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/VolumeContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+min_value = -30.0
+max_value = 0.0
+step = 1.0
+value = -10.0
+
+[node name="VolumeValueLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/VolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "50%"
+horizontal_alignment = 2
+
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ContinueButton" to="Control" method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ExitButton" to="Control" method="_on_exit_button_pressed"]
 [connection signal="toggled" from="Control/CenterContainer/VBoxContainer/DebugToggle" to="Control" method="_on_debug_toggle_toggled"]
+[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/MusicToggle" to="Control" method="_on_music_toggle_toggled"]
+[connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/VolumeContainer/VolumeSlider" to="Control" method="_on_volume_slider_value_changed"]

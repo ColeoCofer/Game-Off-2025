@@ -1,0 +1,139 @@
+[gd_scene load_steps=20 format=3 uid="uid://dby0n4if8rhwp"]
+
+[ext_resource type="Script" uid="uid://bjmapvwcve54s" path="res://Entities/Objects/falling_stalagmite.gd" id="1_stalagmite"]
+[ext_resource type="Texture2D" uid="uid://bfx8uu4amxwvn" path="res://Assets/Art/falling-stag.png" id="2_kr5jn"]
+
+[sub_resource type="Animation" id="Animation_rm730"]
+resource_name = "fall"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_io7de"]
+_data = {
+&"fall": SubResource("Animation_rm730")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+radius = 100.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tge2m"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(0, 0, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbafw"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(182, 0, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31aye"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(364, 0, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ud6o"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(546, 0, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uy6oh"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(0, 86, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ix6uo"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(182, 86, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pu1ln"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(364, 86, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idunv"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(546, 86, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3lko"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(0, 172, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uu42b"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(182, 172, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmrnf"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(364, 172, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ii15q"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(546, 172, 182, 86)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ib4of"]
+atlas = ExtResource("2_kr5jn")
+region = Rect2(0, 258, 182, 86)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pyjfo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tge2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbafw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31aye")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ud6o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uy6oh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ix6uo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pu1ln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idunv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3lko")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uu42b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmrnf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ii15q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ib4of")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}]
+
+[node name="FallingStalagmite" type="Node2D"]
+script = ExtResource("1_stalagmite")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_io7de")
+}
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+shape = SubResource("CircleShape2D_detection")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals"]
+sprite_frames = SubResource("SpriteFrames_pyjfo")
+animation = &"fall"
+
+[node name="DamageArea" type="Area2D" parent="Visuals"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/DamageArea"]

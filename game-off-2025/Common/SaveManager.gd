@@ -3,6 +3,7 @@ extends Node
 # SaveManager - Handles all persistent data for the game
 # Stores settings, game progress, checkpoints, best times, etc.
 
+# Idk if this is the best place? 
 const SAVE_FILE_PATH = "user://save_data.json"
 
 # Default save data structure

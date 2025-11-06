@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://de6p1l8qfd8pb"]
+[gd_scene load_steps=18 format=4 uid="uid://de6p1l8qfd8pb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -8,6 +8,7 @@
 [ext_resource type="Shader" uid="uid://uacftcxjkp8x" path="res://Shaders/foliage_wind.gdshader" id="3_ys3un"]
 [ext_resource type="Script" uid="uid://ddjdewh07dgws" path="res://UI/StaminaUI.gd" id="4_aoct0"]
 [ext_resource type="PackedScene" uid="uid://b73psve87rk1g" path="res://Entities/Objects/moving-plank.tscn" id="5_6p1x0"]
+[ext_resource type="PackedScene" uid="uid://bqy5xk8j1234" path="res://Entities/Enemies/ant_enemy.tscn" id="5_jfi0m"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
@@ -453,6 +454,11 @@ material = SubResource("ShaderMaterial_b6mne")
 tile_map_data = PackedByteArray("AAAHABcAAQABABMAAAAXABcAAQAFABIAAAARABYAAQACABIAAAAlABMAAQAAABIAAAAgABMAAQABABIAABAGABUAAQAFABIAAAADABcAAQAAABIAAAA=")
 tile_set = ExtResource("2_n4bx7")
 
+[node name="Enemies" type="Node" parent="."]
+
+[node name="AntEnemy" parent="Enemies" instance=ExtResource("5_jfi0m")]
+position = Vector2(406, 361.42)
+
 [node name="Objects" type="Node" parent="."]
 
 [node name="MovingPlank" parent="Objects" instance=ExtResource("5_6p1x0")]
@@ -460,6 +466,9 @@ position = Vector2(740, 268)
 
 [node name="MovingPlank2" parent="Objects" instance=ExtResource("5_6p1x0")]
 position = Vector2(865, 238)
+
+[node name="MovingPlank3" parent="Objects" instance=ExtResource("5_6p1x0")]
+position = Vector2(1082, 264)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(149, 372)

@@ -113,7 +113,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -173,7 +173,7 @@ PlayerSprite = NodePath("AnimatedSprite2D")
 PlayerCollider = NodePath("CollisionShape2D")
 FlapAudioPlayer = NodePath("FlapAudioPlayer")
 WalkingAudioPlayer = NodePath("WalkingAudioPlayer")
-fallGravity = 20.0
+fallGravity = 14.0
 coyoteTime = 0.085
 flapLift = 125.0
 flapCooldown = 0.2
@@ -187,6 +187,7 @@ skid = true
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
 animation = &"jump"
+frame = 2
 frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

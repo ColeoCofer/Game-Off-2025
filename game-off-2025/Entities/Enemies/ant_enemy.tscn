@@ -1,0 +1,64 @@
+[gd_scene load_steps=8 format=3 uid="uid://bqy5xk8j1234"]
+
+[ext_resource type="Script" uid="uid://db0ucpcdwwmf1" path="res://Entities/Enemies/ant_enemy.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bdervfm0tjd2u" path="res://Assets/Art/ant-walk.png" id="2_wwsnq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1r32"]
+atlas = ExtResource("2_wwsnq")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otkh8"]
+atlas = ExtResource("2_wwsnq")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jhmmj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1r32")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otkh8")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(28.5, 11)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(25, 4)
+
+[node name="AntEnemy" type="CharacterBody2D"]
+collision_layer = 2
+script = ExtResource("1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -4)
+sprite_frames = SubResource("SpriteFrames_jhmmj")
+animation = &"walk"
+frame_progress = 0.5302995
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_1")
+
+[node name="FloorRayCast" type="RayCast2D" parent="."]
+position = Vector2(10, 0)
+target_position = Vector2(0, 20)
+
+[node name="StompDetector" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
+position = Vector2(0.5, -6)
+shape = SubResource("RectangleShape2D_2")
+
+[node name="DamageDetector" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
+position = Vector2(0.25, 1)
+shape = SubResource("RectangleShape2D_1")

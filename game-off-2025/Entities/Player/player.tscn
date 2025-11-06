@@ -209,6 +209,7 @@ stream = ExtResource("4_flap")
 
 [node name="WalkingAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_walking")
+volume_db = 10.0
 
 [node name="HungerManager" type="Node" parent="."]
 script = ExtResource("5_hunger")

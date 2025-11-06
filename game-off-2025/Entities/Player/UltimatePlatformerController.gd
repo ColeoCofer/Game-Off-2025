@@ -2,13 +2,6 @@ extends CharacterBody2D
 
 class_name PlatformerController2D
 
-@export var README: String = "IMPORTANT: MAKE SURE TO ASSIGN 'left' 'right' 'jump' 'dash' 'up' 'down' in the project settings input map. Usage tips. 1. Hover over each toggle and variable to read what it does and to make sure nothing bugs. 2. Animations are very primitive. To make full use of your custom art, you may want to slightly change the code for the animations"
-#INFO READEME 
-#IMPORTANT: MAKE SURE TO ASSIGN 'left' 'right' 'jump' 'dash' 'up' 'down' in the project settings input map. THIS IS REQUIRED
-#Usage tips. 
-#1. Hover over each toggle and variable to read what it does and to make sure nothing bugs. 
-#2. Animations are very primitive. To make full use of your custom art, you may want to slightly change the code for the animations
-
 @export_category("Necesary Child Nodes")
 @export var PlayerSprite: AnimatedSprite2D
 @export var PlayerCollider: CollisionShape2D
@@ -92,7 +85,7 @@ class_name PlatformerController2D
 ##Raycast used for corner cutting calculations. Place above and to the right of the players head point up. ALL ARE NEEDED FOR IT TO WORK.
 @export var rightRaycast: RayCast2D
 @export_category("Wing Flap/Tail Whip")
-##Allows the player to flap wings in midair to slow descent (SMB3 tail whip style). Assign "flap" in project input settings.
+##Allows the player to flap wings in midair to slow descent (SMB3 tail whip style). Uses the jump button when airborne.
 @export var canFlap: bool = true
 ##How much upward velocity is added when flapping (negative fall speed)
 @export_range(0, 300) var flapLift: float = 100.0
@@ -216,7 +209,6 @@ var latchHold
 var dashTap
 var rollTap
 var downTap
-var flapTap
 #var twirlTap
 
 func _ready():
@@ -411,7 +403,6 @@ func _physics_process(delta):
 	#dashTap = Input.is_action_just_pressed("dash")
 	#rollTap = Input.is_action_just_pressed("roll")
 	downTap = Input.is_action_just_pressed("down")
-	flapTap = Input.is_action_just_pressed("flap")
 	#twirlTap = Input.is_action_just_pressed("twirl")
 	
 	
@@ -705,7 +696,8 @@ func _physics_process(delta):
 			position.x -= correctionAmount
 			
 	#INFO Wing Flap (SMB3 Tail Whip Style)
-	if canFlap and flapTap and !is_on_floor() and !is_on_wall() and canFlapNow and velocity.y > 0:
+	# Use jump button for flapping when in the air and falling
+	if canFlap and jumpTap and !is_on_floor() and !is_on_wall() and canFlapNow and velocity.y > 0:
 		_flap()
 
 	# Reset flap availability when grounded

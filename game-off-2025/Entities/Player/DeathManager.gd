@@ -64,7 +64,15 @@ func _check_hazard_collision():
 		if collider is TileMapLayer:
 			# Check if this collision is on physics layer 1 (hazards)
 			# We need to check the tile at the collision position
-			var tile_pos = collider.local_to_map(collision.get_position())
+			# Use the actual contact position in world space, then convert to local
+			var contact_point = collision.get_position()
+			var normal = collision.get_normal()
+
+			# Push the contact point slightly into the tile to ensure we check the right tile
+			# The normal points away from the surface, so we go opposite
+			var check_point = contact_point - normal * 2.0
+
+			var tile_pos = collider.local_to_map(collider.to_local(check_point))
 			var tile_data = collider.get_cell_tile_data(tile_pos)
 
 			if tile_data:

@@ -461,7 +461,7 @@ tile_set = ExtResource("2_n4bx7")
 position = Vector2(406, 361.42)
 
 [node name="FallingStalagmite" parent="Enemies" instance=ExtResource("6_8jvyo")]
-position = Vector2(-103, 341)
+position = Vector2(257, 337)
 
 [node name="Objects" type="Node" parent="."]
 

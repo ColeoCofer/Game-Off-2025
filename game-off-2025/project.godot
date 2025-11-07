@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="Game Off 2025"
-run/main_scene="uid://de6p1l8qfd8pb"
+run/main_scene="res://UI/MainMenu.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 SaveManager="*res://Common/SaveManager.gd"
+SceneManager="*res://Common/SceneManager.gd"
 BackgroundMusic="*res://Common/Audio/BackgroundMusic.gd"
 PauseMenu="*res://UI/pause_menu.tscn"
 DebugManager="*res://DebugManager.gd"

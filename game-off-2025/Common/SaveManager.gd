@@ -23,6 +23,9 @@ var save_data = {
 
 func _ready():
 	load_game()
+	# Ensure level 1 is always unlocked by default
+	if not is_level_unlocked("level-1"):
+		unlock_level("level-1")
 
 # Save all data to file
 func save_game():

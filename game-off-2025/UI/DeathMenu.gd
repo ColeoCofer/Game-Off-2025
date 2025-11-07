@@ -1,6 +1,8 @@
 extends Control
 
 signal play_again_pressed
+signal next_level_pressed
+signal level_select_pressed
 signal exit_pressed
 
 @export var fade_in_duration: float = 0.5
@@ -9,8 +11,12 @@ signal exit_pressed
 var title_label: Label
 var subtitle_label: Label
 var play_again_button: Button
+var next_level_button: Button
+var level_select_button: Button
 var exit_button: Button
 var current_button_index: int = 0
+var is_success: bool = false
+var button_count: int = 2
 
 func _ready():
 	# Start invisible
@@ -21,11 +27,14 @@ func _ready():
 	title_label = get_node("CenterContainer/VBoxContainer/TitleLabel")
 	subtitle_label = get_node("CenterContainer/VBoxContainer/SubtitleLabel")
 	play_again_button = get_node("CenterContainer/VBoxContainer/PlayAgainButton")
+	next_level_button = get_node("CenterContainer/VBoxContainer/NextLevelButton")
+	level_select_button = get_node("CenterContainer/VBoxContainer/LevelSelectButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 
 func show_menu(death_reason: String = "starvation"):
 	visible = true
 	current_button_index = 0
+	is_success = (death_reason == "success")
 
 	# Death texts lmao
 	match death_reason:
@@ -42,6 +51,24 @@ func show_menu(death_reason: String = "starvation"):
 		_:
 			title_label.text = "YOU DIED"
 			subtitle_label.text = "The bat has perished..."
+
+	# Show/hide buttons based on success or failure
+	if is_success:
+		play_again_button.visible = false
+		next_level_button.visible = SceneManager.has_next_level()
+		level_select_button.visible = true
+		exit_button.visible = true
+
+		if next_level_button.visible:
+			button_count = 3
+		else:
+			button_count = 2
+	else:
+		play_again_button.visible = true
+		next_level_button.visible = false
+		level_select_button.visible = true
+		exit_button.visible = true
+		button_count = 3
 
 	# Set initial button focus
 	_update_button_focus()
@@ -63,10 +90,26 @@ func _on_play_again_button_pressed():
 	await get_tree().create_timer(fade_out_duration).timeout
 	get_tree().reload_current_scene()
 
+func _on_next_level_button_pressed():
+	next_level_pressed.emit()
+	hide_menu()
+	await get_tree().create_timer(fade_out_duration).timeout
+	SceneManager.next_level()
+
+
+func _on_level_select_button_pressed():
+	level_select_pressed.emit()
+	hide_menu()
+	await get_tree().create_timer(fade_out_duration).timeout
+	SceneManager.goto_level_select()
+
+
 func _on_exit_button_pressed():
 	exit_pressed.emit()
-	# Quit the game
-	get_tree().quit()
+	# Return to main menu instead of quitting
+	hide_menu()
+	await get_tree().create_timer(fade_out_duration).timeout
+	SceneManager.goto_main_menu()
 
 func _input(event):
 	# Only handle input when menu is visible
@@ -75,11 +118,11 @@ func _input(event):
 
 	# Navigate between buttons with up/down or W/S
 	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
-		current_button_index = (current_button_index + 1) % 2
+		current_button_index = (current_button_index + 1) % button_count
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
-		current_button_index = (current_button_index - 1) % 2
+		current_button_index = (current_button_index - 1 + button_count) % button_count
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
@@ -89,13 +132,39 @@ func _input(event):
 		get_viewport().set_input_as_handled()
 
 func _update_button_focus():
-	if current_button_index == 0:
-		play_again_button.grab_focus()
+	if is_success:
+		# Success menu: Next Level (if available), Level Select, Exit
+		if next_level_button.visible:
+			match current_button_index:
+				0: next_level_button.grab_focus()
+				1: level_select_button.grab_focus()
+				2: exit_button.grab_focus()
+		else:
+			# No next level available
+			match current_button_index:
+				0: level_select_button.grab_focus()
+				1: exit_button.grab_focus()
 	else:
-		exit_button.grab_focus()
+		# Death menu: Play Again, Level Select, Exit
+		match current_button_index:
+			0: play_again_button.grab_focus()
+			1: level_select_button.grab_focus()
+			2: exit_button.grab_focus()
+
 
 func _activate_current_button():
-	if current_button_index == 0:
-		_on_play_again_button_pressed()
+	if is_success:
+		if next_level_button.visible:
+			match current_button_index:
+				0: _on_next_level_button_pressed()
+				1: _on_level_select_button_pressed()
+				2: _on_exit_button_pressed()
+		else:
+			match current_button_index:
+				0: _on_level_select_button_pressed()
+				1: _on_exit_button_pressed()
 	else:
-		_on_exit_button_pressed()
+		match current_button_index:
+			0: _on_play_again_button_pressed()
+			1: _on_level_select_button_pressed()
+			2: _on_exit_button_pressed()

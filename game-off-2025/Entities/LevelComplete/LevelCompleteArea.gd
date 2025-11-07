@@ -36,6 +36,9 @@ func _trigger_level_complete(player: CharacterBody2D):
 
 func _show_completion_menu():
 	"""Show the death menu but with success message"""
+	# Notify SceneManager of level completion
+	SceneManager.complete_level()
+
 	# Find or create the death menu (we'll reuse it for completion)
 	var death_menu = get_tree().get_first_node_in_group("DeathMenu")
 

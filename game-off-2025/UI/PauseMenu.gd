@@ -10,6 +10,7 @@ var title_label: Label
 var continue_button: Button
 var exit_button: Button
 var debug_toggle: CheckButton
+var timer_toggle: CheckButton
 var volume_slider: HSlider
 var volume_value_label: Label
 var current_button_index: int = 0
@@ -26,11 +27,13 @@ func _ready():
 	continue_button = get_node("CenterContainer/VBoxContainer/ContinueButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 	debug_toggle = get_node("CenterContainer/VBoxContainer/DebugToggle")
+	timer_toggle = get_node("CenterContainer/VBoxContainer/TimerToggle")
 	volume_slider = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeSlider")
 	volume_value_label = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeValueLabel")
 
 	# Load settings from SaveManager
 	debug_toggle.button_pressed = SaveManager.get_debug_mode()
+	timer_toggle.button_pressed = SaveManager.get_show_timer()
 	volume_slider.value = SaveManager.get_music_volume()
 	_update_volume_label(SaveManager.get_music_volume())
 
@@ -137,3 +140,10 @@ func _update_volume_label(db_value: float):
 	# -40 dB = 0%, 0 dB = 100%
 	var percentage = int(((db_value + 40.0) / 40.0) * 100.0)
 	volume_value_label.text = str(percentage) + "%"
+
+func _on_timer_toggle_toggled(toggled_on: bool):
+	SaveManager.set_show_timer(toggled_on)
+	# Update timer visibility in the current level if it exists
+	var timer_ui = get_tree().current_scene.find_child("TimerUI", true, false)
+	if timer_ui:
+		timer_ui.set_timer_visible(toggled_on)

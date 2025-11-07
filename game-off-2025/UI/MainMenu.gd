@@ -7,6 +7,7 @@ extends Control
 @onready var quit_button: Button = get_node("QuitButton")
 @onready var settings_panel: Control = get_node("SettingsPanel")
 @onready var volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider")
+@onready var timer_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")
 
 # Track whether we're using keyboard/controller or mouse
@@ -29,6 +30,7 @@ func _ready() -> void:
 
 func _load_settings() -> void:
 	volume_slider.value = SaveManager.save_data["settings"]["music_volume"]
+	timer_toggle.button_pressed = SaveManager.get_show_timer()
 
 
 func _on_start_pressed() -> void:
@@ -53,6 +55,10 @@ func _on_volume_changed(value: float) -> void:
 	SaveManager.save_data["settings"]["music_volume"] = value
 	SaveManager.save_game()
 	BackgroundMusic.set_volume(value)
+
+
+func _on_timer_toggle_toggled(toggled_on: bool) -> void:
+	SaveManager.set_show_timer(toggled_on)
 
 
 func _input(event: InputEvent) -> void:

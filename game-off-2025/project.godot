@@ -22,6 +22,7 @@ SceneManager="*res://Common/SceneManager.gd"
 BackgroundMusic="*res://Common/Audio/BackgroundMusic.gd"
 PauseMenu="*res://UI/pause_menu.tscn"
 DebugManager="*res://DebugManager.gd"
+TimerManager="*res://Common/TimerManager.gd"
 
 [display]
 

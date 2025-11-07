@@ -39,6 +39,9 @@ func _ready() -> void:
 	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fade_layer.add_child(fade_rect)
 
+	# Connect to scene changes to detect level reloads
+	get_tree().node_added.connect(_on_node_added)
+
 
 func _process(delta: float) -> void:
 	# Track level playtime if in a level
@@ -57,7 +60,7 @@ func load_level(level_name: String) -> void:
 		return
 
 	current_level = level_name
-	current_level_start_time = Time.get_ticks_msec() / 1000.0
+	reset_level_timer()
 	await _change_scene(level_info["path"])
 
 
@@ -193,3 +196,21 @@ func _fade_from_black() -> void:
 	var tween = create_tween()
 	tween.tween_property(fade_rect, "modulate:a", 0.0, 0.3)
 	await tween.finished
+
+
+## Reset the level timer (called on level start/restart)
+func reset_level_timer() -> void:
+	current_level_start_time = Time.get_ticks_msec() / 1000.0
+
+
+## Detect when a level scene is reloaded (after death/restart)
+func _on_node_added(node: Node) -> void:
+	# Check if this is the root of a level scene being loaded
+	if current_level != "" and node == get_tree().current_scene:
+		# Check if we're in a level by looking for the level path
+		var level_info = get_level_info(current_level)
+		if level_info != null:
+			var scene_path = node.scene_file_path
+			if scene_path == level_info["path"]:
+				# Level was reloaded, reset the timer
+				reset_level_timer()

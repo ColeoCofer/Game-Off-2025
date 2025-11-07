@@ -10,7 +10,8 @@ const SAVE_FILE_PATH = "user://save_data.json"
 var save_data = {
 	"settings": {
 		"music_volume": -10.0,  # in dB
-		"debug_mode": false
+		"debug_mode": false,
+		"show_timer": false  # Timer display toggle
 	},
 	"game_data": {
 		"checkpoints": {},
@@ -87,6 +88,13 @@ func set_debug_mode(enabled: bool):
 func get_debug_mode() -> bool:
 	return save_data["settings"]["debug_mode"]
 
+func set_show_timer(enabled: bool):
+	save_data["settings"]["show_timer"] = enabled
+	save_game()
+
+func get_show_timer() -> bool:
+	return save_data["settings"]["show_timer"]
+
 # ============= GAME DATA FUNCTIONS =============
 
 func save_checkpoint(level_name: String, checkpoint_data: Dictionary):
@@ -128,7 +136,8 @@ func reset_save_data():
 	save_data = {
 		"settings": {
 			"music_volume": -10.0,
-			"debug_mode": false
+			"debug_mode": false,
+			"show_timer": false
 		},
 		"game_data": {
 			"checkpoints": {},

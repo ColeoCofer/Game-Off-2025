@@ -73,7 +73,7 @@ height = 14.0
 
 [node name="Butterfly" type="Area2D"]
 script = ExtResource("3_butterfly_script")
-hunger_restore_amount = 40.0
+hunger_restore_amount = 100.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c761e")

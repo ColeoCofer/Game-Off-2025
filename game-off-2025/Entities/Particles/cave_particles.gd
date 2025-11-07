@@ -5,6 +5,7 @@ extends CPUParticles2D
 func _ready():
 	# Make sure particles are emitting
 	emitting = true
+	visible = true
 	randomize()
 
 	# Find the camera to attach to

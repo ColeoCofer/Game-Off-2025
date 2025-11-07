@@ -90,6 +90,11 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			# Immediately disable damage detector to prevent it from triggering
 			if damage_detector:
 				damage_detector.monitoring = false
+				damage_detector.monitorable = false
+				# Also disable the collision shape
+				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
+				if collision_shape:
+					collision_shape.set_deferred("disabled", true)
 			_die_from_stomp(body)
 
 func _on_damage_detector_body_entered(body: Node2D):
@@ -115,8 +120,11 @@ func _die_from_stomp(player: Node2D):
 	set_collision_mask_value(1, false)
 
 	# Disable damage detector so we don't hurt player after death
+	# (This is redundant with the immediate disable in _on_stomp_detector_body_entered,
+	# but kept as a safety measure)
 	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
+		damage_detector.monitoring = false
+		damage_detector.monitorable = false
 
 	# Apply death shader (same as player)
 	_apply_death_shader()

@@ -29,15 +29,17 @@ animations = [{
 size = Vector2(19.875, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(25, 4)
+size = Vector2(25, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3"]
-size = Vector2(29, 11)
+size = Vector2(29, 9)
 
 [node name="AntEnemy" type="CharacterBody2D"]
+scale = Vector2(0.75, 0.75)
 collision_layer = 2
 script = ExtResource("1")
-stomp_bounce_force = 200.0
+walk_speed = 40.0
+stomp_bounce_force = 220.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -4)
@@ -57,12 +59,12 @@ target_position = Vector2(0, 20)
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
-position = Vector2(0.5, -6)
+position = Vector2(0.5, -5)
 shape = SubResource("RectangleShape2D_2")
 
 [node name="DamageDetector" type="Area2D" parent="."]
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
-position = Vector2(0.5, 1.5)
+position = Vector2(0.5, 2.5)
 shape = SubResource("RectangleShape2D_3")

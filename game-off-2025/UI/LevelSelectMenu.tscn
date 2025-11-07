@@ -42,17 +42,11 @@ theme_override_constants/separation = 6
 [node name="Title" type="Label" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 56
-text = "Sona"
-horizontal_alignment = 1
-
-[node name="LevelSelectLabel" type="Label" parent="Control/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
 text = "Select Level"
 horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 175)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

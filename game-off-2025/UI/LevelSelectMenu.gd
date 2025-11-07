@@ -30,7 +30,7 @@ func _populate_level_list() -> void:
 		var level_button = LEVEL_BUTTON_SCENE.instantiate()
 		level_list.add_child(level_button)
 
-		# Set up the button
+		# Button setup stuff
 		level_button.setup(
 			level_info["name"],
 			level_info["display_name"],

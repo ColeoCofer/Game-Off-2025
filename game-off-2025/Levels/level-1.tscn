@@ -491,7 +491,7 @@ time_offset = 0.5
 
 [node name="MovingPlank3" parent="Objects" instance=ExtResource("5_6p1x0")]
 position = Vector2(1295, 198)
-time_offset = 0.5
+time_offset = 1.0
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(116, 367)

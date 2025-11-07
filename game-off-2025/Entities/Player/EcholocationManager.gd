@@ -2,7 +2,7 @@ extends CanvasLayer
 
 # References
 @onready var darkness_overlay: ColorRect = $DarknessOverlay
-@onready var player: CharacterBody2D = get_node("/root/Level1/Player")
+@onready var player: CharacterBody2D = get_parent().get_node("Player")
 @onready var camera: Camera2D = player.get_node("Camera2D")
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 

@@ -77,6 +77,7 @@ theme_override_font_sizes/font_size = 24
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24

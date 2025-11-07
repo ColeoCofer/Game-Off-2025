@@ -9,6 +9,9 @@ extends Control
 @onready var volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")
 
+# Track whether we're using keyboard/controller or mouse
+var using_keyboard_nav: bool = false
+
 
 func _ready() -> void:
 	# Signals are already connected in the scene file
@@ -20,8 +23,8 @@ func _ready() -> void:
 	# Load settings
 	_load_settings()
 
-	# Focus the start button
-	start_button.grab_focus()
+	# Don't grab focus initially - wait for keyboard input
+	# start_button.grab_focus()
 
 
 func _load_settings() -> void:
@@ -53,6 +56,26 @@ func _on_volume_changed(value: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Detect mouse movement and disable keyboard navigation
+	if event is InputEventMouseMotion:
+		if using_keyboard_nav:
+			using_keyboard_nav = false
+			# Release focus from all buttons
+			if get_viewport().gui_get_focus_owner():
+				get_viewport().gui_get_focus_owner().release_focus()
+
+	# Detect keyboard/controller input and enable navigation
+	elif event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		if not using_keyboard_nav and (event is InputEventKey or event is InputEventJoypadButton):
+			using_keyboard_nav = true
+			# Grab focus on appropriate button based on which panel is visible
+			if settings_panel.visible:
+				if not get_viewport().gui_get_focus_owner():
+					volume_slider.grab_focus()
+			else:
+				if not get_viewport().gui_get_focus_owner():
+					start_button.grab_focus()
+
 	# Close settings with Escape key
 	if settings_panel.visible and event.is_action_pressed("ui_cancel"):
 		_on_close_settings_pressed()

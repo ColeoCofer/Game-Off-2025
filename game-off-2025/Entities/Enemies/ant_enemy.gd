@@ -87,14 +87,21 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 		# Only count as stomp if player is moving downward
 		if player_velocity.y > 0:
-			# Immediately disable damage detector to prevent it from triggering
+			# Immediately disable BOTH detectors to prevent race conditions
 			if damage_detector:
 				damage_detector.monitoring = false
 				damage_detector.monitorable = false
-				# Also disable the collision shape
 				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
 					collision_shape.set_deferred("disabled", true)
+
+			if stomp_detector:
+				stomp_detector.monitoring = false
+				stomp_detector.monitorable = false
+				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
+				if collision_shape:
+					collision_shape.set_deferred("disabled", true)
+
 			_die_from_stomp(body)
 
 func _on_damage_detector_body_entered(body: Node2D):
@@ -103,6 +110,21 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player - side collision kills them
 	if body.is_in_group("Player"):
+		# Immediately disable BOTH detectors to prevent race conditions
+		if damage_detector:
+			damage_detector.monitoring = false
+			damage_detector.monitorable = false
+			var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
+			if collision_shape:
+				collision_shape.set_deferred("disabled", true)
+
+		if stomp_detector:
+			stomp_detector.monitoring = false
+			stomp_detector.monitorable = false
+			var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
+			if collision_shape:
+				collision_shape.set_deferred("disabled", true)
+
 		_kill_player(body)
 
 func _die_from_stomp(player: Node2D):

@@ -1,7 +1,48 @@
-[gd_scene load_steps=13 format=3 uid="uid://d0dm8g5325rmn"]
+[gd_scene load_steps=24 format=3 uid="uid://d0dm8g5325rmn"]
 
 [ext_resource type="Texture2D" uid="uid://hwdig6n5vs78" path="res://Assets/Art/Butterfly_001 Spritesheet.png" id="2_1t72d"]
+[ext_resource type="Texture2D" uid="uid://cq6r1mtbhvycy" path="res://Assets/Art/bug.png" id="2_w03uv"]
 [ext_resource type="Script" uid="uid://c46n7mtrpde5r" path="res://Entities/Bugs/butterfly.gd" id="3_butterfly_script"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yo3hd"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_00qr1"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6h0v"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hnfgb"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8ioe"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_go41q"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sd0f8"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ij6b"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26s6i"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xgxqn"]
+atlas = ExtResource("2_w03uv")
+region = Rect2(16, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w03uv"]
 atlas = ExtResource("2_1t72d")
@@ -39,6 +80,41 @@ region = Rect2(56, 48, 8, 8)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_yo3hd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_00qr1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6h0v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hnfgb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8ioe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_go41q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sd0f8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ij6b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26s6i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xgxqn")
+}],
+"loop": true,
+"name": &"hover",
+"speed": 19.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_w03uv")
 }, {
 "duration": 1.0,
@@ -63,7 +139,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_uqgyg")
 }],
 "loop": true,
-"name": &"hover",
+"name": &"hover-old",
 "speed": 5.0
 }]
 
@@ -71,13 +147,14 @@ animations = [{
 radius = 6.0
 height = 14.0
 
-[node name="Butterfly" type="Area2D"]
+[node name="Bug" type="Area2D"]
 script = ExtResource("3_butterfly_script")
 hunger_restore_amount = 100.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_c761e")
 animation = &"hover"
+frame_progress = 0.10930876
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_g6v7b")

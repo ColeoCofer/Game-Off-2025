@@ -177,8 +177,8 @@ walkSpeed = 125.0
 runSpeed = 200.0
 fallGravity = 20.0
 coyoteTime = 0.085
-flapLift = 10.0
-flapCooldown = 0.3
+flapLift = 25.0
+flapCooldown = 0.2
 run = true
 jump = true
 idle = true
@@ -210,7 +210,7 @@ stream = ExtResource("4_flap")
 stream = ExtResource("5_walking")
 volume_db = 10.0
 
-[node name="HungerManager" type="Node" parent="."]
+[node name="HungerManager" type="Node" parent="." groups=["hunger_manager"]]
 script = ExtResource("5_hunger")
 
 [node name="DeathManager" type="Node" parent="."]

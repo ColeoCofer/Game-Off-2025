@@ -495,7 +495,7 @@ tile_set = ExtResource("2_n4bx7")
 material = SubResource("ShaderMaterial_b6mne")
 tile_set = ExtResource("2_n4bx7")
 
-[node name="EcholocationManager" type="CanvasLayer" parent="."]
+[node name="EcholocationManager" type="CanvasLayer" parent="." groups=["echolocation_manager"]]
 script = ExtResource("3_r041s")
 vision_radius = 150.0
 vision_fade_distance = 100.0

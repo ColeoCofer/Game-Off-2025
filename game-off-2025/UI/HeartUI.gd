@@ -12,12 +12,22 @@ func _ready():
 		heart_sprite.stop()
 		heart_sprite.animation = "heart"
 
-	# Connect to HungerManager
-	var hunger_manager = get_node("/root/Level1/Player/HungerManager")
+	# Connect to HungerManager - find it dynamically
+	var hunger_manager = get_tree().get_first_node_in_group("hunger_manager")
+	if not hunger_manager:
+		# Fallback: search for player's HungerManager (try both lowercase and capitalized)
+		var player = get_tree().get_first_node_in_group("player")
+		if not player:
+			player = get_tree().get_first_node_in_group("Player")
+		if player:
+			hunger_manager = player.get_node_or_null("HungerManager")
+
 	if hunger_manager:
 		hunger_manager.hunger_changed.connect(_on_hunger_changed)
 		# Initialize with current hunger
 		_on_hunger_changed(hunger_manager.current_hunger, hunger_manager.max_hunger)
+	else:
+		push_error("HeartUI: Could not find HungerManager")
 
 func _on_hunger_changed(current: float, maximum: float):
 	if not heart_sprite:

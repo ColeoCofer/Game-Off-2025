@@ -4,7 +4,7 @@ extends Control
 
 @onready var start_button: Button = get_node("ButtonContainer/StartButton")
 @onready var settings_button: Button = get_node("ButtonContainer/SettingsButton")
-@onready var quit_button: Button = get_node("ButtonContainer/QuitButton")
+@onready var quit_button: Button = get_node("QuitButton")
 @onready var settings_panel: Control = get_node("SettingsPanel")
 @onready var volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")

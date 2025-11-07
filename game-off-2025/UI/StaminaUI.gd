@@ -26,10 +26,16 @@ func _ready():
 	bar_fill.position = Vector2.ZERO
 	bar_background.add_child(bar_fill)
 
-	# Connect to EcholocationManager
-	var echo_manager = get_node("/root/Level1/EcholocationManager")
-	if echo_manager:
+	# Connect to EcholocationManager - find it dynamically
+	var echo_manager = get_tree().get_first_node_in_group("echolocation_manager")
+	if not echo_manager:
+		# Fallback: StaminaUI is a child of EcholocationManager, so get parent
+		echo_manager = get_parent()
+
+	if echo_manager and echo_manager.has_signal("cooldown_changed"):
 		echo_manager.cooldown_changed.connect(_on_cooldown_changed)
+	else:
+		push_error("StaminaUI: Could not find EcholocationManager")
 
 func _on_cooldown_changed(current: float, maximum: float):
 	if current >= maximum:

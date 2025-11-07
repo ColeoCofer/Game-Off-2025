@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://pause_menu_ui"]
+[gd_scene load_steps=2 format=3 uid="uid://gu7nxs3k0akq"]
 
-[ext_resource type="Script" path="res://UI/PauseMenu.gd" id="1_pause_menu"]
+[ext_resource type="Script" uid="uid://bpg5cjvcqlqnj" path="res://UI/PauseMenu.gd" id="1_pause_menu"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 process_mode = 3
@@ -34,7 +34,7 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
@@ -68,12 +68,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Debug Mode (Invincible)"
 
-[node name="MusicToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
-layout_mode = 2
-button_pressed = true
-theme_override_font_sizes/font_size = 18
-text = "Music"
-
 [node name="VolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -86,9 +80,8 @@ text = "Volume:"
 [node name="VolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/VolumeContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-min_value = -30.0
+min_value = -40.0
 max_value = 0.0
-step = 1.0
 value = -10.0
 
 [node name="VolumeValueLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/VolumeContainer"]
@@ -101,5 +94,4 @@ horizontal_alignment = 2
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ContinueButton" to="Control" method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ExitButton" to="Control" method="_on_exit_button_pressed"]
 [connection signal="toggled" from="Control/CenterContainer/VBoxContainer/DebugToggle" to="Control" method="_on_debug_toggle_toggled"]
-[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/MusicToggle" to="Control" method="_on_music_toggle_toggled"]
 [connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/VolumeContainer/VolumeSlider" to="Control" method="_on_volume_slider_value_changed"]

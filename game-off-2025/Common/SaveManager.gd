@@ -9,7 +9,6 @@ const SAVE_FILE_PATH = "user://save_data.json"
 # Default save data structure
 var save_data = {
 	"settings": {
-		"music_enabled": true,
 		"music_volume": -10.0,  # in dB
 		"debug_mode": false
 	},
@@ -74,13 +73,6 @@ func _merge_data(default_dict: Dictionary, loaded_dict: Dictionary):
 
 # ============= SETTINGS FUNCTIONS =============
 
-func set_music_enabled(enabled: bool):
-	save_data["settings"]["music_enabled"] = enabled
-	save_game()
-
-func get_music_enabled() -> bool:
-	return save_data["settings"]["music_enabled"]
-
 func set_music_volume(volume_db: float):
 	save_data["settings"]["music_volume"] = volume_db
 	save_game()
@@ -135,7 +127,6 @@ func get_total_playtime() -> float:
 func reset_save_data():
 	save_data = {
 		"settings": {
-			"music_enabled": true,
 			"music_volume": -10.0,
 			"debug_mode": false
 		},

@@ -1,6 +1,5 @@
 extends AudioStreamPlayer
 
-var music_enabled: bool = true
 var water_drops_player: AudioStreamPlayer
 
 func _ready():
@@ -9,7 +8,6 @@ func _ready():
 
 	# Load saved settings (check if SaveManager exists first)
 	if has_node("/root/SaveManager"):
-		music_enabled = SaveManager.get_music_enabled()
 		volume_db = SaveManager.get_music_volume()
 
 	# Create and setup water drops audio player
@@ -18,23 +16,34 @@ func _ready():
 	water_drops_player.volume_db = -40  # Adjust this value to control water drops volume
 	add_child(water_drops_player)
 
-	# Play on loop if enabled
-	if music_enabled:
-		autoplay = true
-		play()
-		water_drops_player.play()
+	# Play on loop - will be paused if volume is at minimum
+	autoplay = true
+	play()
+	water_drops_player.play()
 
-func toggle_music(enabled: bool):
-	music_enabled = enabled
-	if enabled:
-		if not playing:
-			play()
-		if water_drops_player and not water_drops_player.playing:
-			water_drops_player.play()
-	else:
-		stop()
-		if water_drops_player:
-			water_drops_player.stop()
+	# Pause if volume is at minimum
+	if volume_db <= -40.0:
+		stream_paused = true
+		water_drops_player.stream_paused = true
 
 func set_volume(db_value: float):
 	volume_db = db_value
+
+	# Pause music if volume is at minimum (-40 dB)
+	if db_value <= -40.0:
+		if playing:
+			stream_paused = true
+		if water_drops_player and water_drops_player.playing:
+			water_drops_player.stream_paused = true
+	else:
+		# Resume music if it was paused
+		if playing and stream_paused:
+			stream_paused = false
+		elif not playing:
+			play()
+
+		if water_drops_player:
+			if water_drops_player.playing and water_drops_player.stream_paused:
+				water_drops_player.stream_paused = false
+			elif not water_drops_player.playing:
+				water_drops_player.play()

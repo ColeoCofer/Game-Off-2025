@@ -2,9 +2,9 @@ extends Control
 
 ## MainMenu - The main entry point for the game
 
-@onready var start_button: Button = get_node("ButtonContainer/StartButton")
-@onready var settings_button: Button = get_node("ButtonContainer/SettingsButton")
-@onready var quit_button: Button = get_node("QuitButton")
+@onready var start_button: TextureButton = get_node("ButtonContainer/StartButtonContainer/StartButton")
+@onready var settings_button: TextureButton = get_node("ButtonContainer/SettingsButtonContainer/SettingsButton")
+@onready var quit_button: TextureButton = get_node("QuitButtonContainer/QuitButton")
 @onready var settings_panel: Control = get_node("SettingsPanel")
 @onready var volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider")
 @onready var timer_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bh6fggks3shfp"]
+[gd_scene load_steps=12 format=3 uid="uid://bh6fggks3shfp"]
 
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
 [ext_resource type="Texture2D" uid="uid://2ejioy4fw863" path="res://Assets/Art/ui/start-button-normal.png" id="2_normal"]
@@ -9,27 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://dxtgtg5x453m3" path="res://Assets/Art/ui/settings-button-hover.png" id="7_settings_hover"]
 [ext_resource type="Texture2D" uid="uid://bkj8dvqw0l8l4" path="res://Assets/Art/ui/settings-button-pressed.png" id="8_settings_pressed"]
 [ext_resource type="Texture2D" uid="uid://bcryyl6vcgjob" path="res://Assets/Art/ui/quit-button-normal.png" id="9_quit_normal"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_normal"]
-texture = ExtResource("2_normal")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pressed"]
-texture = ExtResource("4_pressed")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hover"]
-texture = ExtResource("3_hover")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_normal"]
-texture = ExtResource("6_settings_normal")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_pressed"]
-texture = ExtResource("8_settings_pressed")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_hover"]
-texture = ExtResource("7_settings_hover")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_quit_normal"]
-texture = ExtResource("9_quit_normal")
+[ext_resource type="Texture2D" uid="uid://lknpojvl1ewk" path="res://Assets/Art/ui/quit-button-hover.png" id="10_quit_hover"]
+[ext_resource type="Texture2D" uid="uid://d3smk2abbipcl" path="res://Assets/Art/ui/quit-button-pressed.png" id="11_quit_pressed"]
 
 [node name="MainMenu" type="CanvasLayer"]
 layer = 100
@@ -68,36 +49,54 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = -4
 
-[node name="StartButton" type="Button" parent="Control/ButtonContainer"]
+[node name="StartButtonContainer" type="AspectRatioContainer" parent="Control/ButtonContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_normal")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+ratio = 4.166667
 
-[node name="SettingsButton" type="Button" parent="Control/ButtonContainer"]
+[node name="StartButton" type="TextureButton" parent="Control/ButtonContainer/StartButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_normal")
+texture_pressed = ExtResource("4_pressed")
+texture_hover = ExtResource("3_hover")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsButtonContainer" type="AspectRatioContainer" parent="Control/ButtonContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxTexture_settings_normal")
-theme_override_styles/pressed = SubResource("StyleBoxTexture_settings_pressed")
-theme_override_styles/hover = SubResource("StyleBoxTexture_settings_hover")
+ratio = 2.857143
 
-[node name="QuitButton" type="Button" parent="Control"]
+[node name="SettingsButton" type="TextureButton" parent="Control/ButtonContainer/SettingsButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("6_settings_normal")
+texture_pressed = ExtResource("8_settings_pressed")
+texture_hover = ExtResource("7_settings_hover")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QuitButtonContainer" type="AspectRatioContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -109.640015
+offset_left = -92.34003
 offset_top = -46.850006
-offset_right = -9.640015
+offset_right = 7.659973
 offset_bottom = -6.850006
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_styles/normal = SubResource("StyleBoxTexture_quit_normal")
+ratio = 1.642857
+
+[node name="QuitButton" type="TextureButton" parent="Control/QuitButtonContainer"]
+layout_mode = 2
+texture_normal = ExtResource("9_quit_normal")
+texture_pressed = ExtResource("11_quit_pressed")
+texture_hover = ExtResource("10_quit_hover")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="SettingsPanel" type="Control" parent="Control"]
 visible = false
@@ -173,9 +172,9 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Close"
 
-[connection signal="pressed" from="Control/ButtonContainer/StartButton" to="Control" method="_on_start_pressed"]
-[connection signal="pressed" from="Control/ButtonContainer/SettingsButton" to="Control" method="_on_settings_pressed"]
-[connection signal="pressed" from="Control/QuitButton" to="Control" method="_on_quit_pressed"]
+[connection signal="pressed" from="Control/ButtonContainer/StartButtonContainer/StartButton" to="Control" method="_on_start_pressed"]
+[connection signal="pressed" from="Control/ButtonContainer/SettingsButtonContainer/SettingsButton" to="Control" method="_on_settings_pressed"]
+[connection signal="pressed" from="Control/QuitButtonContainer/QuitButton" to="Control" method="_on_quit_pressed"]
 [connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider" to="Control" method="_on_volume_changed"]
 [connection signal="toggled" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle" to="Control" method="_on_timer_toggle_toggled"]
 [connection signal="pressed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton" to="Control" method="_on_close_settings_pressed"]

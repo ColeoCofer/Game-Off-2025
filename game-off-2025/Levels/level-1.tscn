@@ -512,7 +512,7 @@ position = Vector2(1295, 198)
 time_offset = 1.0
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(1702, 192)
+position = Vector2(130, 372)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

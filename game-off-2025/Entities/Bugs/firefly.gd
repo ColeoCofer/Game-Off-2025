@@ -50,21 +50,26 @@ func _check_if_collected():
 	if current_level.is_empty():
 		return
 
-	# Check if this firefly was already collected
+	# Check if this firefly was already PERMANENTLY collected (saved in previous runs)
+	# If permanently collected, don't spawn at all
 	if FireflyCollectionManager.is_firefly_collected(current_level, firefly_id):
 		is_collected = true
-		queue_free()  # Remove if already collected
+		queue_free()  # Remove if already permanently collected
 
 func _on_body_entered(body: Node2D):
-	# Check if the body that entered is the player and not already collected
+	# Check if the body that entered is the player
 	if is_collected:
 		return
 
+	# Check if already collected in this run (temporary collection)
+	if FireflyCollectionManager.is_firefly_collected_this_run(firefly_id):
+		return
+
 	if body is PlatformerController2D:
-		# Mark as collected
+		# Mark as collected (temporarily)
 		is_collected = true
 
-		# Save collection to manager
+		# Save collection to manager (temporarily, until level completion)
 		var current_level = SceneManager.current_level
 		FireflyCollectionManager.collect_firefly(current_level, firefly_id)
 

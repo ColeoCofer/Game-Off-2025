@@ -61,6 +61,10 @@ func load_level(level_name: String) -> void:
 
 	current_level = level_name
 	reset_level_timer()
+
+	# Start a new firefly collection run (clears temporary collected fireflies)
+	FireflyCollectionManager.start_level_run(level_name)
+
 	await _change_scene(level_info["path"])
 
 
@@ -116,6 +120,9 @@ func complete_level(level_name: String = "") -> void:
 
 	# Save best time
 	SaveManager.save_best_time(level_name, completion_time)
+
+	# Save collected fireflies permanently (only if level completed without dying)
+	FireflyCollectionManager.commit_level_completion(level_name)
 
 	# Unlock next level
 	var current_info = get_level_info(level_name)
@@ -214,3 +221,5 @@ func _on_node_added(node: Node) -> void:
 			if scene_path == level_info["path"]:
 				# Level was reloaded, reset the timer
 				reset_level_timer()
+				# Clear temporary firefly collection (player died/restarted)
+				FireflyCollectionManager.start_level_run(current_level)

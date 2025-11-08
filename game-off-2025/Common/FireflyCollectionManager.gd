@@ -2,6 +2,9 @@ extends Node
 
 # FireflyCollectionManager - Handles firefly collection tracking and persistence
 # Works with SaveManager to store collected fireflies
+#
+# IMPORTANT: Fireflies are only permanently saved when the level is completed!
+# If the player dies, temporary collections are lost and fireflies respawn.
 
 # Signal emitted when a firefly is collected
 signal firefly_collected(level_name: String, firefly_id: int, total_collected: int, total_in_level: int)
@@ -10,32 +13,60 @@ signal all_fireflies_collected_in_level(level_name: String)
 # Total fireflies per level (all levels have 3 fireflies)
 const FIREFLIES_PER_LEVEL = 3
 
-# Collect a firefly and save to persistent storage
+# Temporary collection tracking for current level run
+# These are NOT saved permanently until level completion
+var current_run_collected: Array = []
+var current_run_level: String = ""
+
+# Start a new level run - clears temporary collection
+func start_level_run(level_name: String):
+	current_run_level = level_name
+	current_run_collected.clear()
+	print("Started new level run: %s" % level_name)
+
+# Collect a firefly (temporarily, until level completion)
 func collect_firefly(level_name: String, firefly_id: int):
-	# Check if already collected (shouldn't happen, but safety check)
-	if SaveManager.is_firefly_collected(level_name, firefly_id):
-		print("Firefly %d in %s already collected!" % [firefly_id, level_name])
+	# Check if already collected in current run
+	if firefly_id in current_run_collected:
+		print("Firefly %d already collected in this run!" % firefly_id)
 		return
 
-	# Save to persistent storage
-	SaveManager.save_firefly(level_name, firefly_id)
+	# Add to temporary collection for current run
+	current_run_collected.append(firefly_id)
 
-	# Get updated count
-	var total_collected = SaveManager.get_firefly_count(level_name)
+	# Get total count (permanent + temporary)
+	var permanent_count = SaveManager.get_firefly_count(level_name)
+	var temp_count = current_run_collected.size()
+	var total_collected = permanent_count + temp_count
 
 	# Emit collection signal
 	firefly_collected.emit(level_name, firefly_id, total_collected, FIREFLIES_PER_LEVEL)
 
-	# Check if all fireflies in this level are collected
-	if total_collected == FIREFLIES_PER_LEVEL:
-		all_fireflies_collected_in_level.emit(level_name)
-		print("All fireflies collected in %s! (%d/%d)" % [level_name, total_collected, FIREFLIES_PER_LEVEL])
-	else:
-		print("Firefly %d collected in %s! (%d/%d)" % [firefly_id, level_name, total_collected, FIREFLIES_PER_LEVEL])
+	print("Firefly %d collected in %s! (Run: %d/?, Total: %d/%d)" % [firefly_id, level_name, temp_count, total_collected, FIREFLIES_PER_LEVEL])
 
-# Check if a specific firefly has been collected
+# Commit temporary collected fireflies to permanent storage (called on level completion)
+func commit_level_completion(level_name: String):
+	if current_run_collected.is_empty():
+		print("No new fireflies to save for %s" % level_name)
+		return
+
+	# Save all temporarily collected fireflies permanently
+	for firefly_id in current_run_collected:
+		SaveManager.save_firefly(level_name, firefly_id)
+
+	var count = current_run_collected.size()
+	print("Saved %d fireflies permanently for %s!" % [count, level_name])
+
+	# Clear temporary collection
+	current_run_collected.clear()
+
+# Check if a specific firefly has been permanently collected
 func is_firefly_collected(level_name: String, firefly_id: int) -> bool:
 	return SaveManager.is_firefly_collected(level_name, firefly_id)
+
+# Check if a firefly was collected in the current run (temporary)
+func is_firefly_collected_this_run(firefly_id: int) -> bool:
+	return firefly_id in current_run_collected
 
 # Get array of collected firefly IDs for a level
 func get_collected_fireflies(level_name: String) -> Array:

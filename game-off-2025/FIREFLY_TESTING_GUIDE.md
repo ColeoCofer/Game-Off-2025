@@ -2,6 +2,11 @@
 
 ## Implementation Complete! ✅
 
+**IMPORTANT: Fireflies only count if you complete the level without dying!**
+- Collect firefly → it disappears temporarily
+- Die/restart → firefly respawns (not permanently saved yet)
+- Complete level → fireflies saved permanently
+
 The firefly collectible system has been fully implemented with the following features:
 
 ### What Was Implemented:
@@ -64,15 +69,27 @@ Enhanced with:
    - ✅ Collection animation plays (fade out, scale up, float up)
    - ✅ Console shows: "Firefly X collected in level-1! (Y/3)"
 
-### Step 3: Test Persistence
+### Step 3: Test Death/Respawn Behavior
 
-1. Pause and return to level select
+1. Collect a firefly (it disappears)
+2. Die or restart the level
+3. Verify:
+   - ✅ Firefly respawns! (wasn't permanently saved yet)
+   - ✅ You can collect it again
+4. Collect the firefly again
+5. Complete the level without dying
+6. Verify:
+   - ✅ Firefly is now permanently saved
+
+### Step 3b: Test Persistence Across Deaths
+
+1. Return to level select
 2. Check the level button:
-   - ✅ Shows "1/3 fireflies" (or however many you collected)
+   - ✅ Shows "1/3 fireflies" (only counts completed runs)
    - ✅ First icon is bright yellow, others are greyed out
 3. Restart the level
 4. Verify:
-   - ✅ Already-collected firefly doesn't appear
+   - ✅ Already-permanently-collected firefly doesn't appear
    - ✅ Uncollected fireflies are still there
 
 ### Step 4: Test Save/Load
@@ -120,14 +137,30 @@ print(FireflyCollectionManager.is_game_100_percent_complete())
 ## Expected Behavior:
 
 ### Collection Flow:
-1. Player enters firefly collision area
-2. Firefly checks if already collected (via SaveManager)
-3. If not collected:
-   - Marks as collected
-   - Saves to persistent storage
-   - Emits `firefly_collected` signal
-   - Plays collection animation
-   - Removes itself from scene
+1. **On Level Start:**
+   - Fireflies check if PERMANENTLY collected (saved in previous successful runs)
+   - If permanently collected → don't spawn
+   - If not permanently collected → spawn normally
+   - Temporary collection is cleared
+
+2. **When Player Collects Firefly:**
+   - Check if already collected THIS RUN (temporary)
+   - If not collected this run:
+     - Mark as collected temporarily (NOT saved to disk yet)
+     - Add to `current_run_collected` array
+     - Emit `firefly_collected` signal
+     - Play collection animation
+     - Remove from scene
+
+3. **On Death/Restart:**
+   - Temporary collection cleared
+   - All fireflies respawn (except permanently collected ones)
+   - Player must collect them again
+
+4. **On Level Completion:**
+   - All temporarily collected fireflies → saved permanently
+   - Committed to SaveManager (written to disk)
+   - Next time level loads, those fireflies won't spawn
 
 ### Save Data Structure:
 ```json
@@ -152,10 +185,12 @@ print(FireflyCollectionManager.is_game_100_percent_complete())
 
 ## Known Features:
 
-✅ Fireflies persist across game sessions
-✅ No duplicate collection (can't collect twice)
+✅ Fireflies only save permanently on level completion
+✅ Fireflies respawn if you die before completing the level
+✅ Challenge: Must collect AND survive to keep them
+✅ No duplicate collection in same run
 ✅ Smooth collection animation
-✅ Visual feedback on level select
+✅ Visual feedback on level select (shows permanent collection only)
 ✅ Works with existing save system
 ✅ Optional collectible (doesn't block progression)
 

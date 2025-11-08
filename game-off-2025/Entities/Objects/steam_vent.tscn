@@ -3,58 +3,60 @@
 [ext_resource type="Script" uid="uid://bn5ps3nuoli4f" path="res://Entities/Objects/steam_vent.gd" id="1_steam_vent"]
 [ext_resource type="Texture2D" uid="uid://mbq3oxcrflwm" path="res://Assets/Art/danger-objects/steam-vent.png" id="2_3oxgx"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_3oxgx"]
+atlas = ExtResource("2_3oxgx")
+region = Rect2(0, 0, 32, 40)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_7erdx"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(0, 0, 128, 160)
+region = Rect2(32, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_roc2n"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(128, 0, 128, 160)
+region = Rect2(64, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jyfkp"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(256, 0, 128, 160)
+region = Rect2(96, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1n05y"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(384, 0, 128, 160)
+region = Rect2(128, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qw7cy"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(512, 0, 128, 160)
+region = Rect2(160, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q4hj6"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(640, 0, 128, 160)
+region = Rect2(192, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jcbyc"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(768, 0, 128, 160)
+region = Rect2(224, 0, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bgkgc"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(896, 0, 128, 160)
+region = Rect2(0, 40, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xmke8"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(0, 160, 128, 160)
+region = Rect2(32, 40, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bvebl"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(128, 160, 128, 160)
+region = Rect2(64, 40, 32, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k1w31"]
 atlas = ExtResource("2_3oxgx")
-region = Rect2(256, 160, 128, 160)
+region = Rect2(0, 0, 32, 40)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_pkyj6"]
 animations = [{
-"frames": [],
-"loop": true,
-"name": &"emit",
-"speed": 5.0
-}, {
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3oxgx")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7erdx")
 }, {
@@ -84,7 +86,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bvebl")
+}],
+"loop": false,
+"name": &"emit",
+"speed": 13.0
 }, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_k1w31")
 }],
@@ -93,31 +100,29 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_3oxgx"]
-points = PackedVector2Array(-51, 19, -27, -17, -12, -55, 16, -55, 29, -16, 58, 19)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_steam"]
-size = Vector2(40, 60)
+size = Vector2(19, 39.5)
 
 [node name="SteamVent" type="Node2D"]
 script = ExtResource("1_steam_vent")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pkyj6")
-animation = &"idle"
+animation = &"emit"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(0, 60)
-shape = SubResource("ConvexPolygonShape2D_3oxgx")
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2(-0.44323635, 15.375)
+scale = Vector2(0.26949543, 0.24999997)
+polygon = PackedVector2Array(-51, 20, -24, -20, -15, -55, 16, -55, 28, -17, 58, 19)
 
 [node name="DamageArea" type="Area2D" parent="."]
 collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
-position = Vector2(2, -28)
+position = Vector2(1, -18.25)
 shape = SubResource("RectangleShape2D_steam")
 
 [node name="EmissionTimer" type="Timer" parent="."]

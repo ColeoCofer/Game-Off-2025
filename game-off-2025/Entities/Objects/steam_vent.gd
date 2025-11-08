@@ -1,7 +1,6 @@
 extends Node2D
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@ontml:parameter>
 @onready var damage_area: Area2D = $DamageArea
 @onready var emission_timer: Timer = $EmissionTimer
 
@@ -9,12 +8,17 @@ extends Node2D
 @export var min_interval: float = 2.0
 @export var max_interval: float = 5.0
 @export var emission_duration: float = 1.0
+@export var boost_force: float = -600.0  ## Negative value for upward boost
 
 var is_emitting: bool = false
 
 func _ready() -> void:
-	# Disable damage area initially
+	# Disable boost area initially
 	damage_area.monitoring = false
+
+	# Play idle animation
+	if animated_sprite:
+		animated_sprite.play("idle")
 
 	# Connect signals
 	damage_area.body_entered.connect(_on_body_entered)
@@ -38,7 +42,7 @@ func _emit_steam() -> void:
 	if animated_sprite:
 		animated_sprite.play("emit")  # Adjust animation name as needed
 
-	# Enable damage area
+	# Enable boost area
 	damage_area.monitoring = true
 
 	# Wait for emission duration, then stop
@@ -48,11 +52,11 @@ func _emit_steam() -> void:
 func _stop_emission() -> void:
 	is_emitting = false
 
-	# Stop animation (or play idle animation if you have one)
+	# Return to idle animation
 	if animated_sprite:
-		animated_sprite.stop()
+		animated_sprite.play("idle")
 
-	# Disable damage area
+	# Disable boost area
 	damage_area.monitoring = false
 
 	# Schedule next emission
@@ -61,6 +65,6 @@ func _stop_emission() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	# Check if it's the player
 	if body.is_in_group("player") or body.name == "Player":
-		var death_manager = body.get_node_or_null("DeathManager")
-		if death_manager and death_manager.has_method("trigger_hazard_death"):
-			death_manager.trigger_hazard_death()
+		# Apply upward boost to the player
+		if body is CharacterBody2D:
+			body.velocity.y = boost_force

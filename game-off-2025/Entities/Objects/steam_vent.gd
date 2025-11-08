@@ -8,7 +8,7 @@ extends Node2D
 @export var min_interval: float = 2.0
 @export var max_interval: float = 5.0
 @export var emission_duration: float = 1.0
-@export var boost_force: float = -400.0  ## Negative value for upward boost
+@export var boost_force: float = -400.0  ## Ah yes its gotta be negative 
 
 var is_emitting: bool = false
 
@@ -37,11 +37,10 @@ func _on_emission_timer_timeout() -> void:
 
 func _emit_steam() -> void:
 	is_emitting = true
-	print("Steam emitting! Boost area enabled.")
 
 	# Play the steam animation
 	if animated_sprite:
-		animated_sprite.play("emit")  # Adjust animation name as needed
+		animated_sprite.play("emit")
 
 	# Enable boost area
 	damage_area.monitoring = true
@@ -66,7 +65,7 @@ func _stop_emission() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	print("Body entered: ", body.name, " | Groups: ", body.get_groups())
 
-	# Check if it's the player (capital P)
+	# Check if it's the player (capital P...)
 	if body.is_in_group("Player") or body.name == "Player":
 		print("Player detected! Applying boost...")
 		# Apply upward boost to the player

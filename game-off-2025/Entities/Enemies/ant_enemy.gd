@@ -136,6 +136,7 @@ func _die_from_stomp(player: Node2D):
 	# Trigger hit stop for satisfying feedback
 	HitStop.activate(0.03)
 
+	# Good effect to have but doesn't look that good on the ant...
 	# Spawn impact particles
 	# _spawn_stomp_particles()  # Disabled - not adding much
 

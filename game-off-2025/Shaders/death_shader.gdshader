@@ -20,8 +20,8 @@ void fragment() {
     // Sample the texture with distorted UVs
     vec4 original_color = texture(TEXTURE, uv);
 
-    // Fade to death color (black)
-    vec4 final_color = mix(original_color, death_color, death_progress);
+    // Keep original color, don't fade to black
+    vec4 final_color = original_color;
 
     // Add some chromatic aberration effect for more dramatic death
     if (death_progress > 0.3) {
@@ -33,8 +33,8 @@ void fragment() {
         final_color.rgb = mix(final_color.rgb, aberration, death_progress - 0.3);
     }
 
-    // Fade out alpha as well for complete disappearance
-    final_color.a *= (1.0 - death_progress * 0.7);
+    // Fade out to transparent
+    final_color.a *= (1.0 - death_progress);
 
     COLOR = final_color;
 }

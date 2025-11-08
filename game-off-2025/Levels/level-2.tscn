@@ -472,10 +472,10 @@ tile_set = ExtResource("2_n4bx7")
 [node name="Enemies" type="Node" parent="."]
 
 [node name="AntEnemy" parent="Enemies" instance=ExtResource("5_jfi0m")]
-position = Vector2(406, 361.42)
+position = Vector2(175, 417)
 
 [node name="AntEnemy2" parent="Enemies" instance=ExtResource("5_jfi0m")]
-position = Vector2(1570, 234.00002)
+position = Vector2(56, 382)
 
 [node name="Hurt Objects" type="Node" parent="."]
 
@@ -496,7 +496,7 @@ position = Vector2(62, 44)
 time_offset = 0.5
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(116, 367)
+position = Vector2(171, 341)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

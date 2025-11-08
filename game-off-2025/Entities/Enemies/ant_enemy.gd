@@ -130,6 +130,9 @@ func _on_damage_detector_body_entered(body: Node2D):
 func _die_from_stomp(player: Node2D):
 	is_alive = false
 
+	# Trigger hit stop for satisfying feedback
+	HitStop.activate(0.03)
+
 	# Give player a bounce
 	if player is CharacterBody2D:
 		player.velocity.y = -stomp_bounce_force

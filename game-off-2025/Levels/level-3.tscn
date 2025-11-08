@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bqy5xk8j1234" path="res://Entities/Enemies/ant_enemy.tscn" id="5_jfi0m"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
-[ext_resource type="PackedScene" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
+[ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="cave_bg_material"]

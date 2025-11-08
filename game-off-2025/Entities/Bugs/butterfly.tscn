@@ -145,7 +145,7 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g6v7b"]
 radius = 6.0
-height = 14.0
+height = 18.0
 
 [node name="Bug" type="Area2D"]
 script = ExtResource("3_butterfly_script")

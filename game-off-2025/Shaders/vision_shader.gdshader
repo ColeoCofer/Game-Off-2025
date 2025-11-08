@@ -18,7 +18,13 @@ uniform float echo_radii[10]; // Current expansion radius of each pulse
 uniform float echo_reveal_distance = 800.0;
 
 // Wave thickness (how thick the expanding ring is)
-uniform float wave_thickness = 100.0;
+uniform float wave_thickness = 60.0;
+
+// Wave brightness (how visible the wave ring is)
+uniform float wave_brightness = 0.4;
+
+// How far ahead of the reveal the wave appears
+uniform float wave_offset = 40.0;
 
 // Darkness intensity (0.0 = fully visible, 1.0 = completely dark)
 uniform float darkness_intensity = 0.95;
@@ -37,6 +43,8 @@ void fragment() {
 
 	// Check echolocation reveals with expanding wave
 	float echo_alpha = 1.0;
+	float wave_glow = 0.0; // Accumulate wave ring brightness
+
 	for (int i = 0; i < 10; i++) {
 		if (echo_intensities[i] > 0.0) {
 			float dist_from_echo = distance(pixel_pos, echo_positions[i]);
@@ -51,12 +59,47 @@ void fragment() {
 				float echo_reveal = max_reveal_at_distance * echo_intensities[i];
 				echo_alpha = min(echo_alpha, 1.0 - echo_reveal);
 			}
+
+			// Create visible wave ring ahead of the reveal edge
+			// Wave appears at: current_radius + wave_offset
+			float wave_position = echo_radii[i] + wave_offset;
+			float distance_from_wave = abs(dist_from_echo - wave_position);
+
+			// Only show wave if we're within the wave thickness
+			if (distance_from_wave < wave_thickness) {
+				// Create smooth falloff from center of wave ring
+				float wave_intensity = smoothstep(wave_thickness, 0.0, distance_from_wave);
+
+				// Fade the wave with pulse intensity
+				wave_intensity *= echo_intensities[i];
+
+				// Add a subtle pulse effect (brighter at the leading edge)
+				float edge_boost = smoothstep(wave_thickness * 0.5, 0.0, distance_from_wave);
+				wave_intensity += edge_boost * 0.2 * echo_intensities[i];
+
+				// Accumulate wave brightness (in case multiple waves overlap)
+				wave_glow = max(wave_glow, wave_intensity);
+			}
 		}
 	}
 
 	// Combine vision and echo
 	float final_alpha = min(vision_alpha, echo_alpha) * darkness_intensity;
 
-	// Output black with calculated alpha
-	COLOR = vec4(0.0, 0.0, 0.0, final_alpha);
+	// Apply wave distortion effect
+	// The wave creates a clearish distortion that moves through the darkness
+	float wave_effect = wave_glow * wave_brightness;
+
+	// Reduce the darkness alpha where the wave passes (makes it more transparent)
+	final_alpha = final_alpha * (1.0 - wave_effect * 0.7);
+
+	// Add a very subtle white tint to the wave for visibility (not blue, just a hint of light)
+	vec3 base_color = vec3(0.0, 0.0, 0.0); // Black darkness
+	vec3 wave_tint = vec3(0.95, 0.95, 1.0); // Very subtle cool white (barely any blue)
+
+	// Mix in a tiny bit of tint only where the wave is
+	vec3 final_color = mix(base_color, wave_tint, wave_effect * 0.3);
+
+	// Output color with modified alpha for distortion effect
+	COLOR = vec4(final_color, final_alpha);
 }

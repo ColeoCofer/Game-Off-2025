@@ -52,7 +52,7 @@ func _emit_steam() -> void:
 func _stop_emission() -> void:
 	is_emitting = false
 
-	# Return to idle animation
+	# Return to idle animationr
 	if animated_sprite:
 		animated_sprite.play("idle")
 

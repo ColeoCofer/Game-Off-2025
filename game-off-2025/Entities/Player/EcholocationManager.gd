@@ -17,6 +17,11 @@ extends CanvasLayer
 @export var echo_expansion_speed: float = 1200.0  # pixels per second (how fast the wave expands)
 @export var echolocation_cooldown: float = 5.0  # seconds for full recharge
 
+# Wave visual settings
+@export var wave_thickness: float = 60.0  # How thick the visible wave ring is
+@export var wave_brightness: float = 0.4  # How visible/bright the wave ring appears (0-1)
+@export var wave_offset: float = 40.0  # How far ahead of the reveal the wave appears
+
 # Cooldown system
 var cooldown_timer: float = 0.0  # 0 = ready, increases to echolocation_cooldown
 var is_on_cooldown: bool = false
@@ -43,6 +48,9 @@ func _ready():
 	shader_material.set_shader_parameter("vision_fade_distance", vision_fade_distance)
 	shader_material.set_shader_parameter("darkness_intensity", darkness_intensity)
 	shader_material.set_shader_parameter("echo_reveal_distance", echo_reveal_distance)
+	shader_material.set_shader_parameter("wave_thickness", wave_thickness)
+	shader_material.set_shader_parameter("wave_brightness", wave_brightness)
+	shader_material.set_shader_parameter("wave_offset", wave_offset)
 
 	# Initialize echo arrays
 	update_echo_shader_params()

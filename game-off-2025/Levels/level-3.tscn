@@ -525,7 +525,7 @@ position = Vector2(40, 60)
 [node name="Butterflies" type="Node" parent="."]
 
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
-position = Vector2(467, 285)
+position = Vector2(726, 285)
 
 [node name="Butterfly3" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1495, 70)

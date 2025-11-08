@@ -14,6 +14,7 @@ extends CharacterBody2D
 @export var fall_speed: float = 100.0
 @export var squash_duration: float = 0.15
 @export var squash_amount: Vector2 = Vector2(1.5, 0.4)  # Wide and flat
+@export var stomp_particle_scene: PackedScene = preload("res://Entities/Particles/stomp_impact.tscn")
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var floor_raycast: RayCast2D = $FloorRayCast
@@ -135,6 +136,9 @@ func _die_from_stomp(player: Node2D):
 	# Trigger hit stop for satisfying feedback
 	HitStop.activate(0.03)
 
+	# Spawn impact particles
+	# _spawn_stomp_particles()  # Disabled - not adding much
+
 	# Give player a bounce
 	if player is CharacterBody2D:
 		player.velocity.y = -stomp_bounce_force
@@ -158,6 +162,24 @@ func _die_from_stomp(player: Node2D):
 
 	# Play squash effect, then death animation
 	_play_squash_effect()
+
+func _spawn_stomp_particles():
+	"""Spawn particle effect at stomp location"""
+	if not stomp_particle_scene:
+		return
+
+	var particles = stomp_particle_scene.instantiate()
+	# Add to current scene (not as child of ant, so particles persist after ant dies)
+	get_tree().current_scene.add_child(particles)
+	# Position at the top of the ant (where the stomp happened)
+	particles.global_position = global_position + Vector2(0, -8)
+	# Start emitting
+	particles.emitting = true
+
+	# Auto-cleanup after particles finish
+	if particles is CPUParticles2D or particles is GPUParticles2D:
+		var cleanup_timer = get_tree().create_timer(particles.lifetime + 0.1)
+		cleanup_timer.timeout.connect(particles.queue_free)
 
 func _play_squash_effect():
 	"""Quick squash effect before death animation"""

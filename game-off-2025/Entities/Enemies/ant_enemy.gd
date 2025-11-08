@@ -84,15 +84,12 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not is_alive:
 		return
 
-	# Check if it's the player and they're falling (stomping)
+	# Check if it's the player and they're above the ant
 	if body.is_in_group("Player"):
-		var player_velocity = body.velocity if body is CharacterBody2D else Vector2.ZERO
-
-		# 1. Player must be moving downward (any amount.. I think this is fine?)
-		# 2. Player must be above the ant's center
+		# Player must be above the ant's center
 		var player_is_above = body.global_position.y < global_position.y - 5  # 5 pixel tolerance
 
-		if player_is_above and player_velocity.y > 0:
+		if player_is_above:
 			# Immediately mark as dead FIRST to prevent any race conditions
 			is_alive = false
 

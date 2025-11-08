@@ -29,7 +29,7 @@ animations = [{
 size = Vector2(19.875, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(27, 3)
+size = Vector2(28, 3)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3"]
 size = Vector2(29.166668, 7.166667)
@@ -60,7 +60,7 @@ target_position = Vector2(0, 20)
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
-position = Vector2(-0.5, -5)
+position = Vector2(0, -5)
 shape = SubResource("RectangleShape2D_2")
 
 [node name="DamageDetector" type="Area2D" parent="."]

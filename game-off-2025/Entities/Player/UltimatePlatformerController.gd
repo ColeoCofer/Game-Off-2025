@@ -130,6 +130,8 @@ class_name PlatformerController2D
 @export var crouch_walk: bool
 ##Animations must be named "roll" all lowercase as the check box says
 @export var roll: bool
+##Animations must be named "flap" all lowercase as the check box says
+@export var flap: bool
 
 
 
@@ -341,14 +343,18 @@ func _process(_delta):
 			anim.play("idle")
 			_stopWalkingSound()
 		
+	#flap (check before jump/falling to give it priority)
+	if flap and isFlapping and !is_on_floor() and !dashing:
+		anim.speed_scale = 1
+		anim.play("flap")
+		_stopWalkingSound()
 	#jump
-	if velocity.y < 0 and jump and !dashing:
+	elif velocity.y < 0 and jump and !dashing:
 		if anim.animation != "jump":
 			anim.speed_scale = 1
 			anim.play("jump")
 			_stopWalkingSound()
-
-	if velocity.y > 40 and falling and !dashing and !crouching:
+	elif velocity.y > 40 and falling and !dashing and !crouching:
 		anim.speed_scale = 1
 		anim.play("falling")
 		_stopWalkingSound()
@@ -834,7 +840,7 @@ func _flap():
 	if FlapAudioPlayer:
 		FlapAudioPlayer.play()
 
-	# Set flapping state and cooldown
+	# Set flapping state and cooldown (animation handled in _process)
 	isFlapping = true
 	canFlapNow = false
 	_flapCooldownReset()

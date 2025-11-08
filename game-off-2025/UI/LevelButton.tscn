@@ -1,37 +1,73 @@
-[gd_scene load_steps=2 format=3 uid="uid://cqxb8g7j8lal0"]
+[gd_scene load_steps=3 format=3 uid="uid://cqxb8g7j8lal0"]
 
 [ext_resource type="Script" path="res://UI/LevelButton.gd" id="1_levelbutton"]
+[ext_resource type="Texture2D" uid="uid://dftdljbdpvkbp" path="res://Assets/Art/bugs/firefly.png" id="2_firefly_icon"]
 
 [node name="LevelButton" type="Button"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 80)
 offset_right = 500.0
-offset_bottom = 60.0
+offset_bottom = 80.0
 theme_override_font_sizes/font_size = 20
 script = ExtResource("1_levelbutton")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="StatusLabel" type="Label" parent="HBoxContainer"]
+[node name="StatusLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 24
 text = "✓"
 
-[node name="LevelLabel" type="Label" parent="HBoxContainer"]
+[node name="LevelLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Level 1"
 
-[node name="TimeLabel" type="Label" parent="HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 20
 text = "--:--:--"
+
+[node name="FireflyContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+
+[node name="FireflyIcon1" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("2_firefly_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FireflyIcon2" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("2_firefly_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FireflyIcon3" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("2_firefly_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FireflyLabel" type="Label" parent="VBoxContainer/FireflyContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0/3 fireflies"

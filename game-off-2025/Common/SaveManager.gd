@@ -17,7 +17,8 @@ var save_data = {
 		"checkpoints": {},
 		"best_times": {},
 		"unlocked_levels": [],
-		"total_playtime": 0.0
+		"total_playtime": 0.0,
+		"fireflies_collected": {}  # {"level-1": [0, 1, 2], "level-2": [0]}
 	}
 }
 
@@ -131,6 +132,38 @@ func add_playtime(delta_time: float):
 func get_total_playtime() -> float:
 	return save_data["game_data"]["total_playtime"]
 
+# ============= FIREFLY COLLECTION FUNCTIONS =============
+
+func save_firefly(level_name: String, firefly_id: int):
+	# Initialize array for this level if it doesn't exist
+	if level_name not in save_data["game_data"]["fireflies_collected"]:
+		save_data["game_data"]["fireflies_collected"][level_name] = []
+
+	# Add firefly ID if not already collected
+	var collected_fireflies = save_data["game_data"]["fireflies_collected"][level_name]
+	if firefly_id not in collected_fireflies:
+		collected_fireflies.append(firefly_id)
+		save_game()
+
+func is_firefly_collected(level_name: String, firefly_id: int) -> bool:
+	if level_name not in save_data["game_data"]["fireflies_collected"]:
+		return false
+	return firefly_id in save_data["game_data"]["fireflies_collected"][level_name]
+
+func get_collected_fireflies(level_name: String) -> Array:
+	if level_name in save_data["game_data"]["fireflies_collected"]:
+		return save_data["game_data"]["fireflies_collected"][level_name]
+	return []
+
+func get_firefly_count(level_name: String) -> int:
+	return get_collected_fireflies(level_name).size()
+
+func get_total_fireflies_collected() -> int:
+	var total = 0
+	for level in save_data["game_data"]["fireflies_collected"]:
+		total += save_data["game_data"]["fireflies_collected"][level].size()
+	return total
+
 # Clear all save data (for debugging or new game)
 func reset_save_data():
 	save_data = {
@@ -143,7 +176,8 @@ func reset_save_data():
 			"checkpoints": {},
 			"best_times": {},
 			"unlocked_levels": [],
-			"total_playtime": 0.0
+			"total_playtime": 0.0,
+			"fireflies_collected": {}
 		}
 	}
 	save_game()

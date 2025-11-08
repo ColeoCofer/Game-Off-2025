@@ -101,7 +101,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_steam"]
-size = Vector2(19, 39.5)
+size = Vector2(19, 24.5)
 
 [node name="SteamVent" type="Node2D"]
 script = ExtResource("1_steam_vent")
@@ -119,10 +119,10 @@ polygon = PackedVector2Array(-51, 20, -24, -20, -15, -55, 16, -55, 28, -17, 58, 
 
 [node name="DamageArea" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 4
+collision_mask = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
-position = Vector2(1, -18.25)
+position = Vector2(1, -10.75)
 shape = SubResource("RectangleShape2D_steam")
 
 [node name="EmissionTimer" type="Timer" parent="."]

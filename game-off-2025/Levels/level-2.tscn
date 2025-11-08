@@ -447,6 +447,12 @@ tile_set = SubResource("TileSet_wcctb")
 [node name="Cave Detail" type="TileMapLayer" parent="TileMap"]
 tile_set = ExtResource("2_n4bx7")
 
+[node name="GroundBG" type="TileMapLayer" parent="TileMap"]
+position = Vector2(-1, 0)
+rotation = 0.0003004115
+tile_map_data = PackedByteArray("AAABABkAAQABAAAAAAACABkAAQAFAAAAAAADABkAAQAFAAAAAAAEABkAAQABAAAAAAAFABkAAQAGAAAAAAABABYAAQADAAAAAAAKABYAAQAAAAAAAAALABYAAQAFAAAAAAAMABYAAQAFAAAAAAANABYAAQAGAAAAAAAFABQAAQADAAAAAAAMABEAAQAAAAAAAAANABEAAQACAAAAAAAAABEAAQAAAAAAAAABABEAAQABAAAAAAACABEAAQACAAAAAAANAA8AAQAGAAAAAAAMAA8AAQAEAAAAAAA=")
+tile_set = ExtResource("2_n4bx7")
+
 [node name="Ground" type="TileMapLayer" parent="TileMap"]
 position = Vector2(-1, 0)
 rotation = 0.0003004115

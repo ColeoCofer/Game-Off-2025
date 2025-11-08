@@ -81,8 +81,8 @@ custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxTexture_settings_normal")
-theme_override_styles/hover = SubResource("StyleBoxTexture_settings_hover")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_settings_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_settings_hover")
 
 [node name="QuitButton" type="Button" parent="Control"]
 layout_mode = 1
@@ -91,10 +91,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -64.76001
-offset_top = -47.940002
-offset_right = 35.23999
-offset_bottom = -7.9400024
+offset_left = -109.640015
+offset_top = -46.850006
+offset_right = -9.640015
+offset_bottom = -6.850006
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxTexture_quit_normal")
@@ -165,7 +165,6 @@ value = -10.0
 [node name="TimerToggle" type="CheckButton" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-button_pressed = false
 text = "Show Timer"
 
 [node name="CloseButton" type="Button" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]

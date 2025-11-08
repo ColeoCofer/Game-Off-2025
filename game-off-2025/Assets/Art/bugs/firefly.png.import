@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hwdig6n5vs78"
-path="res://.godot/imported/Butterfly_001 Spritesheet.png-caec7f976a03808c7ccfbace866a10dc.ctex"
+uid="uid://dy0ungu5u28qx"
+path="res://.godot/imported/firefly.png-b477a87a869083d5dccb899a6491372f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Art/Butterfly_001 Spritesheet.png"
-dest_files=["res://.godot/imported/Butterfly_001 Spritesheet.png-caec7f976a03808c7ccfbace866a10dc.ctex"]
+source_file="res://Assets/Art/bugs/firefly.png"
+dest_files=["res://.godot/imported/firefly.png-b477a87a869083d5dccb899a6491372f.ctex"]
 
 [params]
 

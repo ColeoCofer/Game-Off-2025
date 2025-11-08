@@ -16,6 +16,7 @@ extends Node2D
 @onready var detection_shape: CollisionShape2D = $DetectionArea/CollisionShape2D
 @onready var damage_area: Area2D = $Visuals/DamageArea
 @onready var damage_area2: Area2D = $Visuals/DamageArea2
+@onready var damage_area_top: Area2D = $Visuals/TopDamageArea
 
 var has_triggered: bool = false
 var is_on_cooldown: bool = false
@@ -32,6 +33,8 @@ func _ready():
 		damage_area.body_entered.connect(_on_damage_area_body_entered)
 	if damage_area2:
 		damage_area2.body_entered.connect(_on_damage_area_body_entered)
+	if damage_area_top:
+		damage_area_top.body_entered.connect(_on_damage_area_body_entered)
 
 	# Connect to animation finished signal to reset
 	if animation_player:

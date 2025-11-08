@@ -88,22 +88,28 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if body.is_in_group("Player"):
 		var player_velocity = body.velocity if body is CharacterBody2D else Vector2.ZERO
 
-		# Only count as stomp if player is moving downward
-		if player_velocity.y > 0:
+		# 1. Player must be moving downward (any amount.. I think this is fine?)
+		# 2. Player must be above the ant's center
+		var player_is_above = body.global_position.y < global_position.y - 5  # 5 pixel tolerance
+
+		if player_is_above and player_velocity.y > 0:
+			# Immediately mark as dead FIRST to prevent any race conditions
+			is_alive = false
+
 			# Immediately disable BOTH detectors to prevent race conditions
 			if damage_detector:
 				damage_detector.monitoring = false
 				damage_detector.monitorable = false
 				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
+					collision_shape.disabled = true
 
 			if stomp_detector:
 				stomp_detector.monitoring = false
 				stomp_detector.monitorable = false
 				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
+					collision_shape.disabled = true
 
 			_die_from_stomp(body)
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dby0n4if8rhwp"]
+[gd_scene load_steps=23 format=3 uid="uid://dby0n4if8rhwp"]
 
 [ext_resource type="Script" uid="uid://bjmapvwcve54s" path="res://Entities/Objects/falling_stalagmite.gd" id="1_stalagmite"]
 [ext_resource type="Texture2D" uid="uid://bfx8uu4amxwvn" path="res://Assets/Art/falling-stag.png" id="2_kr5jn"]
@@ -21,46 +21,22 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Visuals/DamageArea/CollisionShape2D:position")
+tracks/1/path = NodePath("Visuals/DamageArea2/CollisionShape2D:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(2.42, 3.1, 4.04, 4.59, 5.41),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(-42, -26), Vector2(-42, -6), Vector2(-41, 9), Vector2(-41, 25), Vector2(-39, 39)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Visuals/DamageArea2/CollisionShape2D:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
 "times": PackedFloat32Array(2.42, 3.1, 4.04, 4.59, 5.41, 6),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(49, -25), Vector2(49, 0), Vector2(50, 15), Vector2(50, 25), Vector2(50, 45), Vector2(50, 45)]
 }
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Visuals/DamageArea/CollisionShape2D:scale")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.99500024, 2.42, 4.6, 5, 5.41),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1, 1), Vector2(1, 1), Vector2(1, 1), Vector2(1, 1)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Visuals/DamageArea2/CollisionShape2D:scale")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Visuals/DamageArea2/CollisionShape2D:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0.99500024, 2.42, 4.6, 5, 5.41, 6),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
@@ -84,46 +60,22 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Visuals/DamageArea/CollisionShape2D:position")
+tracks/1/path = NodePath("Visuals/DamageArea2/CollisionShape2D:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(-42, -26)]
+"values": [Vector2(49, -25)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Visuals/DamageArea2/CollisionShape2D:position")
+tracks/2/path = NodePath("Visuals/DamageArea2/CollisionShape2D:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(49, -25)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Visuals/DamageArea/CollisionShape2D:scale")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1, 1)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Visuals/DamageArea2/CollisionShape2D:scale")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -135,9 +87,6 @@ _data = {
 &"RESET": SubResource("Animation_kr5jn"),
 &"fall": SubResource("Animation_rm730")
 }
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
-radius = 100.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tge2m"]
 atlas = ExtResource("2_kr5jn")
@@ -238,8 +187,14 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_detection"]
+radius = 100.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_kr5jn"]
 radius = 9.055386
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kr5jn"]
+size = Vector2(177, 11)
 
 [node name="FallingStalagmite" type="Node2D"]
 script = ExtResource("1_stalagmite")
@@ -251,23 +206,23 @@ libraries = {
 }
 speed_scale = 3.5
 
-[node name="DetectionArea" type="Area2D" parent="."]
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
-shape = SubResource("CircleShape2D_detection")
-
 [node name="Visuals" type="Node2D" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals"]
 sprite_frames = SubResource("SpriteFrames_pyjfo")
 animation = &"fall"
 
-[node name="DamageArea" type="Area2D" parent="Visuals"]
+[node name="DetectionArea" type="Area2D" parent="Visuals"]
 collision_layer = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/DamageArea"]
-position = Vector2(-42, -26)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/DetectionArea"]
+shape = SubResource("CircleShape2D_detection")
+
+[node name="DamageArea3" type="Area2D" parent="Visuals"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/DamageArea3"]
+position = Vector2(-39, 39)
 shape = SubResource("CircleShape2D_kr5jn")
 
 [node name="DamageArea2" type="Area2D" parent="Visuals"]
@@ -276,3 +231,10 @@ collision_layer = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/DamageArea2"]
 position = Vector2(49, -25)
 shape = SubResource("CircleShape2D_kr5jn")
+
+[node name="TopDamageArea" type="Area2D" parent="Visuals"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/TopDamageArea"]
+position = Vector2(0.5, -34.5)
+shape = SubResource("RectangleShape2D_kr5jn")

@@ -466,7 +466,7 @@ tile_set = ExtResource("2_n4bx7")
 [node name="fireflies" type="Node" parent="."]
 
 [node name="Firefly" parent="fireflies" instance=ExtResource("7_rb4r8")]
-position = Vector2(-312, 244)
+position = Vector2(-313, 237)
 firefly_id = 1
 
 [node name="Firefly2" parent="fireflies" instance=ExtResource("7_rb4r8")]

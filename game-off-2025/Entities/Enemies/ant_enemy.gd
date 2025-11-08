@@ -12,6 +12,8 @@ extends CharacterBody2D
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
 @export var fall_speed: float = 100.0
+@export var squash_duration: float = 0.15
+@export var squash_amount: Vector2 = Vector2(1.5, 0.4)  # Wide and flat
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var floor_raycast: RayCast2D = $FloorRayCast
@@ -154,8 +156,27 @@ func _die_from_stomp(player: Node2D):
 	# Apply death shader (same as player)
 	_apply_death_shader()
 
-	# Play death animation
-	_play_death_animation()
+	# Play squash effect, then death animation
+	_play_squash_effect()
+
+func _play_squash_effect():
+	"""Quick squash effect before death animation"""
+	if not animated_sprite:
+		_play_death_animation()
+		return
+
+	# Squash down quickly, recover slower for more impact
+	var squash_tween = create_tween()
+	squash_tween.set_ease(Tween.EASE_OUT)
+	squash_tween.set_trans(Tween.TRANS_BACK)
+
+	# Instant squash down
+	squash_tween.tween_property(animated_sprite, "scale", squash_amount, squash_duration * 0.3)
+	# Slower bounce back
+	squash_tween.tween_property(animated_sprite, "scale", Vector2.ONE, squash_duration * 0.7)
+
+	# After squash completes, play death animation
+	squash_tween.finished.connect(_play_death_animation)
 
 func _apply_death_shader():
 	if not animated_sprite:

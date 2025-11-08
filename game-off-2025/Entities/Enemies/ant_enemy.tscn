@@ -39,6 +39,8 @@ collision_layer = 2
 script = ExtResource("1")
 walk_speed = 40.0
 stomp_bounce_force = 220.0
+squash_duration = 0.2
+squash_amount = Vector2(1.5, 0.3)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -4)

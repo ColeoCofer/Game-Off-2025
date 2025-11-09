@@ -1,19 +1,42 @@
-[gd_scene load_steps=6 format=3 uid="uid://bj8i0g3uaelrt"]
+[gd_scene load_steps=10 format=3 uid="uid://bj8i0g3uaelrt"]
 
 [ext_resource type="Script" uid="uid://beeo4y2fnsmps" path="res://Entities/Objects/torch.gd" id="1_torch_script"]
+[ext_resource type="Texture2D" uid="uid://sos2i7at8ogw" path="res://Assets/Art/sprite-sheets/Torch.png" id="2_4y6u6"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
-size = Vector2(16, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ysmd"]
+atlas = ExtResource("2_4y6u6")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_57els"]
+atlas = ExtResource("2_4y6u6")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5725"]
+atlas = ExtResource("2_4y6u6")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xffb2"]
+atlas = ExtResource("2_4y6u6")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_torch"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("PlaceholderTexture2D_sprite")
+"texture": SubResource("AtlasTexture_1ysmd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_57els")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l5725")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xffb2")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 5.0
+"speed": 4.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_glow"]
@@ -37,6 +60,7 @@ light_flicker_intensity = 0.13
 sprite_frames = SubResource("SpriteFrames_torch")
 animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.968216
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 position = Vector2(0, -8)

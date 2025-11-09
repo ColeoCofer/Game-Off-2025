@@ -16,6 +16,9 @@ func _ready():
 	water_drops_player.volume_db = -40  # Adjust this value to control water drops volume
 	add_child(water_drops_player)
 
+	# Connect finished signal to loop the main music
+	finished.connect(_on_music_finished)
+
 	# Play on loop - will be paused if volume is at minimum
 	autoplay = true
 	play()
@@ -25,6 +28,10 @@ func _ready():
 	if volume_db <= -40.0:
 		stream_paused = true
 		water_drops_player.stream_paused = true
+
+func _on_music_finished():
+	# Replay the music when it finishes to create a loop
+	play()
 
 func set_volume(db_value: float):
 	volume_db = db_value

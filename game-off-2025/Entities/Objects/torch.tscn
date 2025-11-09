@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://bj8i0g3uaelrt"]
+
+[ext_resource type="Script" uid="uid://beeo4y2fnsmps" path="res://Entities/Objects/torch.gd" id="1_torch_script"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sprite"]
+size = Vector2(16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_torch"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("PlaceholderTexture2D_sprite")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_glow"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 0.6, 0.2, 1, 1, 0.4, 0.1, 0.5, 1, 0.3, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glow"]
+gradient = SubResource("Gradient_glow")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Torch" type="Node2D"]
+script = ExtResource("1_torch_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_torch")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, -8)
+color = Color(1, 0.65, 0.3, 1)
+energy = 2.0
+texture = SubResource("GradientTexture2D_glow")
+texture_scale = 1.2

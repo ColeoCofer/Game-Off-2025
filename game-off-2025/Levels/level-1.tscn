@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://de6p1l8qfd8pb"]
+[gd_scene load_steps=22 format=4 uid="uid://de6p1l8qfd8pb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="7_rb4r8"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
+[ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="11_vqiix"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="cave_bg_material"]
 
@@ -510,6 +511,9 @@ time_offset = 0.5
 [node name="MovingPlank3" parent="Objects" instance=ExtResource("5_6p1x0")]
 position = Vector2(1295, 198)
 time_offset = 1.0
+
+[node name="Torch" parent="Objects" instance=ExtResource("11_vqiix")]
+position = Vector2(77, 368)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(130, 372)

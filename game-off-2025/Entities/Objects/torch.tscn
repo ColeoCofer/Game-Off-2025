@@ -29,6 +29,9 @@ fill_from = Vector2(0.5, 0.5)
 
 [node name="Torch" type="Node2D"]
 script = ExtResource("1_torch_script")
+light_energy = 0.64
+light_flicker_speed = 4.13
+light_flicker_intensity = 0.13
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_torch")

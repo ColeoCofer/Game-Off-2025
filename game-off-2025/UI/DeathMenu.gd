@@ -88,12 +88,25 @@ func _on_play_again_button_pressed():
 	# Hide menu then reload
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
+
+	# Clean up the death menu and its parent CanvasLayer before reloading
+	# This ensures the menu doesn't persist across scene changes
+	var canvas_layer = get_parent()
+	if canvas_layer is CanvasLayer:
+		canvas_layer.queue_free()
+
 	SceneManager.reload_current_level()
 
 func _on_next_level_button_pressed():
 	next_level_pressed.emit()
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
+
+	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	var canvas_layer = get_parent()
+	if canvas_layer is CanvasLayer:
+		canvas_layer.queue_free()
+
 	SceneManager.next_level()
 
 
@@ -101,6 +114,12 @@ func _on_level_select_button_pressed():
 	level_select_pressed.emit()
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
+
+	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	var canvas_layer = get_parent()
+	if canvas_layer is CanvasLayer:
+		canvas_layer.queue_free()
+
 	SceneManager.goto_level_select()
 
 
@@ -109,6 +128,12 @@ func _on_exit_button_pressed():
 	# Return to main menu instead of quitting
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
+
+	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	var canvas_layer = get_parent()
+	if canvas_layer is CanvasLayer:
+		canvas_layer.queue_free()
+
 	SceneManager.goto_main_menu()
 
 func _input(event):

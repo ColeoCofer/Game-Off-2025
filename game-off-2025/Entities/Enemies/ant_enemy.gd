@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 ## Ant enemy that walks back and forth on platforms
-## - Detects platform edges and turns around
+## - Detects platform edges (via ray for now...) and turns around
 ## - Kills player on side collision
 ## - Dies when player stomps on top
 

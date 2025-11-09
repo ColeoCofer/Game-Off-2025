@@ -436,7 +436,7 @@ shader_parameter/rotation_strength = 1.0
 shader_parameter/rotation_pivot = Vector2(0.5, 1)
 shader_parameter/brightness = 0.6
 
-[node name="Level1" type="Node2D"]
+[node name="Level3" type="Node2D"]
 
 [node name="TileMap" type="Node2D" parent="."]
 material = ExtResource("cave_bg_material")

@@ -26,8 +26,8 @@ extends CanvasLayer
 var cooldown_timer: float = 0.0  # 0 = ready, increases to echolocation_cooldown
 var is_on_cooldown: bool = false
 
-# Echolocation pulses (position, intensity, and expansion radius)
-var echo_pulses: Array = []  # Array of {position: Vector2, intensity: float, radius: float, age: float}
+# Echolocation pulses (relative offset from player, intensity, and expansion radius)
+var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: float, radius: float, age: float}
 
 # Shader material
 var shader_material: ShaderMaterial
@@ -86,8 +86,9 @@ func trigger_echolocation():
 		echo_audio.play()
 
 	# Create new echolocation pulse at player position
+	# Store as relative offset (0,0) so it follows the player
 	var pulse = {
-		"position": player.global_position,
+		"relative_offset": Vector2.ZERO,  # Offset from player position
 		"intensity": 1.0,
 		"radius": 0.0,  # Starts at 0 and expands
 		"age": 0.0  # Track how long the pulse has existed
@@ -134,7 +135,9 @@ func update_echo_shader_params():
 
 	for i in range(10):
 		if i < echo_pulses.size():
-			var screen_pos = get_screen_position(echo_pulses[i].position)
+			# Calculate world position by adding relative offset to current player position
+			var world_pos = player.global_position + echo_pulses[i].relative_offset
+			var screen_pos = get_screen_position(world_pos)
 			positions.append(screen_pos)
 			intensities.append(echo_pulses[i].intensity)
 			radii.append(echo_pulses[i].radius)

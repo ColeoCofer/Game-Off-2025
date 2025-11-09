@@ -12,8 +12,8 @@ extends Node2D
 @export var cooldown_duration: float = 2.0  ## Time in seconds before the trap can trigger again
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-@onready var detection_area: Area2D = $DetectionArea
-@onready var detection_shape: CollisionShape2D = $DetectionArea/CollisionShape2D
+@onready var detection_area: Area2D = $Visuals/DetectionArea
+@onready var detection_shape: CollisionShape2D = $Visuals/DetectionArea/CollisionShape2D
 @onready var damage_area: Area2D = $Visuals/DamageArea
 @onready var damage_area2: Area2D = $Visuals/DamageArea2
 @onready var damage_area_top: Area2D = $Visuals/TopDamageArea

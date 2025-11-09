@@ -14,7 +14,7 @@ extends Node2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var detection_area: Area2D = $Visuals/DetectionArea
 @onready var detection_shape: CollisionShape2D = $Visuals/DetectionArea/CollisionShape2D
-@onready var damage_area: Area2D = $Visuals/DamageArea
+@onready var damage_area3: Area2D = $Visuals/DamageArea3
 @onready var damage_area2: Area2D = $Visuals/DamageArea2
 @onready var damage_area_top: Area2D = $Visuals/TopDamageArea
 
@@ -29,8 +29,8 @@ func _ready():
 		detection_area.body_exited.connect(_on_detection_area_body_exited)
 
 	# Set up damage areas
-	if damage_area:
-		damage_area.body_entered.connect(_on_damage_area_body_entered)
+	if damage_area3:
+		damage_area3.body_entered.connect(_on_damage_area_body_entered)
 	if damage_area2:
 		damage_area2.body_entered.connect(_on_damage_area_body_entered)
 	if damage_area_top:

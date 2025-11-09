@@ -18,8 +18,10 @@ func _ready() -> void:
 	# Signals are already connected in the scene file
 
 	# Set up focus navigation for settings panel
-	volume_slider.focus_neighbor_bottom = volume_slider.get_path_to(close_settings_button)
-	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(volume_slider)
+	volume_slider.focus_neighbor_bottom = volume_slider.get_path_to(timer_toggle)
+	timer_toggle.focus_neighbor_top = timer_toggle.get_path_to(volume_slider)
+	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(close_settings_button)
+	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(timer_toggle)
 
 	# Load settings
 	_load_settings()
@@ -72,7 +74,7 @@ func _input(event: InputEvent) -> void:
 
 	# Detect keyboard/controller input and enable navigation
 	elif event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		if not using_keyboard_nav and (event is InputEventKey or event is InputEventJoypadButton):
+		if not using_keyboard_nav and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
 			using_keyboard_nav = true
 			# Grab focus on appropriate button based on which panel is visible
 			if settings_panel.visible:

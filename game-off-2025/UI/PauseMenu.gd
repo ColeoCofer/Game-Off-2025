@@ -55,13 +55,23 @@ func _input(event):
 
 	# Navigate between buttons with up/down or W/S
 	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
-		current_button_index = (current_button_index + 1) % 3
+		current_button_index = (current_button_index + 1) % 5
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
-		current_button_index = (current_button_index - 1 + 3) % 3
+		current_button_index = (current_button_index - 1 + 5) % 5
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
+
+	# Handle left/right for volume slider
+	elif Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("left"):
+		if current_button_index == 4:  # Volume slider
+			volume_slider.value = max(volume_slider.min_value, volume_slider.value - 5.0)
+			get_viewport().set_input_as_handled()
+	elif Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("right"):
+		if current_button_index == 4:  # Volume slider
+			volume_slider.value = min(volume_slider.max_value, volume_slider.value + 5.0)
+			get_viewport().set_input_as_handled()
 
 	# Select button with space, enter, or controller A button
 	elif Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("jump"):
@@ -111,6 +121,10 @@ func _update_button_focus():
 		exit_button.grab_focus()
 	elif current_button_index == 2:
 		debug_toggle.grab_focus()
+	elif current_button_index == 3:
+		timer_toggle.grab_focus()
+	elif current_button_index == 4:
+		volume_slider.grab_focus()
 
 func _activate_current_button():
 	if current_button_index == 0:
@@ -121,6 +135,11 @@ func _activate_current_button():
 		# Toggle the debug checkbox
 		debug_toggle.button_pressed = !debug_toggle.button_pressed
 		_on_debug_toggle_toggled(debug_toggle.button_pressed)
+	elif current_button_index == 3:
+		# Toggle the timer checkbox
+		timer_toggle.button_pressed = !timer_toggle.button_pressed
+		_on_timer_toggle_toggled(timer_toggle.button_pressed)
+	# No action needed for volume slider on activate
 
 func _on_debug_toggle_toggled(toggled_on: bool):
 	DebugManager.debug_mode = toggled_on

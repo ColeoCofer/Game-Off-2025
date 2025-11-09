@@ -20,8 +20,9 @@ var current_run_level: String = ""
 # Start a new level run - clears temporary collection
 func start_level_run(level_name: String):
 	current_run_level = level_name
+	print("CLEARING firefly collection for level: %s (was: %s)" % [level_name, current_run_collected])
 	current_run_collected.clear()
-	print("Started new level run: %s" % level_name)
+	print("Started new level run: %s, collection now: %s" % [level_name, current_run_collected])
 
 # Collect/eat a firefly
 func collect_firefly(level_name: String, firefly_id: int):
@@ -65,7 +66,9 @@ func is_firefly_collected(level_name: String, firefly_id: int) -> bool:
 
 # Check if a firefly was collected in the current run (temporary)
 func is_firefly_collected_this_run(firefly_id: int) -> bool:
-	return firefly_id in current_run_collected
+	var result = firefly_id in current_run_collected
+	print("Checking firefly %d in run collection %s: %s" % [firefly_id, current_run_collected, result])
+	return result
 
 # Get array of collected firefly IDs for a level
 func get_collected_fireflies(level_name: String) -> Array:

@@ -89,15 +89,33 @@ func _on_play_again_button_pressed():
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
 
-	# Disable all cameras to prevent conflicts
+	# Disable all cameras to prevent conflicts during scene transition
 	_disable_all_cameras()
 
 	# Disable all firefly collisions to prevent them from re-collecting during transition
 	_disable_all_fireflies()
 
 	# Clear temporary firefly collection for this run (so they respawn)
-	if SceneManager.current_level != "":
-		FireflyCollectionManager.start_level_run(SceneManager.current_level)
+	# We do this AFTER disabling fireflies to prevent race condition
+	var level_name = SceneManager.current_level
+
+	# If SceneManager doesn't know the current level (e.g., opened directly in editor),
+	# try to extract it from the scene file path
+	if level_name == "":
+		var scene_path = get_tree().current_scene.scene_file_path
+		print("DEBUG DeathMenu: current_level empty, trying to extract from scene_path: %s" % scene_path)
+		# Extract level name from path like "res://Levels/level-3.tscn"
+		if scene_path.contains("level-"):
+			var filename = scene_path.get_file().get_basename()  # Gets "level-3" from "level-3.tscn"
+			level_name = filename
+			print("DEBUG DeathMenu: Extracted level name: %s" % level_name)
+
+	print("DEBUG DeathMenu: Final level_name = '%s'" % level_name)
+	if level_name != "":
+		print("DEBUG DeathMenu: Calling start_level_run for level: %s" % level_name)
+		FireflyCollectionManager.start_level_run(level_name)
+	else:
+		print("DEBUG DeathMenu: Could not determine level name, NOT clearing collection!")
 
 	# Remove the canvas layer from root before reloading
 	# (it won't be cleaned up automatically since it's attached to root, not the scene)
@@ -105,7 +123,7 @@ func _on_play_again_button_pressed():
 	if canvas_layer:
 		canvas_layer.queue_free()
 
-	# Use call_deferred and reload_current_scene for more reliable scene reload
+	# Use reload_current_scene for reliable camera/respawn behavior
 	get_tree().call_deferred("reload_current_scene")
 
 func _on_next_level_button_pressed():
@@ -216,13 +234,7 @@ func _disable_all_cameras():
 
 func _disable_all_fireflies():
 	"""Disable all firefly collision areas to prevent re-collection during scene transition"""
-	# Find all Area2D nodes in the current scene that might be fireflies
-	for node in get_tree().get_nodes_in_group("collectibles"):
-		if node is Area2D:
-			node.monitoring = false
-			node.monitorable = false
-
-	# Also try to find fireflies by type if they're not in a group
+	# Find all Area2D nodes that look like fireflies and disable their collision detection
 	for node in get_tree().current_scene.find_children("*", "Area2D", true, false):
 		# Check if this looks like a firefly (has the firefly_id export var)
 		if "firefly_id" in node:

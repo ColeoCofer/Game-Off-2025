@@ -478,7 +478,7 @@ position = Vector2(1138, 264)
 [node name="Fireflies" type="Node" parent="."]
 
 [node name="Firefly" parent="Fireflies" instance=ExtResource("7_ffstk")]
-position = Vector2(1104, 380)
+position = Vector2(1102, 380)
 firefly_id = 1
 
 [node name="Firefly2" parent="Fireflies" instance=ExtResource("7_ffstk")]

@@ -46,27 +46,24 @@ func _process(delta):
 		$PointLight2D.energy = glow_energy * pulse
 
 func _check_if_collected():
-	# Get current level name from SceneManager
-	var current_level = SceneManager.current_level
-	if current_level.is_empty():
-		return
-
-	# Check if this firefly was already PERMANENTLY collected (saved in previous runs)
-	# If permanently collected, don't spawn at all
-	if FireflyCollectionManager.is_firefly_collected(current_level, firefly_id):
-		is_collected = true
-		queue_free()  # Remove if already permanently collected
+	# Fireflies always spawn for replayability!
+	# They're only tracked temporarily within a single level attempt
+	# (We removed the permanent collection check so they're always fun to collect)
+	pass
 
 func _on_body_entered(body: Node2D):
 	# Check if the body that entered is the player
 	if is_collected:
+		print("Firefly %d: already marked as collected (is_collected=true)" % firefly_id)
 		return
 
 	# Check if already collected in this run (temporary collection)
 	if FireflyCollectionManager.is_firefly_collected_this_run(firefly_id):
+		print("Firefly %d: already in current_run_collected array" % firefly_id)
 		return
 
 	if body is PlatformerController2D:
+		print("Firefly %d: COLLECTING NOW!" % firefly_id)
 		# Mark as collected (temporarily)
 		is_collected = true
 

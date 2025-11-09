@@ -515,6 +515,12 @@ time_offset = 1.0
 [node name="Torch" parent="Objects" instance=ExtResource("11_vqiix")]
 position = Vector2(139, 368)
 
+[node name="Torch2" parent="Objects" instance=ExtResource("11_vqiix")]
+position = Vector2(1601, 225)
+
+[node name="Torch3" parent="Objects" instance=ExtResource("11_vqiix")]
+position = Vector2(2545, 225)
+
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
 position = Vector2(101, 375)
 jumpHeight = 2.2

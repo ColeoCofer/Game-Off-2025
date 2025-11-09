@@ -102,6 +102,8 @@ func trigger_hazard_death():
 	# Disable player control
 	player.set_physics_process(false)
 
+	# Camera will stay at death position (player doesn't move during animation)
+
 	# Death shader
 	_apply_death_shader()
 
@@ -152,6 +154,8 @@ func trigger_death():
 	# Disable player control
 	player.set_physics_process(false)
 
+	# Camera will stay at death position (player doesn't move during animation)
+
 	# Death shader
 	_apply_death_shader()
 
@@ -188,14 +192,13 @@ func _play_death_animation():
 	# Fade death shader progress
 	tween.tween_method(_update_death_shader, 0.0, 1.0, death_animation_duration)
 
-	# Rotate the player
+	# Rotate the player sprite
 	tween.tween_property(sprite, "rotation", TAU * rotation_speed, death_animation_duration)
 
-	# Shrink the player
+	# Shrink the player sprite
 	tween.tween_property(sprite, "scale", Vector2(0.3, 0.3), death_animation_duration)
 
-	# Make player fall
-	tween.tween_property(player, "position:y", player.position.y + fall_speed, death_animation_duration)
+	# Camera stays at death position (don't move player, just animate sprite)
 
 	# When animation completes, show death menu
 	tween.finished.connect(_finish_death)

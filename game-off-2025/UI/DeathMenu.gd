@@ -89,25 +89,34 @@ func _on_play_again_button_pressed():
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
 
-	# Clean up the death menu and its parent CanvasLayer before reloading
-	# This ensures the menu doesn't persist across scene changes
+	# Disable all cameras to prevent conflicts
+	_disable_all_cameras()
+
+	# Clear temporary firefly collection for this run (so they respawn)
+	if SceneManager.current_level != "":
+		FireflyCollectionManager.start_level_run(SceneManager.current_level)
+
+	# Remove the canvas layer from root before reloading
+	# (it won't be cleaned up automatically since it's attached to root, not the scene)
 	var canvas_layer = get_parent()
-	if canvas_layer is CanvasLayer:
+	if canvas_layer:
 		canvas_layer.queue_free()
 
-	SceneManager.reload_current_level()
+	# Use call_deferred and reload_current_scene for more reliable scene reload
+	get_tree().call_deferred("reload_current_scene")
 
 func _on_next_level_button_pressed():
 	next_level_pressed.emit()
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
 
-	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	# Remove the canvas layer from root before changing scenes
 	var canvas_layer = get_parent()
-	if canvas_layer is CanvasLayer:
+	if canvas_layer:
 		canvas_layer.queue_free()
 
-	SceneManager.next_level()
+	# Use call_deferred to ensure the scene change happens after cleanup
+	SceneManager.next_level.call_deferred()
 
 
 func _on_level_select_button_pressed():
@@ -115,12 +124,13 @@ func _on_level_select_button_pressed():
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
 
-	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	# Remove the canvas layer from root before changing scenes
 	var canvas_layer = get_parent()
-	if canvas_layer is CanvasLayer:
+	if canvas_layer:
 		canvas_layer.queue_free()
 
-	SceneManager.goto_level_select()
+	# Use call_deferred to ensure the scene change happens after cleanup
+	SceneManager.goto_level_select.call_deferred()
 
 
 func _on_exit_button_pressed():
@@ -129,12 +139,13 @@ func _on_exit_button_pressed():
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
 
-	# Clean up the death menu and its parent CanvasLayer before changing scenes
+	# Remove the canvas layer from root before changing scenes
 	var canvas_layer = get_parent()
-	if canvas_layer is CanvasLayer:
+	if canvas_layer:
 		canvas_layer.queue_free()
 
-	SceneManager.goto_main_menu()
+	# Use call_deferred to ensure the scene change happens after cleanup
+	SceneManager.goto_main_menu.call_deferred()
 
 func _input(event):
 	# Only handle input when menu is visible
@@ -193,3 +204,9 @@ func _activate_current_button():
 			0: _on_play_again_button_pressed()
 			1: _on_level_select_button_pressed()
 			2: _on_exit_button_pressed()
+
+func _disable_all_cameras():
+	"""Disable all Camera2D nodes in the scene tree to prevent conflicts during scene transition"""
+	for camera in get_tree().get_nodes_in_group("_camera2d"):
+		if camera is Camera2D:
+			camera.enabled = false

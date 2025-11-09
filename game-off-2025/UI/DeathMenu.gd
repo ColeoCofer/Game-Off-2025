@@ -88,7 +88,7 @@ func _on_play_again_button_pressed():
 	# Hide menu then reload
 	hide_menu()
 	await get_tree().create_timer(fade_out_duration).timeout
-	get_tree().reload_current_scene()
+	SceneManager.reload_current_level()
 
 func _on_next_level_button_pressed():
 	next_level_pressed.emit()

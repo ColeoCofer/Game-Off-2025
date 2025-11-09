@@ -474,7 +474,7 @@ position = Vector2(1495, 67)
 firefly_id = 2
 
 [node name="Firefly3" parent="fireflies" instance=ExtResource("7_rb4r8")]
-position = Vector2(1983, 60)
+position = Vector2(2741, 155)
 firefly_id = 3
 
 [node name="Butterflies" type="Node" parent="."]
@@ -512,7 +512,7 @@ position = Vector2(1295, 198)
 time_offset = 1.0
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(130, 372)
+position = Vector2(2722, 173)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

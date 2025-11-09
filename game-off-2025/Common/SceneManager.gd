@@ -87,6 +87,16 @@ func next_level() -> void:
 	goto_level_select()
 
 
+## Reload the current level (useful for death/restart)
+func reload_current_level() -> void:
+	if current_level == "":
+		return
+
+	# Reload by calling load_level with current level
+	# This ensures FireflyCollectionManager.start_level_run() is called to clear temp collections
+	load_level(current_level)
+
+
 ## Go to the main menu
 func goto_main_menu() -> void:
 	if is_transitioning:

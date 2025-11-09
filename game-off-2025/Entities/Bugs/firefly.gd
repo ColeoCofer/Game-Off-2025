@@ -11,6 +11,7 @@ signal firefly_collected(firefly_id: int)
 
 # Unique ID for this firefly in the level (0, 1, or 2)
 @export var firefly_id: int = 0
+@export var hunger_restore_amount: float = 50.0
 
 var time_passed: float = 0.0
 var initial_y: float = 0.0
@@ -68,6 +69,11 @@ func _on_body_entered(body: Node2D):
 	if body is PlatformerController2D:
 		# Mark as collected (temporarily)
 		is_collected = true
+
+		# Restore hunger
+		var hunger_manager = body.get_node_or_null("HungerManager")
+		if hunger_manager:
+			hunger_manager.consume_food(hunger_restore_amount)
 
 		# Save collection to manager (temporarily, until level completion)
 		var current_level = SceneManager.current_level

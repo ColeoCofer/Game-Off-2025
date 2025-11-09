@@ -92,6 +92,9 @@ func _on_play_again_button_pressed():
 	# Disable all cameras to prevent conflicts
 	_disable_all_cameras()
 
+	# Disable all firefly collisions to prevent them from re-collecting during transition
+	_disable_all_fireflies()
+
 	# Clear temporary firefly collection for this run (so they respawn)
 	if SceneManager.current_level != "":
 		FireflyCollectionManager.start_level_run(SceneManager.current_level)
@@ -210,3 +213,18 @@ func _disable_all_cameras():
 	for camera in get_tree().get_nodes_in_group("_camera2d"):
 		if camera is Camera2D:
 			camera.enabled = false
+
+func _disable_all_fireflies():
+	"""Disable all firefly collision areas to prevent re-collection during scene transition"""
+	# Find all Area2D nodes in the current scene that might be fireflies
+	for node in get_tree().get_nodes_in_group("collectibles"):
+		if node is Area2D:
+			node.monitoring = false
+			node.monitorable = false
+
+	# Also try to find fireflies by type if they're not in a group
+	for node in get_tree().current_scene.find_children("*", "Area2D", true, false):
+		# Check if this looks like a firefly (has the firefly_id export var)
+		if "firefly_id" in node:
+			node.monitoring = false
+			node.monitorable = false

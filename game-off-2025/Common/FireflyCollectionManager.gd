@@ -3,7 +3,7 @@ extends Node
 # FireflyCollectionManager - Handles firefly collection tracking and persistence
 # Works with SaveManager to store collected fireflies
 #
-# IMPORTANT: Fireflies are only permanently saved when the level is completed!
+# Note that Fireflies are only permanently saved when the level is completed
 # If the player dies, temporary collections are lost and fireflies respawn.
 
 # Signal emitted when a firefly is collected
@@ -14,7 +14,6 @@ signal all_fireflies_collected_in_level(level_name: String)
 const FIREFLIES_PER_LEVEL = 3
 
 # Temporary collection tracking for current level run
-# These are NOT saved permanently until level completion
 var current_run_collected: Array = []
 var current_run_level: String = ""
 
@@ -24,7 +23,7 @@ func start_level_run(level_name: String):
 	current_run_collected.clear()
 	print("Started new level run: %s" % level_name)
 
-# Collect a firefly (temporarily, until level completion)
+# Collect/eat a firefly
 func collect_firefly(level_name: String, firefly_id: int):
 	# Check if already collected in current run
 	if firefly_id in current_run_collected:

@@ -95,18 +95,18 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 			# Immediately disable BOTH detectors to prevent race conditions
 			if damage_detector:
-				damage_detector.monitoring = false
-				damage_detector.monitorable = false
+				damage_detector.set_deferred("monitoring", false)
+				damage_detector.set_deferred("monitorable", false)
 				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
-					collision_shape.disabled = true
+					collision_shape.set_deferred("disabled", true)
 
 			if stomp_detector:
-				stomp_detector.monitoring = false
-				stomp_detector.monitorable = false
+				stomp_detector.set_deferred("monitoring", false)
+				stomp_detector.set_deferred("monitorable", false)
 				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
-					collision_shape.disabled = true
+					collision_shape.set_deferred("disabled", true)
 
 			_die_from_stomp(body)
 
@@ -118,15 +118,15 @@ func _on_damage_detector_body_entered(body: Node2D):
 	if body.is_in_group("Player"):
 		# Immediately disable BOTH detectors to prevent race conditions
 		if damage_detector:
-			damage_detector.monitoring = false
-			damage_detector.monitorable = false
+			damage_detector.set_deferred("monitoring", false)
+			damage_detector.set_deferred("monitorable", false)
 			var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 			if collision_shape:
 				collision_shape.set_deferred("disabled", true)
 
 		if stomp_detector:
-			stomp_detector.monitoring = false
-			stomp_detector.monitorable = false
+			stomp_detector.set_deferred("monitoring", false)
+			stomp_detector.set_deferred("monitorable", false)
 			var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
 			if collision_shape:
 				collision_shape.set_deferred("disabled", true)
@@ -158,8 +158,8 @@ func _die_from_stomp(player: Node2D):
 	# (This is redundant with the immediate disable in _on_stomp_detector_body_entered,
 	# but kept as a safety measure)
 	if damage_detector:
-		damage_detector.monitoring = false
-		damage_detector.monitorable = false
+		damage_detector.set_deferred("monitoring", false)
+		damage_detector.set_deferred("monitorable", false)
 
 	# Apply death shader (same as player)
 	_apply_death_shader()

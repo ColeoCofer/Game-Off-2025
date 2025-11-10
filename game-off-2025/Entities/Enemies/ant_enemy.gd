@@ -84,12 +84,30 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not is_alive:
 		return
 
-	# Check if it's the player and they're above the ant
+	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Player must be above the ant's center
-		var player_is_above = body.global_position.y < global_position.y - 5  # 5 pixel tolerance
+		# Player must be falling (velocity.y > 0)
+		# and layer must be above the ant (bottom of player above top of ant)
+		var player_falling = false
+		if body is CharacterBody2D:
+			player_falling = body.velocity.y > 0  # Moving downward
 
-		if player_is_above:
+		# Get player's collision shape to check bottom edge
+		var player_bottom_y = body.global_position.y
+		if body.has_node("CollisionShape2D"):
+			var player_collision = body.get_node("CollisionShape2D")
+			if player_collision and player_collision.shape:
+				var shape = player_collision.shape
+				if shape is RectangleShape2D or shape is CapsuleShape2D:
+					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
+					player_bottom_y = body.global_position.y + (shape_height / 2.0)
+
+		# Ant's top is roughly at global_position.y - 6 (considering sprite offset)
+		var ant_top_y = global_position.y - 6
+		var player_is_above = player_bottom_y <= ant_top_y + 8  # Give some tolerance
+
+		# Valid stomp: player is falling AND above the ant
+		if player_falling and player_is_above:
 			# Immediately mark as dead FIRST to prevent any race conditions
 			is_alive = false
 
@@ -116,6 +134,29 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player - side collision kills them
 	if body.is_in_group("Player"):
+		# Don't kill player if they're clearly stomping from above! plz
+		# Player must be falling and above the player
+		var player_falling = false
+		if body is CharacterBody2D:
+			player_falling = body.velocity.y > 0
+
+		var player_bottom_y = body.global_position.y
+		if body.has_node("CollisionShape2D"):
+			var player_collision = body.get_node("CollisionShape2D")
+			if player_collision and player_collision.shape:
+				var shape = player_collision.shape
+				if shape is RectangleShape2D or shape is CapsuleShape2D:
+					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
+					player_bottom_y = body.global_position.y + (shape_height / 2.0)
+
+		var ant_top_y = global_position.y - 6
+		var is_stomp_scenario = player_falling and (player_bottom_y <= ant_top_y + 8)
+
+		# If this looks like a stomp, let the stomp detector handle it
+		if is_stomp_scenario:
+			return
+
+		# Otherwise, this is a legitimate side/bottom collision - kill the player
 		# Immediately disable BOTH detectors to prevent race conditions
 		if damage_detector:
 			damage_detector.set_deferred("monitoring", false)
@@ -156,7 +197,7 @@ func _die_from_stomp(player: Node2D):
 
 	# Disable damage detector so we don't hurt player after death
 	# (This is redundant with the immediate disable in _on_stomp_detector_body_entered,
-	# but kept as a safety measure)
+	# but kept as a safety measure... i guess)
 	if damage_detector:
 		damage_detector.set_deferred("monitoring", false)
 		damage_detector.set_deferred("monitorable", false)

@@ -98,6 +98,9 @@ func trigger_echolocation():
 	# Emit signal for UI update
 	cooldown_changed.emit(0.0, echolocation_cooldown)
 
+	# Emit signal for enemies to detect echolocation
+	echolocation_triggered.emit(player.global_position)
+
 func update_echo_pulses(delta: float):
 	# Update pulses: expand radius and fade over time
 	for i in range(echo_pulses.size() - 1, -1, -1):
@@ -167,3 +170,6 @@ func get_screen_position(world_pos: Vector2) -> Vector2:
 
 # Signal for UI updates
 signal cooldown_changed(current: float, maximum: float)
+
+# Signal for enemy detection (emitted when player uses echolocation)
+signal echolocation_triggered(player_position: Vector2)

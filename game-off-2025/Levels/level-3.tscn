@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://82s6sdfcovi7"]
+[gd_scene load_steps=23 format=4 uid="uid://82s6sdfcovi7"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bqy5xk8j1234" path="res://Entities/Enemies/ant_enemy.tscn" id="5_jfi0m"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
+[ext_resource type="PackedScene" uid="uid://dut7ugtlgkwnb" path="res://Entities/Enemies/blob_enemy.tscn" id="7_7ag1g"]
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="7_ffstk"]
 [ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="8_kpkdj"]
@@ -473,6 +474,9 @@ position = Vector2(714, 313)
 [node name="AntEnemy2" parent="Enemies" instance=ExtResource("5_jfi0m")]
 position = Vector2(1138, 264)
 
+[node name="BlobEnemy" parent="Enemies" instance=ExtResource("7_7ag1g")]
+position = Vector2(2003, 273)
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="Fireflies" type="Node" parent="."]
@@ -529,7 +533,7 @@ position = Vector2(1854, 224)
 position = Vector2(2134, 225)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(123, 372)
+position = Vector2(1841, 222)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

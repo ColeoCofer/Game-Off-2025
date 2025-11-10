@@ -32,6 +32,9 @@ var vulnerable_timer: float = 0.0
 var invincibility_timer: float = 0.0
 var is_flashing: bool = false
 
+# Immovable position
+var spawn_position: Vector2
+
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
@@ -42,6 +45,9 @@ var death_material: ShaderMaterial = null
 
 func _ready():
 	current_health = max_health
+
+	# Store spawn position so blob stays immovable
+	spawn_position = global_position
 
 	# Connect to echolocation manager
 	_connect_to_echolocation()
@@ -54,9 +60,14 @@ func _ready():
 	_enter_dormant_state()
 
 func _physics_process(delta: float):
+	# Keep blob completely immovable
+	velocity = Vector2.ZERO
+
 	# CharacterBody2D needs move_and_slide() to properly handle collisions
-	# Even if not moving, this makes it solid
 	move_and_slide()
+
+	# Reset position to prevent being pushed
+	global_position = spawn_position
 
 	match current_state:
 		State.DORMANT:
@@ -238,12 +249,12 @@ func _on_stomp_detector_body_entered(body: Node2D):
 		_take_damage(body)
 
 func _damage_player(player: Node2D):
-	# Find player's hunger manager
-	var hunger_manager = player.get_node_or_null("HungerManager")
-	if hunger_manager and hunger_manager.has_method("take_damage"):
-		hunger_manager.take_damage(15.0)
+	# Stomping on blob during shooting phase kills the player
+	var death_manager = player.get_node_or_null("DeathManager")
+	if death_manager and death_manager.has_method("trigger_enemy_death"):
+		death_manager.trigger_enemy_death()
 
-	# Still bounce the player
+	# Still bounce the player (death animation plays after)
 	if player is CharacterBody2D:
 		player.velocity.y = stomp_bounce_force
 

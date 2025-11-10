@@ -581,6 +581,9 @@ position = Vector2(40, 60)
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(724, 288)
 
+[node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
+position = Vector2(2159, 227)
+
 [node name="Butterfly3" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1655, 188)
 

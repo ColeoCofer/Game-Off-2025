@@ -91,11 +91,41 @@ func trigger_hazard_death():
 
 	if is_dead:
 		return
-		
+
 	TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "hazard"
+
+	# Stop walking sound
+	if player.has_method("_stopWalkingSound"):
+		player._stopWalkingSound()
+
+	# Disable player control
+	player.set_physics_process(false)
+
+	# Camera will stay at death position (player doesn't move during animation)
+
+	# Death shader
+	_apply_death_shader()
+
+	# Death animation
+	_play_death_animation()
+
+func trigger_enemy_death():
+	"""Called when player is killed by an enemy"""
+	# DEBUG MODE - TODO: Remove for production
+	if DebugManager.debug_mode:
+		print("DEBUG: Would have died from enemy, but debug mode is enabled")
+		return
+
+	if is_dead:
+		return
+
+	TimerManager.stop_timer()
+
+	is_dead = true
+	death_reason = "enemy"
 
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):

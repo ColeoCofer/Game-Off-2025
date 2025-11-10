@@ -77,6 +77,18 @@ tracks/5/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Visuals/DamageArea3/CollisionShape2D:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-39, 39)]
+}
 
 [sub_resource type="Animation" id="Animation_rm730"]
 resource_name = "fall"
@@ -148,10 +160,22 @@ tracks/5/path = NodePath("Visuals/DamageArea3/CollisionShape2D:disabled")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 5.41),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.8666667, 5.866667, 6.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [true, false]
+"values": [true, false, false, true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Visuals/DamageArea3/CollisionShape2D:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.96666664, 2.3666666, 3.0666666, 4.0666666, 4.6, 5.1666665),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-39, -32.84), Vector2(-39, -22.33), Vector2(-39, -14.75), Vector2(-39, 11.46), Vector2(-39, 29.33), Vector2(-39, 36.09)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_io7de"]

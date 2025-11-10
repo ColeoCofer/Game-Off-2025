@@ -435,6 +435,7 @@ shader_parameter/rotation_pivot = Vector2(0.5, 1)
 shader_parameter/brightness = 0.6
 
 [node name="Level2" type="Node2D"]
+metadata/_edit_lock_ = true
 
 [node name="TileMap" type="Node2D" parent="."]
 material = ExtResource("cave_bg_material")

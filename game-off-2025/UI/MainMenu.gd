@@ -86,5 +86,6 @@ func _input(event: InputEvent) -> void:
 
 	# Close settings with Escape key
 	if settings_panel.visible and event.is_action_pressed("ui_cancel"):
+		
 		_on_close_settings_pressed()
 		get_viewport().set_input_as_handled()

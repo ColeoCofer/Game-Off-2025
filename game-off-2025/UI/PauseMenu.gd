@@ -83,6 +83,10 @@ func show_menu():
 	is_paused = true
 	current_button_index = 0
 
+	debug_toggle.button_pressed = SaveManager.get_debug_mode()
+	timer_toggle.button_pressed = SaveManager.get_show_timer()
+	volume_slider.value = SaveManager.get_music_volume()
+	
 	# Pause the game
 	get_tree().paused = true
 

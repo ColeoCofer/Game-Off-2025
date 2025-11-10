@@ -103,8 +103,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stomp"]
 size = Vector2(25, 6)
 
-[node name="BlobEnemy" type="CharacterBody2D" groups=["Enemy"]]
-collision_layer = 2
+[node name="BlobEnemy" type="StaticBody2D" groups=["Enemy"]]
+collision_layer = 3
+collision_mask = 0
 script = ExtResource("1_blob_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -121,5 +122,5 @@ polygon = PackedVector2Array(3.0000005, 13, -5, 8, -8, -0.99999964, -5, -9, 2.99
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
-position = Vector2(1, -9)
+position = Vector2(1, -10)
 shape = SubResource("RectangleShape2D_stomp")

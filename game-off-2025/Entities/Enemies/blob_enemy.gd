@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends StaticBody2D
 
 # Enemy states
 enum State { DORMANT, SHOOTING, VULNERABLE, INVINCIBLE }
@@ -32,9 +32,6 @@ var vulnerable_timer: float = 0.0
 var invincibility_timer: float = 0.0
 var is_flashing: bool = false
 
-# Immovable position
-var spawn_position: Vector2
-
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
@@ -46,9 +43,6 @@ var death_material: ShaderMaterial = null
 func _ready():
 	current_health = max_health
 
-	# Store spawn position so blob stays immovable
-	spawn_position = global_position
-
 	# Connect to echolocation manager
 	_connect_to_echolocation()
 
@@ -59,16 +53,8 @@ func _ready():
 	# Start in dormant state
 	_enter_dormant_state()
 
-func _physics_process(delta: float):
-	# Keep blob completely immovable
-	velocity = Vector2.ZERO
-
-	# CharacterBody2D needs move_and_slide() to properly handle collisions
-	move_and_slide()
-
-	# Reset position to prevent being pushed
-	global_position = spawn_position
-
+func _process(delta: float):
+	# StaticBody2D doesn't need physics processing, just state updates
 	match current_state:
 		State.DORMANT:
 			_process_dormant(delta)
@@ -220,16 +206,21 @@ func _schedule_return_to_idle():
 # ============================================================
 
 func _on_stomp_detector_body_entered(body: Node2D):
+	print("StompDetector triggered by: ", body.name)
+
 	# Check if it's the player
 	if not (body.is_in_group("Player") or body is PlatformerController2D):
+		print("  Not the player, ignoring")
 		return
 
-	# Verify player is falling
+	# Verify player is falling or just landed (velocity.y >= 0 instead of > 0)
 	var player_falling = false
 	if body is CharacterBody2D:
-		player_falling = body.velocity.y > 0
+		player_falling = body.velocity.y >= -50  # Allow small upward velocity too (landing tolerance)
 
+	print("  Player falling: ", player_falling, " (velocity.y: ", body.velocity.y if body is CharacterBody2D else "N/A", ")")
 	if not player_falling:
+		print("  Player not falling, ignoring stomp")
 		return
 
 	# Check spatial position (player must be above)
@@ -237,16 +228,23 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	var blob_top_y = global_position.y - 8
 	var player_is_above = player_bottom_y <= blob_top_y + 8
 
+	print("  Player position check - bottom: ", player_bottom_y, " blob top: ", blob_top_y, " is_above: ", player_is_above)
 	if not player_is_above:
+		print("  Player not above blob, ignoring")
 		return
 
 	# Valid stomp detected - check state
+	print("  Valid stomp! Current state: ", current_state)
 	if current_state == State.SHOOTING:
+		print("  Blob is SHOOTING - killing player!")
 		# Dangerous to stomp during shooting - damage player
 		_damage_player(body)
 	elif current_state == State.VULNERABLE and not is_invincible:
+		print("  Blob is VULNERABLE - damaging blob!")
 		# Safe to stomp during vulnerable window
 		_take_damage(body)
+	else:
+		print("  Blob state prevents stomp (state: ", current_state, " invincible: ", is_invincible, ")")
 
 func _damage_player(player: Node2D):
 	# Stomping on blob during shooting phase kills the player

@@ -70,3 +70,9 @@ func _on_level_completed(level_name: String, completion_time: float) -> void:
 	# Stop the timer when level is completed
 	if current_timer_ui and current_timer_ui.has_method("stop_timer"):
 		current_timer_ui.stop_timer()
+
+func stop_timer() -> void:
+	# Stop the timer when level is completed
+	if current_timer_ui and current_timer_ui.has_method("stop_timer"):
+		current_timer_ui.stop_timer()
+		

@@ -91,6 +91,8 @@ func trigger_hazard_death():
 
 	if is_dead:
 		return
+		
+	TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "hazard"
@@ -124,6 +126,8 @@ func trigger_fall_death():
 
 	if is_dead:
 		return
+		
+	TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "fall"
@@ -146,6 +150,8 @@ func trigger_fall_death():
 func trigger_death():
 	is_dead = true
 	death_reason = "starvation"
+	
+	TimerManager.stop_timer()
 
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):

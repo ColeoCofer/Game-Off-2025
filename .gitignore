@@ -15,5 +15,5 @@ export_credentials.cfg
 data_*/
 mono_crash.*.json
 
-# Claude Code documentation (auto-generated)
 CLAUDE.md
+.DS_Store

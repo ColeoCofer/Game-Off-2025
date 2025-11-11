@@ -7,6 +7,8 @@ enum State { DORMANT, SHOOTING, VULNERABLE }
 @export var max_health: int = 1  # Only takes 1 hit to kill
 @export var aggro_radius: float = 300.0  # Start shooting when player this close
 @export var shots_per_burst: int = 3
+@export var projectiles_per_shot: int = 1  # Number of projectiles fired simultaneously
+@export var projectile_spread_angle: float = 15.0  # Degrees between simultaneous projectiles
 @export var shot_interval_min: float = 0.8
 @export var shot_interval_max: float = 1.5
 @export var vulnerable_duration: float = 2.0
@@ -149,13 +151,31 @@ func _fire_projectile():
 	if not player:
 		return
 
-	# Spawn projectile FIRST
-	var projectile = projectile_scene.instantiate()
-	get_parent().add_child(projectile)
-	projectile.global_position = global_position + projectile_spawn_offset
+	# Calculate direction to player
+	var direction_to_player = (player.global_position - global_position).normalized()
+	var base_angle = direction_to_player.angle()
 
-	# Launch at player with configured arc
-	projectile.launch_at_target(player.global_position, projectile_arc)
+	# Fire multiple projectiles if configured
+	for i in range(projectiles_per_shot):
+		# Spawn projectile
+		var projectile = projectile_scene.instantiate()
+		get_parent().add_child(projectile)
+		projectile.global_position = global_position + projectile_spawn_offset
+
+		# Calculate spread angle for this projectile
+		var angle_offset = 0.0
+		if projectiles_per_shot > 1:
+			# Center the spread around the base angle
+			var total_spread = projectile_spread_angle * (projectiles_per_shot - 1)
+			angle_offset = deg_to_rad(-total_spread / 2.0 + i * projectile_spread_angle)
+
+		# Calculate target position with angle offset
+		var spread_direction = Vector2.from_angle(base_angle + angle_offset)
+		var distance = global_position.distance_to(player.global_position)
+		var target_position = global_position + spread_direction * distance
+
+		# Launch at adjusted target with configured arc
+		projectile.launch_at_target(target_position, projectile_arc)
 
 	# Play shoot animation (don't wait for it to finish)
 	if animated_sprite:

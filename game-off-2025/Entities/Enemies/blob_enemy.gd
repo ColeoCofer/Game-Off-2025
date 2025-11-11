@@ -12,6 +12,7 @@ enum State { DORMANT, SHOOTING, VULNERABLE }
 @export var vulnerable_duration: float = 2.0
 @export var projectile_scene: PackedScene = preload("res://Entities/Enemies/blob_projectile.tscn")
 @export var projectile_spawn_offset: Vector2 = Vector2(0, -10)
+@export var projectile_arc: float = 10.0  # Lower = flatter trajectory
 @export var stomp_bounce_force: float = -300.0
 
 # Death animation settings
@@ -153,8 +154,8 @@ func _fire_projectile():
 	get_parent().add_child(projectile)
 	projectile.global_position = global_position + projectile_spawn_offset
 
-	# Launch at player
-	projectile.launch_at_target(player.global_position)
+	# Launch at player with configured arc
+	projectile.launch_at_target(player.global_position, projectile_arc)
 
 	# Play shoot animation (don't wait for it to finish)
 	if animated_sprite:

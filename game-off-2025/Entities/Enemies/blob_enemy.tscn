@@ -107,6 +107,10 @@ size = Vector2(25, 6)
 collision_layer = 3
 collision_mask = 0
 script = ExtResource("1_blob_script")
+aggro_radius = 200.0
+shot_interval_min = 0.6
+vulnerable_duration = 1.5
+projectile_arc = -20.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -6)

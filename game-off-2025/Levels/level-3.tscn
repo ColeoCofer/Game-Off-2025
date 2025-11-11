@@ -545,7 +545,7 @@ position = Vector2(1855, 225)
 position = Vector2(2335, 240)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(2132, 106)
+position = Vector2(122, 373)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

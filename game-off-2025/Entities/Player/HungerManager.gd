@@ -37,19 +37,12 @@ func consume_food(amount: float):
 	food_consumed.emit(amount)
 
 func take_damage(amount: float):
-	print("HungerManager.take_damage called!")
-	print("  Amount: ", amount)
-	print("  Current hunger BEFORE: ", current_hunger)
-
 	# Reduce hunger when taking damage
 	current_hunger = max(current_hunger - amount, min_hunger)
-
-	print("  Current hunger AFTER: ", current_hunger)
 	hunger_changed.emit(current_hunger, max_hunger)
 
 	# Check if hunger depleted
 	if current_hunger <= min_hunger:
-		print("  Hunger depleted! Emitting signal...")
 		hunger_depleted.emit()
 
 func set_depletion_active(active: bool):

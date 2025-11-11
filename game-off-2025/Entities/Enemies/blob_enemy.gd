@@ -70,9 +70,6 @@ func _connect_to_echolocation():
 	echolocation_manager = get_tree().get_first_node_in_group("echolocation_manager")
 	if echolocation_manager:
 		echolocation_manager.echolocation_triggered.connect(_on_echolocation_triggered)
-		print("Blob connected to echolocation manager")
-	else:
-		print("Warning: Blob could not find echolocation manager")
 
 func _on_echolocation_triggered(player_position: Vector2):
 	# Only react if dormant
@@ -81,15 +78,10 @@ func _on_echolocation_triggered(player_position: Vector2):
 
 	# Check if player is within wake radius
 	var distance = global_position.distance_to(player_position)
-	print("Blob: Echolocation detected! Distance: ", distance, " / ", wake_radius)
 	if distance <= wake_radius:
-		print("Blob: Waking up!")
 		_wake_up()
-	else:
-		print("Blob: Too far away to wake up")
 
 func _wake_up():
-	print("Blob waking up!")
 	_enter_shooting_state()
 
 # ============================================================
@@ -170,21 +162,17 @@ func _process_invincible(delta: float):
 
 func _fire_projectile():
 	if not projectile_scene:
-		print("Blob: No projectile scene loaded!")
 		return
 
 	# Find player
 	var player = get_tree().get_first_node_in_group("Player")
 	if not player:
-		print("Blob: No player found!")
 		return
 
 	# Spawn projectile FIRST
 	var projectile = projectile_scene.instantiate()
 	get_parent().add_child(projectile)
 	projectile.global_position = global_position + projectile_spawn_offset
-
-	print("Blob: Spawned projectile at ", projectile.global_position)
 
 	# Launch at player
 	projectile.launch_at_target(player.global_position)
@@ -206,11 +194,8 @@ func _schedule_return_to_idle():
 # ============================================================
 
 func _on_stomp_detector_body_entered(body: Node2D):
-	print("StompDetector triggered by: ", body.name)
-
 	# Check if it's the player
 	if not (body.is_in_group("Player") or body is PlatformerController2D):
-		print("  Not the player, ignoring")
 		return
 
 	# Verify player is falling or just landed (velocity.y >= 0 instead of > 0)
@@ -218,9 +203,7 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if body is CharacterBody2D:
 		player_falling = body.velocity.y >= -50  # Allow small upward velocity too (landing tolerance)
 
-	print("  Player falling: ", player_falling, " (velocity.y: ", body.velocity.y if body is CharacterBody2D else "N/A", ")")
 	if not player_falling:
-		print("  Player not falling, ignoring stomp")
 		return
 
 	# Check spatial position (player must be above)
@@ -228,23 +211,16 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	var blob_top_y = global_position.y - 8
 	var player_is_above = player_bottom_y <= blob_top_y + 8
 
-	print("  Player position check - bottom: ", player_bottom_y, " blob top: ", blob_top_y, " is_above: ", player_is_above)
 	if not player_is_above:
-		print("  Player not above blob, ignoring")
 		return
 
 	# Valid stomp detected - check state
-	print("  Valid stomp! Current state: ", current_state)
 	if current_state == State.SHOOTING:
-		print("  Blob is SHOOTING - killing player!")
 		# Dangerous to stomp during shooting - damage player
 		_damage_player(body)
 	elif current_state == State.VULNERABLE and not is_invincible:
-		print("  Blob is VULNERABLE - damaging blob!")
 		# Safe to stomp during vulnerable window
 		_take_damage(body)
-	else:
-		print("  Blob state prevents stomp (state: ", current_state, " invincible: ", is_invincible, ")")
 
 func _damage_player(player: Node2D):
 	# Stomping on blob during shooting phase kills the player

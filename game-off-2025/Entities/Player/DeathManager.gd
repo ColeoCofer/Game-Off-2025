@@ -47,7 +47,6 @@ func _physics_process(_delta):
 func _on_hunger_depleted():
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		print("DEBUG: Would have died from hunger, but debug mode is enabled")
 		return
 
 	if not is_dead:
@@ -86,7 +85,6 @@ func trigger_hazard_death():
 	"""Called when player touches a hazard (spikes, etc.)"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		print("DEBUG: Would have died from hazard, but debug mode is enabled")
 		return
 
 	if is_dead:
@@ -116,7 +114,6 @@ func trigger_enemy_death():
 	"""Called when player is killed by an enemy"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		print("DEBUG: Would have died from enemy, but debug mode is enabled")
 		return
 
 	if is_dead:
@@ -146,7 +143,6 @@ func trigger_fall_death():
 	"""Called when player falls too far"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		print("DEBUG: Would have died from falling, but debug mode is enabled - resetting position")
 		# Reset player to starting position
 		player.position = starting_position
 		player.velocity = Vector2.ZERO

@@ -477,6 +477,9 @@ position = Vector2(1138, 264)
 [node name="BlobEnemy" parent="Enemies" instance=ExtResource("7_7ag1g")]
 position = Vector2(2003, 273)
 
+[node name="BlobEnemy2" parent="Enemies" instance=ExtResource("7_7ag1g")]
+position = Vector2(635, 272)
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="Fireflies" type="Node" parent="."]
@@ -533,7 +536,7 @@ position = Vector2(1854, 224)
 position = Vector2(2134, 225)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(1841, 222)
+position = Vector2(120, 374)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]

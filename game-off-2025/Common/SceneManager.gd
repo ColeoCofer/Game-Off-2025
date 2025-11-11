@@ -227,16 +227,12 @@ func reset_level_timer() -> void:
 ## Detect when a level scene is reloaded (after death/restart)
 func _on_node_added(node: Node) -> void:
 	# Check if this is the root of a level scene being loaded
-	print("DEBUG SceneManager._on_node_added: node=%s, current_level='%s', is_current_scene=%s" % [node.name, current_level, node == get_tree().current_scene])
 	if current_level != "" and node == get_tree().current_scene:
 		# Check if we're in a level by looking for the level path
 		var level_info = get_level_info(current_level)
-		print("DEBUG SceneManager: level_info=%s" % level_info)
 		if level_info != null:
 			var scene_path = node.scene_file_path
-			print("DEBUG SceneManager: scene_path='%s', expected='%s'" % [scene_path, level_info["path"]])
 			if scene_path == level_info["path"]:
-				print("DEBUG SceneManager: Scene reload detected! Clearing firefly collection...")
 				# Level was reloaded, reset the timer
 				reset_level_timer()
 				# Clear temporary firefly collection (player died/restarted)

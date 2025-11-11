@@ -148,10 +148,6 @@ func _activate_current_button():
 func _on_debug_toggle_toggled(toggled_on: bool):
 	DebugManager.debug_mode = toggled_on
 	SaveManager.set_debug_mode(toggled_on)
-	if DebugManager.debug_mode:
-		print("DEBUG MODE ENABLED - Player is invincible")
-	else:
-		print("DEBUG MODE DISABLED - Player can die normally")
 
 func _on_volume_slider_value_changed(value: float):
 	BackgroundMusic.set_volume(value)

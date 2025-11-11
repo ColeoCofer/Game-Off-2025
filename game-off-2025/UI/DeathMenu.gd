@@ -103,19 +103,13 @@ func _on_play_again_button_pressed():
 	# try to extract it from the scene file path
 	if level_name == "":
 		var scene_path = get_tree().current_scene.scene_file_path
-		print("DEBUG DeathMenu: current_level empty, trying to extract from scene_path: %s" % scene_path)
 		# Extract level name from path like "res://Levels/level-3.tscn"
 		if scene_path.contains("level-"):
 			var filename = scene_path.get_file().get_basename()  # Gets "level-3" from "level-3.tscn"
 			level_name = filename
-			print("DEBUG DeathMenu: Extracted level name: %s" % level_name)
 
-	print("DEBUG DeathMenu: Final level_name = '%s'" % level_name)
 	if level_name != "":
-		print("DEBUG DeathMenu: Calling start_level_run for level: %s" % level_name)
 		FireflyCollectionManager.start_level_run(level_name)
-	else:
-		print("DEBUG DeathMenu: Could not determine level name, NOT clearing collection!")
 
 	# Remove the canvas layer from root before reloading
 	# (it won't be cleaned up automatically since it's attached to root, not the scene)

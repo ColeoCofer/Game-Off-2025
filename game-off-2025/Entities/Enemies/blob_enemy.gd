@@ -4,9 +4,9 @@ extends StaticBody2D
 enum State { DORMANT, SHOOTING, VULNERABLE }
 
 # Export variables
-@export var max_health: int = 1  # Only takes 1 hit to kill
-@export var aggro_radius: float = 300.0  # Start shooting when player this close
-@export var shots_per_burst: int = 3
+@export var max_health: int = 1  # Only takes 1 hit to kill (I think I broke this)
+@export var aggro_radius: float = 300.0  # Start shooting when player this close (should just use a collision area TBH)
+@export var shots_per_burst: int = 3 # E.g. shoots three balls and then waits a second to give player opppurtinity to attack
 @export var projectiles_per_shot: int = 1  # Number of projectiles fired simultaneously
 @export var projectile_spread_angle: float = 15.0  # Degrees between simultaneous projectiles
 @export var shot_interval_min: float = 0.8
@@ -14,8 +14,8 @@ enum State { DORMANT, SHOOTING, VULNERABLE }
 @export var vulnerable_duration: float = 2.0
 @export var projectile_scene: PackedScene = preload("res://Entities/Enemies/blob_projectile.tscn")
 @export var projectile_spawn_offset: Vector2 = Vector2(0, -10)
-@export var projectile_arc: float = 10.0  # Lower = flatter trajectory
-@export var stomp_bounce_force: float = -300.0
+@export var projectile_arc: float = 10.0  # Lower = flatter trajectory (even negative)
+@export var stomp_bounce_force: float = -300.0 # (yeet the player a little bit)
 
 # Death animation settings
 @export var death_animation_duration: float = 2.0
@@ -35,7 +35,7 @@ var is_dead: bool = false
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
 
-# Death shader
+# Death shader (TODO: This doesn't look that good really)
 var death_material: ShaderMaterial = null
 
 func _ready():
@@ -91,6 +91,7 @@ func _check_player_proximity():
 
 func _enter_dormant_state():
 	current_state = State.DORMANT
+	# Could revert to idle frame instead of stopping... 
 	if animated_sprite:
 		animated_sprite.stop()
 
@@ -135,7 +136,7 @@ func _process_vulnerable(delta: float):
 	vulnerable_timer += delta
 
 	if vulnerable_timer >= vulnerable_duration:
-		# Vulnerable period over, start shooting again
+		# Vulnerable period over, start rippin again
 		_enter_shooting_state()
 
 # ============================================================
@@ -152,7 +153,7 @@ func _fire_projectile():
 		return
 
 	# Calculate direction to player
-	var direction_to_player = (player.global_position - global_position).normalized()
+	var direction_to_player = (player.global_position - global_position).normalized() # Vector of length 1 pointing at player
 	var base_angle = direction_to_player.angle()
 
 	# Fire multiple projectiles if configured
@@ -160,9 +161,9 @@ func _fire_projectile():
 		# Spawn projectile
 		var projectile = projectile_scene.instantiate()
 		get_parent().add_child(projectile)
-		projectile.global_position = global_position + projectile_spawn_offset
+		projectile.global_position = global_position + projectile_spawn_offset # Offset so it looks like it's coming out of the blob
 
-		# Calculate spread angle for this projectile
+		# Calculate spread angle (for multiple objects)
 		var angle_offset = 0.0
 		if projectiles_per_shot > 1:
 			# Center the spread around the base angle
@@ -198,7 +199,7 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not (body.is_in_group("Player") or body is PlatformerController2D):
 		return
 
-	# Verify player is falling or just landed (velocity.y >= 0 instead of > 0)
+	# Verify player is falling or just landed (e.g. velocity.y >= 0 instead of > 0)
 	var player_falling = false
 	if body is CharacterBody2D:
 		player_falling = body.velocity.y >= -50  # Allow small upward velocity too (landing tolerance)

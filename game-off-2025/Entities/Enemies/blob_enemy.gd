@@ -1,17 +1,15 @@
 extends StaticBody2D
 
 # Enemy states
-enum State { DORMANT, SHOOTING, VULNERABLE, INVINCIBLE }
+enum State { DORMANT, SHOOTING, VULNERABLE }
 
 # Export variables
-@export var max_health: int = 3
-@export var wake_radius: float = 200.0 # How far away can it be woken up
-@export var shots_per_burst: int = 3 # 3 shots before a short break
+@export var max_health: int = 1  # Only takes 1 hit to kill
+@export var aggro_radius: float = 300.0  # Start shooting when player this close
+@export var shots_per_burst: int = 3
 @export var shot_interval_min: float = 0.8
 @export var shot_interval_max: float = 1.5
 @export var vulnerable_duration: float = 2.0
-@export var invincibility_duration: float = 0.5 # So the player can't just reck it 
-@export var flash_speed: float = 0.1 # Blob get's hit flash
 @export var projectile_scene: PackedScene = preload("res://Entities/Enemies/blob_projectile.tscn")
 @export var projectile_spawn_offset: Vector2 = Vector2(0, -10)
 @export var stomp_bounce_force: float = -150.0
@@ -24,27 +22,20 @@ enum State { DORMANT, SHOOTING, VULNERABLE, INVINCIBLE }
 
 # Internal state
 var current_state: State = State.DORMANT
-var current_health: int = 3
-var is_invincible: bool = false
+var current_health: int = 1
 var shots_fired: int = 0
 var shot_timer: float = 0.0
 var vulnerable_timer: float = 0.0
-var invincibility_timer: float = 0.0
-var is_flashing: bool = false
 
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
-@onready var echolocation_manager: Node = null
 
 # Death shader
 var death_material: ShaderMaterial = null
 
 func _ready():
 	current_health = max_health
-
-	# Connect to echolocation manager
-	_connect_to_echolocation()
 
 	# Connect stomp detector
 	if stomp_detector:
@@ -54,7 +45,10 @@ func _ready():
 	_enter_dormant_state()
 
 func _process(delta: float):
-	# StaticBody2D doesn't need physics processing, just state updates
+	# Check player proximity to activate/deactivate
+	_check_player_proximity()
+
+	# Process current state
 	match current_state:
 		State.DORMANT:
 			_process_dormant(delta)
@@ -62,27 +56,26 @@ func _process(delta: float):
 			_process_shooting(delta)
 		State.VULNERABLE:
 			_process_vulnerable(delta)
-		State.INVINCIBLE:
-			_process_invincible(delta)
 
-func _connect_to_echolocation():
-	# Find the echolocation manager in the scene tree (it's in the echolocation_manager group)
-	echolocation_manager = get_tree().get_first_node_in_group("echolocation_manager")
-	if echolocation_manager:
-		echolocation_manager.echolocation_triggered.connect(_on_echolocation_triggered)
-
-func _on_echolocation_triggered(player_position: Vector2):
-	# Only react if dormant
-	if current_state != State.DORMANT:
+func _check_player_proximity():
+	# Find player
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player:
 		return
 
-	# Check if player is within wake radius
-	var distance = global_position.distance_to(player_position)
-	if distance <= wake_radius:
-		_wake_up()
+	# Check distance to player
+	var distance = global_position.distance_to(player.global_position)
+	var player_in_range = distance <= aggro_radius
 
-func _wake_up():
-	_enter_shooting_state()
+	# State transitions based on proximity
+	if player_in_range:
+		# Player entered aggro range - start shooting if dormant
+		if current_state == State.DORMANT:
+			_enter_shooting_state()
+	else:
+		# Player left aggro range - go dormant if currently active
+		if current_state == State.SHOOTING or current_state == State.VULNERABLE:
+			_enter_dormant_state()
 
 # ============================================================
 # STATE MANAGEMENT
@@ -108,20 +101,12 @@ func _enter_vulnerable_state():
 	if animated_sprite:
 		animated_sprite.play("idle")
 
-func _enter_invincible_state():
-	current_state = State.INVINCIBLE
-	is_invincible = true
-	invincibility_timer = 0.0
-
-	# Start flash effect
-	_start_flash()
-
 # ============================================================
 # STATE PROCESSING
 # ============================================================
 
 func _process_dormant(delta: float):
-	# Wait for echolocation signal
+	# Just wait - proximity detection in _check_player_proximity() handles activation
 	pass
 
 func _process_shooting(delta: float):
@@ -143,17 +128,6 @@ func _process_vulnerable(delta: float):
 
 	if vulnerable_timer >= vulnerable_duration:
 		# Vulnerable period over, start shooting again
-		_enter_shooting_state()
-
-func _process_invincible(delta: float):
-	invincibility_timer += delta
-
-	if invincibility_timer >= invincibility_duration:
-		# Invincibility over
-		is_invincible = false
-		_stop_flash()
-
-		# Return to shooting state immediately
 		_enter_shooting_state()
 
 # ============================================================
@@ -214,31 +188,10 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not player_is_above:
 		return
 
-	# Valid stomp detected - check state
-	if current_state == State.SHOOTING:
-		# Dangerous to stomp during shooting - damage player
-		_damage_player(body)
-	elif current_state == State.VULNERABLE and not is_invincible:
-		# Safe to stomp during vulnerable window
-		_take_damage(body)
-
-func _damage_player(player: Node2D):
-	# Stomping on blob during shooting phase kills the player
-	var death_manager = player.get_node_or_null("DeathManager")
-	if death_manager and death_manager.has_method("trigger_enemy_death"):
-		death_manager.trigger_enemy_death()
-
-	# Still bounce the player (death animation plays after)
-	if player is CharacterBody2D:
-		player.velocity.y = stomp_bounce_force
+	# Valid stomp detected - always kill blob (1 hit kill)
+	_take_damage(body)
 
 func _take_damage(player: Node2D):
-	if is_invincible:
-		return
-
-	# Reduce health
-	current_health -= 1
-
 	# Hitstop effect
 	HitStop.activate(0.03)
 
@@ -246,45 +199,15 @@ func _take_damage(player: Node2D):
 	if player is CharacterBody2D:
 		player.velocity.y = stomp_bounce_force
 
-	# Check if dead
-	if current_health <= 0:
-		_die_from_stomp()
-	else:
-		# Play hurt reaction
-		_play_squash_effect()
-		_enter_invincible_state()
+	# Play squash effect then die
+	_play_squash_effect()
+	# Die immediately (1 hit kill)
+	await get_tree().create_timer(squash_duration).timeout
+	_die_from_stomp()
 
 # ============================================================
 # VISUAL EFFECTS
 # ============================================================
-
-func _start_flash():
-	is_flashing = true
-	_flash_loop()
-
-func _stop_flash():
-	is_flashing = false
-	if animated_sprite:
-		animated_sprite.modulate = Color.WHITE
-
-func _flash_loop():
-	if not is_flashing or not animated_sprite:
-		return
-
-	# Flash white
-	animated_sprite.modulate = Color(2.0, 2.0, 2.0, 1.0)
-	await get_tree().create_timer(flash_speed).timeout
-
-	if not is_flashing or not animated_sprite:
-		return
-
-	# Flash normal
-	animated_sprite.modulate = Color.WHITE
-	await get_tree().create_timer(flash_speed).timeout
-
-	# Continue loop
-	if is_flashing:
-		_flash_loop()
 
 func _play_squash_effect():
 	if not animated_sprite:

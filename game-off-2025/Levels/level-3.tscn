@@ -502,15 +502,12 @@ firefly_id = 3
 
 [node name="SteamVent" parent="Objects" instance=ExtResource("9_sus6d")]
 position = Vector2(248, 364)
-boost_force = -475.0
 
 [node name="SteamVent2" parent="Objects" instance=ExtResource("9_sus6d")]
 position = Vector2(63, 524)
-boost_force = -475.0
 
 [node name="SteamVent3" parent="Objects" instance=ExtResource("9_sus6d")]
 position = Vector2(2087, 237)
-boost_force = -475.0
 
 [node name="MovingPlank" parent="Objects" instance=ExtResource("5_6p1x0")]
 position = Vector2(438, 254)
@@ -542,7 +539,7 @@ position = Vector2(1855, 225)
 position = Vector2(2335, 240)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(116, 373)
+position = Vector2(122, 357)
 jumpHeight = 2.2
 
 [node name="Foreground" type="Node2D" parent="."]
@@ -557,6 +554,7 @@ tile_set = ExtResource("2_n4bx7")
 
 [node name="EcholocationManager" type="CanvasLayer" parent="." groups=["echolocation_manager"]]
 script = ExtResource("3_r041s")
+echolocation_mode = 1
 vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0

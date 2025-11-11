@@ -8,7 +8,8 @@ extends Node2D
 @export var min_interval: float = 2.0
 @export var max_interval: float = 5.0
 @export var emission_duration: float = 1.0
-@export var boost_force: float = -400.0  ## Ah yes its gotta be negative 
+@export var base_boost_force: float = -500.0  ## Base boost when player is standing/falling
+@export var jump_boost_multiplier: float = 1.3  ## Multiplier applied to existing jump velocity 
 
 var is_emitting: bool = false
 
@@ -70,7 +71,14 @@ func _on_body_entered(body: Node2D) -> void:
 		print("Player detected! Applying boost...")
 		# Apply upward boost to the player
 		if body is CharacterBody2D:
-			body.velocity.y = boost_force
-			print("Boost applied: ", boost_force)
+			# Check if player is already jumping (has upward velocity)
+			if body.velocity.y < -50.0:  # Player is moving upward (jumping)
+				# Apply multiplier to existing jump velocity for a smaller boost
+				body.velocity.y *= jump_boost_multiplier
+				print("Jump boost applied: velocity.y = ", body.velocity.y)
+			else:  # Player is standing, falling, or barely moving
+				# Apply full base boost force
+				body.velocity.y = base_boost_force
+				print("Base boost applied: ", base_boost_force)
 		else:
 			print("Body is not CharacterBody2D, it's: ", body.get_class())

@@ -1,10 +1,20 @@
 extends CanvasLayer
 
+# Echolocation mode
+enum EcholocationMode {
+	CLASSIC,        # Original: 5s cooldown, no hunger cost
+	HUNGER_COST     # New: cooldown matches fade duration, costs 15% hunger
+}
+
 # References
 @onready var darkness_overlay: ColorRect = $DarknessOverlay
 @onready var player: CharacterBody2D = get_parent().get_node("Player")
 @onready var camera: Camera2D = player.get_node("Camera2D")
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
+@onready var hunger_manager: Node = player.get_node("HungerManager")
+
+# Mode selection
+@export var echolocation_mode: EcholocationMode = EcholocationMode.CLASSIC
 
 # Vision settings
 @export var vision_radius: float = 75.
@@ -15,7 +25,8 @@ extends CanvasLayer
 @export var echo_reveal_distance: float = 800.0
 @export var echo_fade_duration: float = 3.5  # seconds
 @export var echo_expansion_speed: float = 1200.0  # pixels per second (how fast the wave expands)
-@export var echolocation_cooldown: float = 5.0  # seconds for full recharge
+@export var echolocation_cooldown: float = 5.0  # seconds for full recharge (Classic mode)
+@export var hunger_cost_percentage: float = 15.0  # Percentage of max hunger consumed per echo (Hunger Cost mode)
 
 # Wave visual settings
 @export var wave_thickness: float = 60.0  # How thick the visible wave ring is
@@ -77,6 +88,12 @@ func can_use_echolocation() -> bool:
 	return not is_on_cooldown
 
 func trigger_echolocation():
+	# Apply hunger cost in HUNGER_COST mode
+	if echolocation_mode == EcholocationMode.HUNGER_COST:
+		if hunger_manager:
+			var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
+			hunger_manager.take_damage(hunger_cost)
+
 	# Start cooldown
 	is_on_cooldown = true
 	cooldown_timer = 0.0
@@ -95,8 +112,9 @@ func trigger_echolocation():
 	}
 	echo_pulses.append(pulse)
 
-	# Emit signal for UI update
-	cooldown_changed.emit(0.0, echolocation_cooldown)
+	# Emit signal for UI update with appropriate cooldown duration
+	var cooldown_duration = get_active_cooldown_duration()
+	cooldown_changed.emit(0.0, cooldown_duration)
 
 	# Emit signal for enemies to detect echolocation
 	echolocation_triggered.emit(player.global_position)
@@ -121,14 +139,24 @@ func update_cooldown(delta: float):
 	if is_on_cooldown:
 		cooldown_timer += delta
 
+		# Get the appropriate cooldown duration based on mode
+		var cooldown_duration = get_active_cooldown_duration()
+
 		# Emit progress update
-		cooldown_changed.emit(cooldown_timer, echolocation_cooldown)
+		cooldown_changed.emit(cooldown_timer, cooldown_duration)
 
 		# Check if cooldown is complete
-		if cooldown_timer >= echolocation_cooldown:
+		if cooldown_timer >= cooldown_duration:
 			is_on_cooldown = false
 			cooldown_timer = 0.0
-			cooldown_changed.emit(echolocation_cooldown, echolocation_cooldown)  # Signal ready
+			cooldown_changed.emit(cooldown_duration, cooldown_duration)  # Signal ready
+
+func get_active_cooldown_duration() -> float:
+	# Return appropriate cooldown duration based on mode
+	if echolocation_mode == EcholocationMode.HUNGER_COST:
+		return echo_fade_duration  # Cooldown matches fade time
+	else:
+		return echolocation_cooldown  # Classic 5 second cooldown
 
 func update_echo_shader_params():
 	# Prepare arrays for shader (up to 10 pulses)

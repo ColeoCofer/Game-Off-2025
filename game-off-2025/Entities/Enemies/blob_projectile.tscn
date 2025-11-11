@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://w3wwmj02axsj"]
+[gd_scene load_steps=26 format=3 uid="uid://w3wwmj02axsj"]
 
 [ext_resource type="Script" uid="uid://bvbby5hfnq3a0" path="res://Entities/Enemies/blob_projectile.gd" id="1_projectile_script"]
 [ext_resource type="Texture2D" uid="uid://biwegs8r2nuao" path="res://Assets/Art/enemies/Ball.png" id="2_wrvcp"]
@@ -62,18 +62,6 @@ region = Rect2(80, 16, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_mwigi"]
 atlas = ExtResource("2_wrvcp")
 region = Rect2(96, 16, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nj1dh"]
-atlas = ExtResource("2_wrvcp")
-region = Rect2(112, 16, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vp6st"]
-atlas = ExtResource("2_wrvcp")
-region = Rect2(0, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ak2nb"]
-atlas = ExtResource("2_wrvcp")
-region = Rect2(16, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p3yl8"]
 atlas = ExtResource("2_wrvcp")
@@ -153,15 +141,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_nj1dh")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vp6st")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ak2nb")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_p3yl8")
 }, {
 "duration": 1.0,
@@ -179,9 +158,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_70bjt")
 }],
-"loop": true,
+"loop": false,
 "name": &"splatter",
-"speed": 5.0
+"speed": 14.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
@@ -194,9 +173,9 @@ script = ExtResource("1_projectile_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_6qjju")
-animation = &"flying"
+animation = &"splatter"
 frame = 5
-frame_progress = 0.14247586
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_projectile")

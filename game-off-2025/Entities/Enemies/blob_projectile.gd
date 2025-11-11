@@ -85,10 +85,25 @@ func _splatter():
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
 
-	# Play splatter animation
-	if animated_sprite and animated_sprite.sprite_frames.has_animation("splatter"):
-		animated_sprite.play("splatter")
+	# Play splatter animation (one-shot)
+	if animated_sprite:
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation("splatter"):
+			# Get the animation to check if it's looping
+			var anim_name = "splatter"
 
-	# Destroy after splatter animation
-	await get_tree().create_timer(splatter_duration).timeout
-	queue_free()
+			# Play the animation
+			animated_sprite.play(anim_name)
+
+			# Calculate animation duration manually to ensure cleanup even if looping
+			var frame_count = animated_sprite.sprite_frames.get_frame_count(anim_name)
+			var fps = animated_sprite.sprite_frames.get_animation_speed(anim_name)
+			var duration = frame_count / fps if fps > 0 else splatter_duration
+
+			# Wait for animation duration
+			await get_tree().create_timer(duration).timeout
+			queue_free()
+		else:
+			# No splatter animation, just destroy
+			queue_free()
+	else:
+		queue_free()

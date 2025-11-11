@@ -12,7 +12,7 @@ enum State { DORMANT, SHOOTING, VULNERABLE }
 @export var vulnerable_duration: float = 2.0
 @export var projectile_scene: PackedScene = preload("res://Entities/Enemies/blob_projectile.tscn")
 @export var projectile_spawn_offset: Vector2 = Vector2(0, -10)
-@export var stomp_bounce_force: float = -150.0
+@export var stomp_bounce_force: float = -300.0
 
 # Death animation settings
 @export var death_animation_duration: float = 2.0
@@ -26,6 +26,7 @@ var current_health: int = 1
 var shots_fired: int = 0
 var shot_timer: float = 0.0
 var vulnerable_timer: float = 0.0
+var is_dead: bool = false
 
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -45,6 +46,10 @@ func _ready():
 	_enter_dormant_state()
 
 func _process(delta: float):
+	# Don't process anything if dead
+	if is_dead:
+		return
+
 	# Check player proximity to activate/deactivate
 	_check_player_proximity()
 
@@ -192,12 +197,24 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	_take_damage(body)
 
 func _take_damage(player: Node2D):
+	# Mark as dead to stop all state processing
+	is_dead = true
+
+	# Stop shooting immediately
+	current_state = State.DORMANT
+
 	# Hitstop effect
 	HitStop.activate(0.03)
 
 	# Bounce player
 	if player is CharacterBody2D:
 		player.velocity.y = stomp_bounce_force
+
+	# Flash effect
+	if animated_sprite:
+		animated_sprite.modulate = Color(2.0, 2.0, 2.0, 1.0)
+		await get_tree().create_timer(0.1).timeout
+		animated_sprite.modulate = Color.WHITE
 
 	# Play squash effect then die
 	_play_squash_effect()

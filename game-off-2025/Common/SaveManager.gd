@@ -18,7 +18,8 @@ var save_data = {
 		"best_times": {},
 		"unlocked_levels": [],
 		"total_playtime": 0.0,
-		"fireflies_collected": {}  # {"level-1": [0, 1, 2], "level-2": [0]}
+		"fireflies_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
+		"cutscenes_played": []  # Track which cutscenes have been viewed
 	}
 }
 
@@ -164,6 +165,19 @@ func get_total_fireflies_collected() -> int:
 		total += save_data["game_data"]["fireflies_collected"][level].size()
 	return total
 
+# ============= CUTSCENE TRACKING FUNCTIONS =============
+
+func mark_cutscene_played(cutscene_id: String):
+	"""Mark a cutscene as having been played"""
+	if cutscene_id not in save_data["game_data"]["cutscenes_played"]:
+		save_data["game_data"]["cutscenes_played"].append(cutscene_id)
+		save_game()
+		print("SaveManager: Marked cutscene '", cutscene_id, "' as played")
+
+func has_cutscene_played(cutscene_id: String) -> bool:
+	"""Check if a cutscene has already been played"""
+	return cutscene_id in save_data["game_data"]["cutscenes_played"]
+
 # Clear all save data (for debugging or new game)
 func reset_save_data():
 	save_data = {
@@ -177,7 +191,8 @@ func reset_save_data():
 			"best_times": {},
 			"unlocked_levels": [],
 			"total_playtime": 0.0,
-			"fireflies_collected": {}
+			"fireflies_collected": {},
+			"cutscenes_played": []
 		}
 	}
 	save_game()

@@ -10,7 +10,7 @@ func _ready():
 
 	# Find the camera to attach to
 	await get_tree().process_frame
-	var player = get_tree().get_first_node_in_group("player")
+	var player = get_tree().get_first_node_in_group("Player")
 	var camera: Camera2D = null
 
 	if player:

@@ -287,6 +287,10 @@ func _updateData():
 	
 
 func _process(_delta):
+	# Skip animation updates when control is disabled (for cutscenes)
+	if not control_enabled:
+		return
+
 	#INFO animations
 	#Update walking sound timer
 	if walkingSoundTimer > 0:
@@ -385,11 +389,26 @@ func _process(_delta):
 		if rollTap and canRoll and roll:
 			anim.speed_scale = 1
 			anim.play("roll")
-		
-		
-		
+
+# Cutscene control methods
+var control_enabled: bool = true
+
+func disable_control() -> void:
+	"""Disable player control for cutscenes"""
+	control_enabled = false
+	velocity = Vector2.ZERO
+
+func enable_control() -> void:
+	"""Re-enable player control after cutscenes"""
+	control_enabled = true
 
 func _physics_process(delta):
+	# Early return if control is disabled (for cutscenes)
+	if not control_enabled:
+		return
+
+	if !dset:
+		gdelta = delta
 	if !dset:
 		gdelta = delta
 		dset = true

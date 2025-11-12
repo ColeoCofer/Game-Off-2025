@@ -484,6 +484,9 @@ firefly_id = 3
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(832, 212)
 
+[node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
+position = Vector2(179, 365)
+
 [node name="Enemies" type="Node" parent="."]
 
 [node name="AntEnemy3" parent="Enemies" instance=ExtResource("5_jfi0m")]
@@ -577,7 +580,6 @@ offset_bottom = 384.0
 
 [node name="OpeningCutscene" type="Node" parent="."]
 script = ExtResource("18_t2a2k")
-force_play_cutscene = true
 
 [node name="Particles" type="Node" parent="."]
 

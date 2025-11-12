@@ -19,7 +19,8 @@ var save_data = {
 		"unlocked_levels": [],
 		"total_playtime": 0.0,
 		"fireflies_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
-		"cutscenes_played": []  # Track which cutscenes have been viewed
+		"cutscenes_played": [],  # Track which cutscenes have been viewed
+		"tutorials_shown": []  # Track which tutorials have been displayed
 	}
 }
 
@@ -178,6 +179,19 @@ func has_cutscene_played(cutscene_id: String) -> bool:
 	"""Check if a cutscene has already been played"""
 	return cutscene_id in save_data["game_data"]["cutscenes_played"]
 
+# ============= TUTORIAL TRACKING FUNCTIONS =============
+
+func mark_tutorial_shown(tutorial_id: String):
+	"""Mark a tutorial as having been shown"""
+	if tutorial_id not in save_data["game_data"]["tutorials_shown"]:
+		save_data["game_data"]["tutorials_shown"].append(tutorial_id)
+		save_game()
+		print("SaveManager: Marked tutorial '", tutorial_id, "' as shown")
+
+func has_tutorial_shown(tutorial_id: String) -> bool:
+	"""Check if a tutorial has already been shown"""
+	return tutorial_id in save_data["game_data"]["tutorials_shown"]
+
 # Clear all save data (for debugging or new game)
 func reset_save_data():
 	save_data = {
@@ -192,7 +206,8 @@ func reset_save_data():
 			"unlocked_levels": [],
 			"total_playtime": 0.0,
 			"fireflies_collected": {},
-			"cutscenes_played": []
+			"cutscenes_played": [],
+			"tutorials_shown": []
 		}
 	}
 	save_game()

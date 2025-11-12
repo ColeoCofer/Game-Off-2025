@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=3 uid="uid://dialogue_box_test"]
+
+[ext_resource type="PackedScene" uid="uid://cbhrp0pvdkdpg" path="res://UI/DialogueBox/dialogue_box.tscn" id="1_dialogue_box"]
+[ext_resource type="Script" uid="uid://cq32xr7kqhq0y" path="res://UI/DialogueBox/dialogue_box_test.gd" id="2_test_script"]
+
+[node name="DialogueBoxTest" type="Node"]
+script = ExtResource("2_test_script")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.2, 0.3, 1)
+
+[node name="Instructions" type="Label" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 16
+text = "Press ENTER or SPACE to start test dialogue
+Press again to advance through dialogue
+Press again when text is appearing to complete instantly"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TestButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -25.0
+offset_right = 100.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "Start Dialogue Test"
+
+[node name="DialogueBox" parent="CanvasLayer" instance=ExtResource("1_dialogue_box")]
+
+[connection signal="pressed" from="TestButton" to="." method="_on_test_button_pressed"]

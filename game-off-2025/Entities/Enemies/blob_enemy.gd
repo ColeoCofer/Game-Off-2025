@@ -34,12 +34,24 @@ var is_dead: bool = false
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
+@onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 # Death shader (TODO: This doesn't look that good really)
 var death_material: ShaderMaterial = null
 
+# Rock launch sounds
+var rock_launch_sounds: Array[AudioStream] = []
+
 func _ready():
 	current_health = max_health
+
+	# Load rock launch sounds
+	rock_launch_sounds = [
+		load("res://Assets/Audio/rocks/rock-launch-1.wav"),
+		load("res://Assets/Audio/rocks/rock-launch-2.wav"),
+		load("res://Assets/Audio/rocks/rock-launch-3.wav"),
+		load("res://Assets/Audio/rocks/rock-launch-4.wav")
+	]
 
 	# Connect stomp detector
 	if stomp_detector:
@@ -177,6 +189,12 @@ func _fire_projectile():
 
 		# Launch at adjusted target with configured arc
 		projectile.launch_at_target(target_position, projectile_arc)
+
+	# Play random rock launch sound
+	if audio_player and rock_launch_sounds.size() > 0:
+		var random_sound = rock_launch_sounds[randi() % rock_launch_sounds.size()]
+		audio_player.stream = random_sound
+		audio_player.play()
 
 	# Play shoot animation (don't wait for it to finish)
 	if animated_sprite:

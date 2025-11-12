@@ -14,6 +14,10 @@ var is_splattering: bool = false
 # References
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
+
+# Audio
+var splat_sound: AudioStream = preload("res://Assets/Audio/rocks/rock-splat.mp3")
 
 func _ready():
 	# Connect collision signal
@@ -84,6 +88,11 @@ func _splatter():
 	# Disable collision
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
+
+	# Play splat sound
+	if audio_player and splat_sound:
+		audio_player.stream = splat_sound
+		audio_player.play()
 
 	# Play splatter animation (one-shot)
 	if animated_sprite:

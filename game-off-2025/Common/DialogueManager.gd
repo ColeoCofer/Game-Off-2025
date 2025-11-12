@@ -68,6 +68,10 @@ func start_dialogue(lines: Array) -> void:
 	# Create DialogueBox if needed
 	_create_dialogue_box()
 
+	# Clear any previous dialogue state
+	if dialogue_box:
+		dialogue_box.clear()
+
 	# Show the box and start dialogue
 	dialogue_box.show_box()
 	await dialogue_box.dialogue_box_shown
@@ -197,6 +201,16 @@ func set_typing_speed(speed: float) -> void:
 	"""Set the typing speed for the dialogue box"""
 	if dialogue_box:
 		dialogue_box.set_typing_speed(speed)
+
+func set_dialogue_layer(layer: int) -> void:
+	"""Temporarily change the dialogue canvas layer (useful for cutscenes)"""
+	if canvas_layer:
+		canvas_layer.layer = layer
+
+func reset_dialogue_layer() -> void:
+	"""Reset dialogue layer to default (99)"""
+	if canvas_layer:
+		canvas_layer.layer = 99
 
 func cleanup() -> void:
 	"""Clean up DialogueBox instance (useful for scene changes)"""

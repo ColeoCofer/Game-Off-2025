@@ -8,7 +8,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -140.0
+offset_top = -50.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("1_dialogue_box")
@@ -53,27 +53,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ContentMargin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 2
 
 [node name="CharacterName" type="Label" parent="ContentMargin/VBoxContainer"]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.5, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 12
 text = "Character"
 
 [node name="DialogueText" type="RichTextLabel" parent="ContentMargin/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.95, 0.95, 0.95, 1)
-theme_override_font_sizes/normal_font_size = 18
+theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
 text = "This is sample dialogue text that will appear here."
 fit_content = true
@@ -86,14 +86,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -30.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = -28.0
+offset_top = -20.0
+offset_right = -6.0
+offset_bottom = -6.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 14
 text = "▼"
 horizontal_alignment = 1
 vertical_alignment = 1

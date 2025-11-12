@@ -1,0 +1,43 @@
+[gd_scene load_steps=3 format=3 uid="uid://tul7xlhox0du"]
+
+[ext_resource type="PackedScene" path="res://UI/CutscenePlayer/cutscene_player.tscn" id="1_cutscene_player"]
+[ext_resource type="Script" uid="uid://c6fovwmqm4t1e" path="res://UI/CutscenePlayer/cutscene_player_test.gd" id="2_test_script"]
+
+[node name="CutscenePlayerTest" type="Node"]
+script = ExtResource("2_test_script")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="Instructions" type="Label" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -80.0
+offset_right = 250.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "CutscenePlayer Test
+
+Press SPACE to start cutscene
+
+During cutscene:
+- Press SPACE to advance dialogue
+- Hold ESC to skip cutscene"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CutscenePlayer" parent="." instance=ExtResource("1_cutscene_player")]

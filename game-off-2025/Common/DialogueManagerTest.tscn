@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://dialogue_manager_test"]
+
+[ext_resource type="Script" path="res://Common/DialogueManagerTest.gd" id="1_test_script"]
+
+[node name="DialogueManagerTest" type="Node"]
+script = ExtResource("1_test_script")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.2, 0.25, 1)
+
+[node name="Instructions" type="Label" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 120.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 14
+text = "DialogueManager Autoload Test
+
+1 - Simple dialogue sequence
+2 - Dialogue with character names
+3 - Auto-advancing dialogue
+4 - Dialogue with callbacks
+
+ESC - Skip current dialogue"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -80.0
+offset_right = 150.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Test1Button" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "1. Simple Dialogue"
+
+[node name="Test2Button" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "2. With Character Names"
+
+[node name="Test3Button" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "3. Auto-Advancing"
+
+[node name="Test4Button" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "4. With Callbacks"
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -180.0
+offset_right = 200.0
+offset_bottom = -160.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.5, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Ready"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Test1Button" to="." method="_on_test_1_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Test2Button" to="." method="_on_test_2_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Test3Button" to="." method="_on_test_3_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/VBoxContainer/Test4Button" to="." method="_on_test_4_button_pressed"]

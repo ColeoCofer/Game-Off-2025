@@ -25,6 +25,7 @@ FireflyCollectionManager="*res://Common/FireflyCollectionManager.gd"
 SceneManager="*res://Common/SceneManager.gd"
 TimerManager="*res://Common/TimerManager.gd"
 HitStop="*res://Common/HitStopManager.gd"
+DialogueManager="*res://Common/DialogueManager.gd"
 
 [display]
 

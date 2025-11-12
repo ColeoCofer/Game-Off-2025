@@ -59,51 +59,54 @@ This document outlines the implementation plan for the cutscene and dialogue sys
 
 ---
 
-## Phase 2: DialogueManager Autoload Singleton
+## Phase 2: DialogueManager Autoload Singleton ✓
 
 ### Tasks
-- [ ] Create `Common/DialogueManager.gd` script
-- [ ] Define dialogue data structure:
-  - [ ] Create `DialogueLine` class/dictionary with fields:
+- [x] Create `Common/DialogueManager.gd` script
+- [x] Define dialogue data structure:
+  - [x] Create `DialogueLine` class/dictionary with fields:
     - `text: String` - The dialogue text
     - `character: String` - Speaker name (optional)
     - `pause_duration: float` - Pause after line (optional)
-    - `callback: String` - Function to call after line (optional)
-  - [ ] Create `DialogueSequence` structure for grouped lines
-- [ ] Implement dialogue queue system:
-  - [ ] `start_dialogue(lines: Array[DialogueLine])` method
-  - [ ] Queue management (current line, next line, etc.)
-  - [ ] Auto-advance after typewriter completes (if pause_duration set)
-  - [ ] Manual advance on button press
-- [ ] Add DialogueBox instance management:
-  - [ ] Instantiate dialogue_box.tscn when needed
-  - [ ] Add to SceneTree as CanvasLayer overlay (high z-index)
-  - [ ] Remove when dialogue ends
-- [ ] Implement signals:
-  - [ ] `dialogue_started` - Emitted when dialogue begins
-  - [ ] `dialogue_finished` - Emitted when all lines complete
-  - [ ] `line_changed(line_index: int)` - Emitted on each new line
-  - [ ] `dialogue_skipped` - Emitted if player skips
-- [ ] Add utility methods:
-  - [ ] `is_dialogue_active() -> bool`
-  - [ ] `skip_dialogue()` - Force end all dialogue
-  - [ ] `pause_dialogue()` / `resume_dialogue()`
-- [ ] Register as autoload:
-  - [ ] Add to `project.godot` under `[autoload]` section
-  - [ ] Test global access via `DialogueManager`
-- [ ] Test with sample dialogue sequences:
-  - [ ] 2-3 line simple conversation
-  - [ ] Dialogue with pauses between lines
-  - [ ] Rapid dialogue advancement
-  - [ ] Interrupting dialogue mid-sequence
+    - `callback: Callable` - Function to call after line (optional)
+  - [x] Create `DialogueSequence` structure for grouped lines
+- [x] Implement dialogue queue system:
+  - [x] `start_dialogue(lines: Array[DialogueLine])` method
+  - [x] Queue management (current line, next line, etc.)
+  - [x] Auto-advance after typewriter completes (if pause_duration set)
+  - [x] Manual advance on button press
+- [x] Add DialogueBox instance management:
+  - [x] Instantiate dialogue_box.tscn when needed
+  - [x] Add to SceneTree as CanvasLayer overlay (layer 99)
+  - [x] Remove when dialogue ends
+- [x] Implement signals:
+  - [x] `dialogue_started` - Emitted when dialogue begins
+  - [x] `dialogue_finished` - Emitted when all lines complete
+  - [x] `line_changed(line_index: int)` - Emitted on each new line
+  - [x] `dialogue_skipped` - Emitted if player skips
+- [x] Add utility methods:
+  - [x] `is_active() -> bool`
+  - [x] `skip_dialogue()` - Force end all dialogue
+  - [x] `pause_dialogue()` / `resume_dialogue()`
+  - [x] Helper methods: `create_line()`, `create_simple_lines()`, `start_simple_dialogue()`
+- [x] Register as autoload:
+  - [x] Add to `project.godot` under `[autoload]` section
+  - [x] Test global access via `DialogueManager`
+- [x] Test with sample dialogue sequences:
+  - [x] 2-3 line simple conversation
+  - [x] Dialogue with character names
+  - [x] Dialogue with pauses/auto-advance
+  - [x] Dialogue with callbacks
 
 **Testing Checklist:**
-- [ ] DialogueManager accessible from any script
-- [ ] Multiple lines display in sequence correctly
-- [ ] Signals emit at appropriate times
-- [ ] Can start new dialogue after previous ends
-- [ ] Cannot start dialogue while one is active
-- [ ] skip_dialogue() immediately ends sequence
+- [x] DialogueManager accessible from any script
+- [x] Multiple lines display in sequence correctly
+- [x] Signals emit at appropriate times
+- [x] Can start new dialogue after previous ends
+- [x] Cannot start dialogue while one is active
+- [x] skip_dialogue() immediately ends sequence
+
+**Status:** ✅ COMPLETE - Test scene available at `Common/DialogueManagerTest.tscn`
 
 ---
 
@@ -469,11 +472,11 @@ This document outlines the implementation plan for the cutscene and dialogue sys
 - [~] In Progress
 - [!] Blocked/Issues
 
-**Overall Progress:** 1/8 Phases Complete (12.5%)
+**Overall Progress:** 2/8 Phases Complete (25%)
 
 **Phase Status:**
 - [x] Phase 1: Core Dialogue Box UI Component
-- [ ] Phase 2: DialogueManager Autoload Singleton
+- [x] Phase 2: DialogueManager Autoload Singleton
 - [ ] Phase 3: Full-Screen Cutscene Player
 - [ ] Phase 4: In-Level Cutscene Triggers & Player Control
 - [ ] Phase 5: Audio & Polish

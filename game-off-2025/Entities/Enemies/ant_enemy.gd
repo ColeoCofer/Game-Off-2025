@@ -115,6 +115,21 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			# Immediately mark as dead FIRST to prevent any race conditions
 			is_alive = false
 
+			# Stop physics processing immediately to prevent any movement
+			set_physics_process(false)
+
+			# Disable the ant's main collision body immediately
+			# This prevents the CharacterBody2D collision from pushing the ant into the ground
+			# which can cause physics glitches and false damage triggers (causing that weird glitch where the ant goes into the ground)
+			var main_collision = get_node_or_null("CollisionShape2D")
+			if main_collision:
+				main_collision.set_deferred("disabled", true)
+
+			# Immediately disable collision layers/masks to stop physics interactions
+			set_collision_layer_value(1, false)
+			set_collision_layer_value(2, false)
+			set_collision_mask_value(1, false)
+
 			# Immediately disable BOTH detectors to prevent race conditions
 			if damage_detector:
 				damage_detector.set_deferred("monitoring", false)
@@ -158,6 +173,10 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 		# If this looks like a stomp, let the stomp detector handle it
 		if is_stomp_scenario:
+			return
+
+		# Double-check is_alive flag before killing player (safety check for race conditions)
+		if not is_alive:
 			return
 
 		# Otherwise, this is a legitimate side/bottom collision - kill the player

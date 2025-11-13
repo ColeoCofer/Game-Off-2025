@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://s3w5y6221p5b"]
+[gd_scene load_steps=19 format=4 uid="uid://s3w5y6221p5b"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
+[ext_resource type="Script" uid="uid://df6yg4a53s0wp" path="res://Levels/opening_cutscene.gd" id="15_tvahf"]
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="cave_bg_material"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
@@ -533,3 +534,6 @@ offset_left = 1514.0
 offset_top = -16.0
 offset_right = 1643.0
 offset_bottom = 384.0
+
+[node name="OpeningCutscene" type="Node" parent="."]
+script = ExtResource("15_tvahf")

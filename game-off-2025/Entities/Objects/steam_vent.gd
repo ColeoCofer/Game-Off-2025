@@ -8,8 +8,7 @@ extends Node2D
 @export var min_interval: float = 2.0
 @export var max_interval: float = 5.0
 @export var emission_duration: float = 1.0
-@export var base_boost_force: float = -500.0  ## Base boost when player is standing/falling
-@export var jump_boost_multiplier: float = 1.3  ## Multiplier applied to existing jump velocity 
+@export var boost_force: float = -600.0  ## Consistent upward boost force applied to player 
 
 var is_emitting: bool = false
 
@@ -46,6 +45,12 @@ func _emit_steam() -> void:
 	# Enable boost area
 	damage_area.monitoring = true
 
+	# Need to wait one frame for the area to register overlapping bodies
+	await get_tree().process_frame
+
+	# Apply boost to any bodies already in the area
+	_boost_bodies_in_area()
+
 	# Wait for emission duration, then stop
 	await get_tree().create_timer(emission_duration).timeout
 	_stop_emission()
@@ -63,22 +68,31 @@ func _stop_emission() -> void:
 	# Schedule next emission
 	_schedule_next_emission()
 
-func _on_body_entered(body: Node2D) -> void:
-	print("Body entered: ", body.name, " | Groups: ", body.get_groups())
+func _boost_bodies_in_area() -> void:
+	# Get all bodies currently overlapping with the damage area
+	var bodies = damage_area.get_overlapping_bodies()
+	print("Checking for bodies in area. Found: ", bodies.size())
 
-	# Check if it's the player (capital P...)
+	for body in bodies:
+		print("Body found: ", body.name, " | Groups: ", body.get_groups())
+		# Check if it's the player
+		if body.is_in_group("Player") or body.name == "Player":
+			if body is CharacterBody2D:
+				# Apply consistent upward boost, overriding current vertical velocity
+				body.velocity.y = boost_force
+				print("Steam boost applied to player: ", boost_force)
+			else:
+				print("Player found but not CharacterBody2D: ", body.get_class())
+
+func _on_body_entered(body: Node2D) -> void:
+	print("Body entered during emission: ", body.name)
+	# Only boost if we're actively emitting
+	if not is_emitting:
+		return
+
+	# Check if it's the player
 	if body.is_in_group("Player") or body.name == "Player":
-		print("Player detected! Applying boost...")
-		# Apply upward boost to the player
 		if body is CharacterBody2D:
-			# Check if player is already jumping (has upward velocity)
-			if body.velocity.y < -50.0:  # Player is moving upward (jumping)
-				# Apply multiplier to existing jump velocity for a smaller boost
-				body.velocity.y *= jump_boost_multiplier
-				print("Jump boost applied: velocity.y = ", body.velocity.y)
-			else:  # Player is standing, falling, or barely moving
-				# Apply full base boost force
-				body.velocity.y = base_boost_force
-				print("Base boost applied: ", base_boost_force)
-		else:
-			print("Body is not CharacterBody2D, it's: ", body.get_class())
+			# Apply consistent upward boost
+			body.velocity.y = boost_force
+			print("Steam boost applied on entry: ", boost_force)

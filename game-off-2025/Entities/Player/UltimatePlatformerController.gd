@@ -405,6 +405,8 @@ func enable_control() -> void:
 func _physics_process(delta):
 	# Early return if control is disabled (for cutscenes)
 	if not control_enabled:
+		velocity = Vector2.ZERO
+		move_and_slide()
 		return
 
 	if !dset:

@@ -94,6 +94,14 @@ class_name PlatformerController2D
 ##If true, flapping resets a small amount of horizontal momentum (like SMB3)
 @export var flapAffectsHorizontalSpeed: bool = false
 
+@export_category("Step Up")
+##Allows player to walk over small ledges/bumps without getting stuck
+@export var enableStepUp: bool = true
+##Maximum height (in pixels) of bumps the player can step over
+@export_range(1, 16) var maxStepHeight: float = 8.0
+##How far ahead to check for steps (should be slightly larger than player width)
+@export_range(4, 16) var stepCheckDistance: float = 8.0
+
 @export_category("Down Input")
 ##Holding down will crouch the player. Crouching script may need to be changed depending on how your player's size proportions are. It is built for 32x player's sprites.
 @export var crouch: bool = false
@@ -741,7 +749,44 @@ func _physics_process(delta):
 		_groundPound()
 	if is_on_floor() and groundPounding:
 		_endGroundPound()
-	move_and_slide()
+
+	# Step up logic - allows walking over small ledges
+	# Simple approach: if we're moving and hit something, try stepping up
+	if enableStepUp and is_on_floor() and abs(velocity.x) > 0:
+		var was_on_floor = is_on_floor()
+		var old_position = position
+		move_and_slide()
+
+		# If we were moving horizontally but stopped (hit a wall) and still on floor
+		if was_on_floor and is_on_floor() and is_on_wall() and abs(velocity.x) > 10:
+			var stepped_up = false
+			# Try stepping up in small increments
+			for i in range(int(maxStepHeight)):
+				position.y -= 1
+				# Test if we're still colliding horizontally
+				var test_motion_params = PhysicsTestMotionParameters2D.new()
+				test_motion_params.from = global_transform
+				test_motion_params.motion = Vector2(sign(velocity.x) * 2, 0)
+				var test_result = PhysicsTestMotionResult2D.new()
+
+				if not PhysicsServer2D.body_test_motion(get_rid(), test_motion_params, test_result):
+					# We cleared the obstacle horizontally!
+					# Now check if there's actually a floor above to step onto
+					var floor_check_params = PhysicsTestMotionParameters2D.new()
+					floor_check_params.from = global_transform
+					floor_check_params.motion = Vector2(0, maxStepHeight + 2)
+					var floor_result = PhysicsTestMotionResult2D.new()
+
+					if PhysicsServer2D.body_test_motion(get_rid(), floor_check_params, floor_result):
+						# There's a floor beneath us at this height - valid step!
+						stepped_up = true
+						break
+
+			# If we didn't find a valid step, restore original position
+			if not stepped_up:
+				position = old_position
+	else:
+		move_and_slide()
 
 	if upToCancel and upHold and groundPound:
 		_endGroundPound()

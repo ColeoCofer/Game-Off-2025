@@ -175,7 +175,7 @@ func create_photo_cutscene_frames() -> Array:
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-title.png",
 		[
-			""
+			"" # TODO: Need to add a sleep statement here for n-seconds
 		]
 	))
 

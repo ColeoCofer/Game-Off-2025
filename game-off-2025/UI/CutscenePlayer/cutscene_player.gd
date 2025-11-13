@@ -23,12 +23,12 @@ class CutsceneFrame:
 @onready var background: ColorRect = $Background
 @onready var cutscene_image: TextureRect = $CutsceneImage
 @onready var skip_indicator: Control = $SkipIndicator
-@onready var skip_progress: ProgressBar = $SkipIndicator/HBoxContainer/ProgressBar
+@onready var skip_progress: ProgressBar = $SkipIndicator/MarginContainer/VBoxContainer/ProgressBar
 
 # Configuration
 @export var fade_duration: float = 0.5  # Seconds for image fade transitions
 @export var skip_hold_duration: float = 1.5  # How long to hold button to skip
-@export var skip_button: String = "ui_cancel"  # Button to hold for skipping (ESC)
+@export var skip_button: String = "pause"  # Button to hold for skipping (ESC)
 
 # State variables
 var cutscene_frames: Array = []  # Array of CutsceneFrame

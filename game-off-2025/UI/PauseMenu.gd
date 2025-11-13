@@ -43,6 +43,15 @@ func _ready():
 func _input(event):
 	# Toggle pause menu when pause is pressed
 	if Input.is_action_just_pressed("pause"):
+		# Don't allow pausing during cutscenes
+		if CutsceneDirector and CutsceneDirector.is_active():
+			return
+
+		# Check if CutscenePlayer is active
+		var cutscene_player = get_tree().get_first_node_in_group("cutscene_player")
+		if cutscene_player and cutscene_player.has_method("is_cutscene_active") and cutscene_player.is_cutscene_active():
+			return
+
 		if is_paused:
 			_on_continue_button_pressed()
 		else:

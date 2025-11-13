@@ -6,7 +6,7 @@ signal tutorial_shown(tutorial_id: String)
 signal tutorial_dismissed(tutorial_id: String)
 
 # Debug options
-@export var force_show_tutorials: bool = false  ## Enable to always show tutorials (for testing)
+@export var force_show_tutorials: bool = true  ## Enable to always show tutorials (for testing)
 
 # References
 var tooltip_scene = preload("res://UI/Tooltip/tooltip.tscn")

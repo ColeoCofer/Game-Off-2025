@@ -102,6 +102,9 @@ func trigger_hazard_death():
 	# Disable player control
 	player.set_physics_process(false)
 
+	# Disable player collision so enemies/objects don't interact with dead body
+	_disable_player_collision()
+
 	# Camera will stay at death position (player doesn't move during animation)
 
 	# Death shader
@@ -130,6 +133,9 @@ func trigger_enemy_death():
 
 	# Disable player control
 	player.set_physics_process(false)
+
+	# Disable player collision so enemies/objects don't interact with dead body
+	_disable_player_collision()
 
 	# Camera will stay at death position (player doesn't move during animation)
 
@@ -169,6 +175,9 @@ func trigger_fall_death():
 	# Disable player control
 	player.set_physics_process(false)
 
+	# Disable player collision so enemies/objects don't interact with dead body
+	_disable_player_collision()
+
 	# Show death menu immediately after a brief delay
 	await get_tree().create_timer(0.5).timeout
 	_show_death_menu()
@@ -186,6 +195,9 @@ func trigger_death():
 	# Disable player control
 	player.set_physics_process(false)
 
+	# Disable player collision so enemies/objects don't interact with dead body
+	_disable_player_collision()
+
 	# Camera will stay at death position (player doesn't move during animation)
 
 	# Death shader
@@ -193,6 +205,17 @@ func trigger_death():
 
 	# Death animation
 	_play_death_animation()
+
+func _disable_player_collision():
+	"""Disable player collision shape and layers so nothing interacts with dead body"""
+	# Disable the collision shape
+	var collision_shape = player.get_node_or_null("CollisionShape2D")
+	if collision_shape:
+		collision_shape.set_deferred("disabled", true)
+
+	# Disable all collision layers and masks
+	player.set_collision_layer_value(1, false)
+	player.set_collision_mask_value(1, false)
 
 func _apply_death_shader():
 	# Get the player's sprite

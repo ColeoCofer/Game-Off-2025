@@ -20,10 +20,14 @@ extends CharacterBody2D
 @onready var floor_raycast: RayCast2D = $FloorRayCast
 @onready var stomp_detector: Area2D = $StompDetector
 @onready var damage_detector: Area2D = $DamageDetector
+@onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var direction: int = 1  # 1 for right, -1 for left
 var is_alive: bool = true
 var death_material: ShaderMaterial
+
+# Audio
+var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
 
 func _ready():
 	# Connect stomp detection
@@ -179,6 +183,11 @@ func _die_from_stomp(player: Node2D):
 
 	# Trigger hit stop for satisfying feedback
 	HitStop.activate(0.03)
+
+	# Play squish sound
+	if audio_player and squish_sound:
+		audio_player.stream = squish_sound
+		audio_player.play()
 
 	# Good effect to have but doesn't look that good on the ant...
 	# Spawn impact particles

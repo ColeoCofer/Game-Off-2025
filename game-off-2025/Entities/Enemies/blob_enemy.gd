@@ -42,6 +42,9 @@ var death_material: ShaderMaterial = null
 # Rock launch sounds
 var rock_launch_sounds: Array[AudioStream] = []
 
+# Death sound
+var rock_land_sound: AudioStream = preload("res://Assets/Audio/rocks/rock-land.wav")
+
 func _ready():
 	current_health = max_health
 
@@ -245,6 +248,11 @@ func _take_damage(player: Node2D):
 
 	# Hitstop effect
 	HitStop.activate(0.03)
+
+	# Play death sound
+	if audio_player and rock_land_sound:
+		audio_player.stream = rock_land_sound
+		audio_player.play()
 
 	# Bounce player
 	if player is CharacterBody2D:

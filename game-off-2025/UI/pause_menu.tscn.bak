@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3 uid="uid://gu7nxs3k0akq"]
+
+[ext_resource type="Script" uid="uid://bpg5cjvcqlqnj" path="res://UI/PauseMenu.gd" id="1_pause_menu"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+
+[node name="Control" type="Control" parent="."]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pause_menu")
+
+[node name="Background" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control/CenterContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer/Panel"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Control/CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 40
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ContinueButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Continue"
+
+[node name="ExitButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Exit"
+
+[node name="Spacer2" type="Control" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="DebugToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Debug Mode (Invincible)"
+
+[node name="TimerToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Show Timer"
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MusicVolumeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/MusicVolumeContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Music:"
+
+[node name="MusicVolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+min_value = -40.0
+max_value = 0.0
+value = -10.0
+
+[node name="MusicVolumeValueLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "50%"
+horizontal_alignment = 2
+
+[node name="SoundsVolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SoundsVolumeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Sounds:"
+
+[node name="SoundsVolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+min_value = -40.0
+max_value = 0.0
+value = -10.0
+
+[node name="SoundsVolumeValueLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "50%"
+horizontal_alignment = 2
+
+[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ContinueButton" to="Control" method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ExitButton" to="Control" method="_on_exit_button_pressed"]
+[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/DebugToggle" to="Control" method="_on_debug_toggle_toggled"]
+[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/TimerToggle" to="Control" method="_on_timer_toggle_toggled"]
+[connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeSlider" to="Control" method="_on_music_volume_slider_value_changed"]
+[connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer/SoundsVolumeSlider" to="Control" method="_on_sounds_volume_slider_value_changed"]

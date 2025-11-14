@@ -5,6 +5,7 @@ var water_drops_player: AudioStreamPlayer
 func _ready():
 	# Load the main background music
 	stream = load("res://Assets/Audio/sona-main.mp3")
+	bus = "Music"  # Use the Music bus
 
 	# Load saved settings (check if SaveManager exists first)
 	if has_node("/root/SaveManager"):
@@ -14,6 +15,7 @@ func _ready():
 	water_drops_player = AudioStreamPlayer.new()
 	water_drops_player.stream = load("res://Assets/Audio/water_drops.wav")
 	water_drops_player.volume_db = -40  # Adjust this value to control water drops volume
+	water_drops_player.bus = "Music"  # Use the Music bus
 	add_child(water_drops_player)
 
 	# Connect finished signal to loop the main music

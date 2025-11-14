@@ -216,13 +216,16 @@ zoom = Vector2(2.16, 2.16)
 [node name="EchoAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_echo")
 volume_db = -16.293
+bus = &"Sounds"
 
 [node name="FlapAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_flap")
+bus = &"Sounds"
 
 [node name="WalkingAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_walking")
 volume_db = 10.0
+bus = &"Sounds"
 
 [node name="HungerManager" type="Node" parent="." groups=["hunger_manager"]]
 script = ExtResource("5_hunger")

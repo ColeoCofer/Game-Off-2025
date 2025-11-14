@@ -32,3 +32,4 @@ shape = SubResource("CircleShape2D_wx112")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_def456")
 volume_db = -5.0
+bus = &"Sounds"

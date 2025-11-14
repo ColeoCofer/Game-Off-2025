@@ -6,7 +6,8 @@ extends Control
 @onready var settings_button: TextureButton = get_node("ButtonContainer/SettingsButtonContainer/SettingsButton")
 @onready var quit_button: TextureButton = get_node("QuitButtonContainer/QuitButton")
 @onready var settings_panel: Control = get_node("SettingsPanel")
-@onready var volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider")
+@onready var music_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider")
+@onready var sounds_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider")
 @onready var timer_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")
 
@@ -18,8 +19,10 @@ func _ready() -> void:
 	# Signals are already connected in the scene file
 
 	# Set up focus navigation for settings panel
-	volume_slider.focus_neighbor_bottom = volume_slider.get_path_to(timer_toggle)
-	timer_toggle.focus_neighbor_top = timer_toggle.get_path_to(volume_slider)
+	music_volume_slider.focus_neighbor_bottom = music_volume_slider.get_path_to(sounds_volume_slider)
+	sounds_volume_slider.focus_neighbor_top = sounds_volume_slider.get_path_to(music_volume_slider)
+	sounds_volume_slider.focus_neighbor_bottom = sounds_volume_slider.get_path_to(timer_toggle)
+	timer_toggle.focus_neighbor_top = timer_toggle.get_path_to(sounds_volume_slider)
 	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(close_settings_button)
 	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(timer_toggle)
 
@@ -31,7 +34,8 @@ func _ready() -> void:
 
 
 func _load_settings() -> void:
-	volume_slider.value = SaveManager.save_data["settings"]["music_volume"]
+	music_volume_slider.value = SaveManager.save_data["settings"]["music_volume"]
+	sounds_volume_slider.value = SaveManager.save_data["settings"]["sounds_volume"]
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
 
 
@@ -41,7 +45,7 @@ func _on_start_pressed() -> void:
 
 func _on_settings_pressed() -> void:
 	settings_panel.visible = true
-	volume_slider.grab_focus()
+	music_volume_slider.grab_focus()
 
 
 func _on_close_settings_pressed() -> void:
@@ -53,10 +57,15 @@ func _on_quit_pressed() -> void:
 	get_tree().quit()
 
 
-func _on_volume_changed(value: float) -> void:
+func _on_music_volume_changed(value: float) -> void:
 	SaveManager.save_data["settings"]["music_volume"] = value
 	SaveManager.save_game()
 	BackgroundMusic.set_volume(value)
+
+func _on_sounds_volume_changed(value: float) -> void:
+	SaveManager.save_data["settings"]["sounds_volume"] = value
+	SaveManager.save_game()
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), value)
 
 
 func _on_timer_toggle_toggled(toggled_on: bool) -> void:
@@ -79,7 +88,7 @@ func _input(event: InputEvent) -> void:
 			# Grab focus on appropriate button based on which panel is visible
 			if settings_panel.visible:
 				if not get_viewport().gui_get_focus_owner():
-					volume_slider.grab_focus()
+					music_volume_slider.grab_focus()
 			else:
 				if not get_viewport().gui_get_focus_owner():
 					start_button.grab_focus()

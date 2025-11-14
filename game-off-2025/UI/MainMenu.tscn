@@ -153,12 +153,23 @@ theme_override_font_sizes/font_size = 32
 text = "Settings"
 horizontal_alignment = 1
 
-[node name="VolumeLabel" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
+[node name="MusicVolumeLabel" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Volume"
+text = "Music Volume"
 
-[node name="VolumeSlider" type="HSlider" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
+[node name="MusicVolumeSlider" type="HSlider" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+min_value = -40.0
+max_value = 0.0
+value = -10.0
+
+[node name="SoundsVolumeLabel" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Sound Effects Volume"
+
+[node name="SoundsVolumeSlider" type="HSlider" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 min_value = -40.0
 max_value = 0.0
@@ -178,6 +189,7 @@ text = "Close"
 [connection signal="pressed" from="Control/ButtonContainer/StartButtonContainer/StartButton" to="Control" method="_on_start_pressed"]
 [connection signal="pressed" from="Control/ButtonContainer/SettingsButtonContainer/SettingsButton" to="Control" method="_on_settings_pressed"]
 [connection signal="pressed" from="Control/QuitButtonContainer/QuitButton" to="Control" method="_on_quit_pressed"]
-[connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeSlider" to="Control" method="_on_volume_changed"]
+[connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider" to="Control" method="_on_music_volume_changed"]
+[connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider" to="Control" method="_on_sounds_volume_changed"]
 [connection signal="toggled" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle" to="Control" method="_on_timer_toggle_toggled"]
 [connection signal="pressed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton" to="Control" method="_on_close_settings_pressed"]

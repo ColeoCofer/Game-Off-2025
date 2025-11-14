@@ -10,6 +10,7 @@ const SAVE_FILE_PATH = "user://save_data.json"
 var save_data = {
 	"settings": {
 		"music_volume": -10.0,  # in dB
+		"sounds_volume": -10.0,  # in dB
 		"debug_mode": false,
 		"show_timer": false  # Timer display toggle
 	},
@@ -31,6 +32,9 @@ func _ready():
 		unlock_level("tutorial")
 	if not is_level_unlocked("level-1"):
 		unlock_level("level-1")
+
+	# Initialize audio bus volumes from saved settings
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), get_sounds_volume())
 
 # Save all data to file
 func save_game():
@@ -85,6 +89,13 @@ func set_music_volume(volume_db: float):
 
 func get_music_volume() -> float:
 	return save_data["settings"]["music_volume"]
+
+func set_sounds_volume(volume_db: float):
+	save_data["settings"]["sounds_volume"] = volume_db
+	save_game()
+
+func get_sounds_volume() -> float:
+	return save_data["settings"]["sounds_volume"]
 
 func set_debug_mode(enabled: bool):
 	save_data["settings"]["debug_mode"] = enabled

@@ -103,5 +103,6 @@ wait_time = 0.03
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 volume_db = -10.0
+bus = &"Sounds"
 
 [connection signal="timeout" from="TypewriterTimer" to="." method="_on_typewriter_timer_timeout"]

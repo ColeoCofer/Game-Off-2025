@@ -11,8 +11,10 @@ var continue_button: Button
 var exit_button: Button
 var debug_toggle: CheckButton
 var timer_toggle: CheckButton
-var volume_slider: HSlider
-var volume_value_label: Label
+var music_volume_slider: HSlider
+var music_volume_value_label: Label
+var sounds_volume_slider: HSlider
+var sounds_volume_value_label: Label
 var current_button_index: int = 0
 var is_paused: bool = false
 
@@ -28,14 +30,18 @@ func _ready():
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 	debug_toggle = get_node("CenterContainer/VBoxContainer/DebugToggle")
 	timer_toggle = get_node("CenterContainer/VBoxContainer/TimerToggle")
-	volume_slider = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeSlider")
-	volume_value_label = get_node("CenterContainer/VBoxContainer/VolumeContainer/VolumeValueLabel")
+	music_volume_slider = get_node("CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeSlider")
+	music_volume_value_label = get_node("CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeValueLabel")
+	sounds_volume_slider = get_node("CenterContainer/VBoxContainer/SoundsVolumeContainer/SoundsVolumeSlider")
+	sounds_volume_value_label = get_node("CenterContainer/VBoxContainer/SoundsVolumeContainer/SoundsVolumeValueLabel")
 
 	# Load settings from SaveManager
 	debug_toggle.button_pressed = SaveManager.get_debug_mode()
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
-	volume_slider.value = SaveManager.get_music_volume()
-	_update_volume_label(SaveManager.get_music_volume())
+	music_volume_slider.value = SaveManager.get_music_volume()
+	sounds_volume_slider.value = SaveManager.get_sounds_volume()
+	_update_music_volume_label(SaveManager.get_music_volume())
+	_update_sounds_volume_label(SaveManager.get_sounds_volume())
 
 	# Sync with managers
 	DebugManager.debug_mode = SaveManager.get_debug_mode()
@@ -64,22 +70,28 @@ func _input(event):
 
 	# Navigate between buttons with up/down or W/S
 	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
-		current_button_index = (current_button_index + 1) % 5
+		current_button_index = (current_button_index + 1) % 6
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
-		current_button_index = (current_button_index - 1 + 5) % 5
+		current_button_index = (current_button_index - 1 + 6) % 6
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
-	# Handle left/right for volume slider
+	# Handle left/right for volume sliders
 	elif Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("left"):
-		if current_button_index == 4:  # Volume slider
-			volume_slider.value = max(volume_slider.min_value, volume_slider.value - 5.0)
+		if current_button_index == 4:  # Music volume slider
+			music_volume_slider.value = max(music_volume_slider.min_value, music_volume_slider.value - 5.0)
+			get_viewport().set_input_as_handled()
+		elif current_button_index == 5:  # Sounds volume slider
+			sounds_volume_slider.value = max(sounds_volume_slider.min_value, sounds_volume_slider.value - 5.0)
 			get_viewport().set_input_as_handled()
 	elif Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("right"):
-		if current_button_index == 4:  # Volume slider
-			volume_slider.value = min(volume_slider.max_value, volume_slider.value + 5.0)
+		if current_button_index == 4:  # Music volume slider
+			music_volume_slider.value = min(music_volume_slider.max_value, music_volume_slider.value + 5.0)
+			get_viewport().set_input_as_handled()
+		elif current_button_index == 5:  # Sounds volume slider
+			sounds_volume_slider.value = min(sounds_volume_slider.max_value, sounds_volume_slider.value + 5.0)
 			get_viewport().set_input_as_handled()
 
 	# Select button with space, enter, or controller A button
@@ -94,7 +106,8 @@ func show_menu():
 
 	debug_toggle.button_pressed = SaveManager.get_debug_mode()
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
-	volume_slider.value = SaveManager.get_music_volume()
+	music_volume_slider.value = SaveManager.get_music_volume()
+	sounds_volume_slider.value = SaveManager.get_sounds_volume()
 	
 	# Pause the game
 	get_tree().paused = true
@@ -137,7 +150,9 @@ func _update_button_focus():
 	elif current_button_index == 3:
 		timer_toggle.grab_focus()
 	elif current_button_index == 4:
-		volume_slider.grab_focus()
+		music_volume_slider.grab_focus()
+	elif current_button_index == 5:
+		sounds_volume_slider.grab_focus()
 
 func _activate_current_button():
 	if current_button_index == 0:
@@ -158,16 +173,27 @@ func _on_debug_toggle_toggled(toggled_on: bool):
 	DebugManager.debug_mode = toggled_on
 	SaveManager.set_debug_mode(toggled_on)
 
-func _on_volume_slider_value_changed(value: float):
+func _on_music_volume_slider_value_changed(value: float):
 	BackgroundMusic.set_volume(value)
 	SaveManager.set_music_volume(value)
-	_update_volume_label(value)
+	_update_music_volume_label(value)
 
-func _update_volume_label(db_value: float):
+func _on_sounds_volume_slider_value_changed(value: float):
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), value)
+	SaveManager.set_sounds_volume(value)
+	_update_sounds_volume_label(value)
+
+func _update_music_volume_label(db_value: float):
 	# Convert dB to percentage (rough approximation)
 	# -40 dB = 0%, 0 dB = 100%
 	var percentage = int(((db_value + 40.0) / 40.0) * 100.0)
-	volume_value_label.text = str(percentage) + "%"
+	music_volume_value_label.text = str(percentage) + "%"
+
+func _update_sounds_volume_label(db_value: float):
+	# Convert dB to percentage (rough approximation)
+	# -40 dB = 0%, 0 dB = 100%
+	var percentage = int(((db_value + 40.0) / 40.0) * 100.0)
+	sounds_volume_value_label.text = str(percentage) + "%"
 
 func _on_timer_toggle_toggled(toggled_on: bool):
 	SaveManager.set_show_timer(toggled_on)

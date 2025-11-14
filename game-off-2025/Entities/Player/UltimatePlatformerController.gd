@@ -32,7 +32,7 @@ class_name PlatformerController2D
 ##The peak height of your player's jump
 @export_range(0, 20) var jumpHeight: float = 2.0
 ##Jump power multiplier when running at max speed (SMB3 style - faster speed = higher jump)
-@export_range(1.0, 1.8) var maxSpeedJumpBoost: float = 1.75
+@export_range(1.0, 3.0) var maxSpeedJumpBoost: float = 1.75
 ##Jump power multiplier when walking or standing still (base jump height)
 @export_range(1.0, 1.5) var walkJumpBoost: float = 1.5
 ##How many jumps your character can do before needing to touch the ground again. Giving more than 1 jump disables jump buffering and coyote time.

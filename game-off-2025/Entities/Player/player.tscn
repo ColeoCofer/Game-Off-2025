@@ -186,6 +186,7 @@ FlapAudioPlayer = NodePath("FlapAudioPlayer")
 WalkingAudioPlayer = NodePath("WalkingAudioPlayer")
 walkSpeed = 125.0
 runSpeed = 200.0
+jumpHeight = 2.2
 fallGravity = 20.0
 coyoteTime = 0.085
 flapLift = 25.0

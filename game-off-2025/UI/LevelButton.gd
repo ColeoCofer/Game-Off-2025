@@ -57,15 +57,19 @@ func _update_firefly_display() -> void:
 	# Get firefly collection data from FireflyCollectionManager
 	var collected_fireflies = FireflyCollectionManager.get_collected_fireflies(level_name)
 
-	# Update icon display - greyed out if not collected, bright if collected
+	# Update icon display - show firefly if collected, dark/hidden if not
+	# Note: Firefly IDs in levels are 1, 2, 3 (not 0, 1, 2)
 	var icons = [firefly_icon1, firefly_icon2, firefly_icon3]
 	for i in range(icons.size()):
-		if i in collected_fireflies:
-			# Collected - bright and colorful
-			icons[i].modulate = Color(1.0, 0.95, 0.6, 1.0)  # Warm yellow/white glow
+		var firefly_id = i + 1  # Map icon index (0,1,2) to firefly ID (1,2,3)
+		if firefly_id in collected_fireflies:
+			# Collected - show bright firefly image
+			icons[i].modulate = Color(1.0, 1.0, 1.0, 1.0)  # Full brightness
+			icons[i].visible = true
 		else:
-			# Not collected - greyed out and transparent
-			icons[i].modulate = Color(0.3, 0.3, 0.3, 0.4)
+			# Not collected - very dark/barely visible
+			icons[i].modulate = Color(0.2, 0.2, 0.2, 0.3)  # Much darker and more transparent
+			icons[i].visible = true
 
 
 func _on_pressed() -> void:

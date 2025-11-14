@@ -16,9 +16,9 @@ const LEVEL_SELECT_PATH = "res://UI/LevelSelectMenu.tscn"
 # path - path to the actual file
 # order - order of levels that the player plays them in
 var levels: Array[Dictionary] = [
+	{"name": "tutorial", "display_name": "tutorial", "path": "res://Levels/level-tutorial.tscn", "order": 3},
 	{"name": "level-1", "display_name": "Level 1", "path": "res://Levels/level-1.tscn", "order": 1},
 	{"name": "level-2", "display_name": "Level 2", "path": "res://Levels/level-2.tscn", "order": 2},
-	{"name": "level-3", "display_name": "Level 3", "path": "res://Levels/level-tutorial.tscn", "order": 3},
 	{"name": "level-4", "display_name": "Level 4", "path": "res://Levels/level-4.tscn", "order": 4},
 	{"name": "level-5", "display_name": "Level 5", "path": "res://Levels/level-5.tscn", "order": 5},
 ]

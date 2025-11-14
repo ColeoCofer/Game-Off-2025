@@ -48,6 +48,12 @@ func _ready():
 func _find_player():
 	"""Find the player in the scene tree"""
 	await get_tree().process_frame
+
+	# Clear old references (they may be stale from previous scene)
+	player_ref = null
+	player_controller_ref = null
+	hunger_manager_ref = null
+
 	player_ref = get_tree().get_first_node_in_group("Player")
 
 	if player_ref:
@@ -106,9 +112,14 @@ func _start_cutscene(cutscene_id: String, actions: Array) -> void:
 	current_actions = actions
 	current_action_index = -1
 
-	# Ensure player reference is valid
+	# Always re-find player to ensure reference is valid for current scene
+	# (player instance changes between level loads)
+	await _find_player()
+
 	if not player_ref:
-		_find_player()
+		push_error("CutsceneDirector: Cannot start cutscene - player not found!")
+		_end_cutscene()
+		return
 
 	cutscene_started.emit(cutscene_id)
 	print("CutsceneDirector: Starting cutscene '%s'" % cutscene_id)

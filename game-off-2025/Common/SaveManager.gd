@@ -112,9 +112,16 @@ func get_checkpoint(level_name: String) -> Dictionary:
 	return {}
 
 func save_best_time(level_name: String, time: float):
+	print("SaveManager: save_best_time called - level: ", level_name, " time: ", time)
+	var current_best = save_data["game_data"]["best_times"].get(level_name, 999999.0)
+	print("SaveManager: Current best time: ", current_best)
+
 	if level_name not in save_data["game_data"]["best_times"] or time < save_data["game_data"]["best_times"][level_name]:
+		print("SaveManager: New best time! Saving...")
 		save_data["game_data"]["best_times"][level_name] = time
 		save_game()
+	else:
+		print("SaveManager: Not a new best time, not saving")
 
 func get_best_time(level_name: String) -> float:
 	if level_name in save_data["game_data"]["best_times"]:

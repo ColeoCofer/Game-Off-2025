@@ -19,8 +19,8 @@ var levels: Array[Dictionary] = [
 	{"name": "tutorial", "display_name": "Tutorial", "path": "res://Levels/level-tutorial.tscn", "order": 0},
 	{"name": "level-1", "display_name": "Level 1", "path": "res://Levels/level-1.tscn", "order": 1},
 	{"name": "level-2", "display_name": "Level 2", "path": "res://Levels/level-2.tscn", "order": 2},
+	{"name": "level-3", "display_name": "Level 3", "path": "res://Levels/level-3.tscn", "order": 3},
 	{"name": "level-4", "display_name": "Level 4", "path": "res://Levels/level-4.tscn", "order": 4},
-	{"name": "level-5", "display_name": "Level 5", "path": "res://Levels/level-5.tscn", "order": 5},
 ]
 
 var current_level: String = ""
@@ -127,13 +127,19 @@ func complete_level(level_name: String = "") -> void:
 		level_name = current_level
 
 	if level_name == "":
+		print("SceneManager: complete_level called but no level_name!")
 		return
 
 	# Calculate completion time
 	var completion_time = (Time.get_ticks_msec() / 1000.0) - current_level_start_time
 
+	print("SceneManager: Level completed - ", level_name)
+	print("SceneManager: Completion time - ", completion_time)
+	print("SceneManager: Start time was - ", current_level_start_time)
+
 	# Save best time
 	SaveManager.save_best_time(level_name, completion_time)
+	print("SceneManager: Best time saved")
 
 	# Save collected fireflies permanently (only if level completed without dying)
 	FireflyCollectionManager.commit_level_completion(level_name)

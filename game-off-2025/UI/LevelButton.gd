@@ -10,6 +10,7 @@ var is_unlocked: bool = false
 @onready var level_label: Label = $VBoxContainer/HBoxContainer/LevelLabel
 @onready var status_label: Label = $VBoxContainer/HBoxContainer/StatusLabel
 @onready var time_label: Label = $VBoxContainer/HBoxContainer/TimeLabel
+@onready var firefly_container: HBoxContainer = $VBoxContainer/FireflyContainer
 @onready var firefly_icon1: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon1
 @onready var firefly_icon2: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon2
 @onready var firefly_icon3: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon3
@@ -54,6 +55,11 @@ func _ready() -> void:
 
 
 func _update_firefly_display() -> void:
+	# Hide firefly container for tutorial level (no fireflies to collect)
+	if level_name == "tutorial":
+		firefly_container.visible = false
+		return
+
 	# Get firefly collection data from FireflyCollectionManager
 	var collected_fireflies = FireflyCollectionManager.get_collected_fireflies(level_name)
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://s3w5y6221p5b"]
+[gd_scene load_steps=22 format=4 uid="uid://s3w5y6221p5b"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_lkbww"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_wgnk2"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="11_nkhxo"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="12_x2puj"]
 [ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="13_qlwjp"]
+[ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="14_mj45q"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="14_ojlpd"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="15_x2afx"]
 [ext_resource type="Script" uid="uid://df6yg4a53s0wp" path="res://Levels/opening_cutscene.gd" id="16_102q8"]
@@ -535,8 +536,14 @@ hint_text = "sprinting makes you jump even higher!"
 show_once = false
 
 [node name="JumpOnEnemies" parent="TutorialText" instance=ExtResource("17_wgnk2")]
-position = Vector2(1785, 497)
+position = Vector2(1787, 497)
 hint_text = "jump on enemies to kill them"
+trigger_radius = 150.0
+show_once = false
+
+[node name="Fireflies" parent="TutorialText" instance=ExtResource("17_wgnk2")]
+position = Vector2(2130, 485)
+hint_text = "collect all three fireflies in each level"
 trigger_radius = 150.0
 show_once = false
 
@@ -553,8 +560,11 @@ position = Vector2(449, 505)
 [node name="Butterfly2" parent="Bugs" instance=ExtResource("12_x2puj")]
 position = Vector2(1561, 484)
 
+[node name="Firefly" parent="Bugs" instance=ExtResource("14_mj45q")]
+position = Vector2(2121, 483)
+
 [node name="LevelCompleteArea" parent="." instance=ExtResource("13_qlwjp")]
-position = Vector2(1556, 70)
+position = Vector2(2388, 442)
 
 [node name="CaveParticles" parent="." instance=ExtResource("14_ojlpd")]
 visible = false

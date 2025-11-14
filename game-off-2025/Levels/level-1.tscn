@@ -577,7 +577,6 @@ offset_bottom = 384.0
 
 [node name="OpeningCutscene" type="Node" parent="."]
 script = ExtResource("18_t2a2k")
-force_play_cutscene = true
 
 [node name="Particles" type="Node" parent="."]
 

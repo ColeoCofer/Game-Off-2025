@@ -2,7 +2,7 @@ extends Control
 
 ## LevelSelectMenu - Shows available levels with progression tracking
 
-@onready var level_list: VBoxContainer = get_node("MarginContainer/VBoxContainer/ScrollContainer/LevelList")
+@onready var level_grid: GridContainer = get_node("MarginContainer/VBoxContainer/CenterContainer/LevelGrid")
 @onready var back_button: Button = get_node("MarginContainer/VBoxContainer/BackButton")
 
 # Level button scene (we'll create this dynamically)
@@ -11,24 +11,26 @@ const LEVEL_BUTTON_SCENE = preload("res://UI/LevelButton.tscn")
 
 func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
-	_populate_level_list()
+	_populate_level_grid()
 
 	# Focus first unlocked level
 	await get_tree().process_frame
 	_focus_first_unlocked()
 
 
-func _populate_level_list() -> void:
+func _populate_level_grid() -> void:
 	# Clear existing buttons
-	for child in level_list.get_children():
+	for child in level_grid.get_children():
 		child.queue_free()
 
-	# Get all levels from SceneManager
+	# Get all levels from SceneManager sorted by order
 	var all_levels = SceneManager.get_all_levels()
+	all_levels.sort_custom(func(a, b): return a["order"] < b["order"])
 
+	# Create level buttons in order
 	for level_info in all_levels:
 		var level_button = LEVEL_BUTTON_SCENE.instantiate()
-		level_list.add_child(level_button)
+		level_grid.add_child(level_button)
 
 		# Button setup stuff
 		level_button.setup(
@@ -43,7 +45,7 @@ func _populate_level_list() -> void:
 
 
 func _focus_first_unlocked() -> void:
-	for child in level_list.get_children():
+	for child in level_grid.get_children():
 		if child.is_unlocked:
 			child.grab_focus()
 			break

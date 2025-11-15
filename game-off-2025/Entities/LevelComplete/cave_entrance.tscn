@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://ckvjjlnqr2h50"]
+
+[ext_resource type="Script" uid="uid://cu3xtedu8np2" path="res://Entities/LevelComplete/CaveEntrance.gd" id="1_cave_entrance"]
+[ext_resource type="Texture2D" uid="uid://rl80bcud8mgw" path="res://Assets/Art/sprite-sheets/sona-sprites-cole.png" id="2_31rwa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(23, 22.5)
+
+[node name="CaveEntrance" type="Node2D" groups=["CaveEntrance"]]
+script = ExtResource("1_cave_entrance")
+walk_duration = 1.5
+scale_duration = 1.2
+fade_to_black_duration = 0.8
+min_player_scale = 0.25
+depth_offset = 20.0
+
+[node name="EntranceSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_31rwa")
+region_enabled = true
+region_rect = Rect2(112, 8, 72, 40)
+
+[node name="TriggerArea" type="Area2D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+position = Vector2(0, 8.75)
+shape = SubResource("RectangleShape2D_trigger")
+debug_color = Color(0.8, 0.6, 0.2, 0.42)
+
+[node name="VisualHelper" type="ColorRect" parent="."]
+visible = false
+offset_left = -100.0
+offset_top = -50.0
+offset_right = -20.0
+offset_bottom = 50.0
+color = Color(0.8, 0.6, 0.2, 0.3)
+metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
+
+[connection signal="body_entered" from="TriggerArea" to="." method="_on_trigger_entered"]

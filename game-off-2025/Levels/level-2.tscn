@@ -13,11 +13,11 @@
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" uid="uid://dut7ugtlgkwnb" path="res://Entities/Enemies/blob_enemy.tscn" id="7_7ag1g"]
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="7_ffstk"]
-[ext_resource type="PackedScene" uid="uid://nt2eovi76ov0" path="res://Entities/LevelComplete/level_complete_area.tscn" id="7_r041s"]
 [ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="8_kpkdj"]
 [ext_resource type="PackedScene" uid="uid://cbtee321fvftq" path="res://Entities/Objects/steam_vent.tscn" id="9_sus6d"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
+[ext_resource type="PackedScene" uid="uid://ckvjjlnqr2h50" path="res://Entities/LevelComplete/cave_entrance.tscn" id="20_0n542"]
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="cave_bg_material"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
@@ -492,12 +492,17 @@ position = Vector2(1102, 380)
 firefly_id = 1
 
 [node name="Firefly2" parent="Fireflies" instance=ExtResource("7_ffstk")]
-position = Vector2(334, 488)
+position = Vector2(332, 422)
 firefly_id = 2
 
 [node name="Firefly3" parent="Fireflies" instance=ExtResource("7_ffstk")]
-position = Vector2(1786, 113)
+position = Vector2(2201, -185)
 firefly_id = 3
+
+[node name="CaveEntrance" parent="." instance=ExtResource("20_0n542")]
+position = Vector2(2380, 237)
+walk_duration = 0.65
+scale_duration = 0.65
 
 [node name="Objects" type="Node" parent="."]
 
@@ -543,10 +548,10 @@ position = Vector2(1316, 449)
 position = Vector2(1855, 225)
 
 [node name="Torch4" parent="Objects" instance=ExtResource("8_kpkdj")]
-position = Vector2(2335, 240)
+position = Vector2(2421, 241)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(122, 373)
+position = Vector2(118, 379)
 
 [node name="Foreground" type="Node2D" parent="."]
 
@@ -592,19 +597,13 @@ position = Vector2(40, 60)
 [node name="Butterflies" type="Node" parent="."]
 
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
-position = Vector2(741, 295)
+position = Vector2(749, 296)
 
 [node name="Butterfly4" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1390, 382)
 
 [node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1883, 228)
-
-[node name="Butterfly3" parent="Butterflies" instance=ExtResource("5_n4bx7")]
-position = Vector2(1652, 65)
-
-[node name="LevelCompleteArea" parent="." instance=ExtResource("7_r041s")]
-position = Vector2(2391, 224)
 
 [node name="CaveParticles" parent="." instance=ExtResource("1_particles")]
 visible = false

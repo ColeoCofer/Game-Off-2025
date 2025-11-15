@@ -1,0 +1,157 @@
+extends Node2D
+
+signal level_completed
+
+## Configuration
+@export var walk_duration: float = 1.5  # How long player walks toward entrance
+@export var scale_duration: float = 1.2  # How long the scale/fade effect takes
+@export var fade_to_black_duration: float = 0.8  # Screen fade duration
+@export var min_player_scale: float = 0.25  # Final scale (simulates depth)
+@export var depth_offset: float = 20.0  # How far "back" into the cave to walk (Y offset)
+
+## Child nodes (automatically found)
+var trigger_area: Area2D  # Area2D that detects player entry
+var entrance_sprite: Sprite2D  # Your cave entrance art
+
+var is_animating: bool = false
+var player_ref: CharacterBody2D = null
+var fade_canvas_layer: CanvasLayer = null
+
+func _ready():
+	# Find child nodes
+	trigger_area = get_node_or_null("TriggerArea")
+	entrance_sprite = get_node_or_null("EntranceSprite")
+
+	if trigger_area:
+		trigger_area.body_entered.connect(_on_trigger_entered)
+	else:
+		push_error("CaveEntrance: TriggerArea child node not found!")
+
+func _on_trigger_entered(body: Node2D):
+	if body.is_in_group("Player") and not is_animating:
+		print("Player entered cave entrance - starting sequence")
+		is_animating = true
+		player_ref = body
+		_start_entrance_sequence()
+
+func _start_entrance_sequence():
+	"""Main entrance animation sequence"""
+	if not player_ref:
+		return
+
+	# Disable player control
+	player_ref.set_physics_process(false)
+
+	# Get the animated sprite from the player
+	var player_sprite = player_ref.get_node_or_null("AnimatedSprite2D")
+	if not player_sprite:
+		push_warning("Could not find player AnimatedSprite2D")
+		_complete_transition()
+		return
+
+	# Calculate target position - center of trigger area (X only, keep player on ground)
+	var target_position = Vector2(
+		trigger_area.global_position.x,
+		player_ref.global_position.y  # Keep player at their current Y position (on ground)
+	)
+
+	var start_position = player_ref.global_position
+
+	# Store original values
+	var original_scale = player_ref.scale
+	var original_modulate = player_sprite.modulate
+
+	# Phase 1: Walk player to entrance point
+	var walk_tween = create_tween()
+	walk_tween.set_parallel(false)
+
+	# Move player to entrance
+	walk_tween.tween_property(player_ref, "global_position", target_position, walk_duration)
+	walk_tween.tween_callback(_start_depth_effect.bind(player_sprite, original_scale, original_modulate))
+
+	await walk_tween.finished
+
+func _start_depth_effect(player_sprite: AnimatedSprite2D, original_scale: Vector2, original_modulate: Color):
+	"""Phase 2: Scale down and fade out to simulate walking into distance"""
+
+	var depth_tween = create_tween()
+	depth_tween.set_parallel(true)
+
+	# Scale down (simulate walking into distance)
+	depth_tween.tween_property(player_ref, "scale", original_scale * min_player_scale, scale_duration)
+
+	# Fade out player
+	var target_modulate = Color(original_modulate.r, original_modulate.g, original_modulate.b, 0.0)
+	depth_tween.tween_property(player_sprite, "modulate", target_modulate, scale_duration)
+
+	await depth_tween.finished
+
+	# Phase 3: Fade screen to black and transition
+	_fade_to_black_and_transition()
+
+func _fade_to_black_and_transition():
+	"""Phase 3: Create screen fade and trigger level completion"""
+
+	# Create fade overlay
+	var fade_overlay = ColorRect.new()
+	fade_overlay.color = Color(0, 0, 0, 0)  # Start transparent
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Make it cover the entire screen
+	fade_canvas_layer = CanvasLayer.new()
+	fade_canvas_layer.layer = 200  # Very high layer to be on top of everything
+	get_tree().root.add_child(fade_canvas_layer)
+	fade_canvas_layer.add_child(fade_overlay)
+
+	# Set to cover viewport
+	fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.size = get_viewport().get_visible_rect().size
+
+	# Fade to black
+	var fade_tween = create_tween()
+	fade_tween.tween_property(fade_overlay, "color", Color(0, 0, 0, 1), fade_to_black_duration)
+
+	await fade_tween.finished
+
+	# Trigger level completion
+	_complete_transition()
+
+func _complete_transition():
+	"""Complete the level transition"""
+	# Show the completion menu
+	_show_completion_menu()
+
+	# Emit signal
+	level_completed.emit()
+
+func _show_completion_menu():
+	"""Show the completion menu (reusing death menu)"""
+	# Remove the fade overlay so menu is visible
+	if fade_canvas_layer:
+		fade_canvas_layer.queue_free()
+		fade_canvas_layer = null
+
+	# Notify SceneManager of level completion
+	SceneManager.complete_level()
+
+	# Find or create the death menu (we'll reuse it for completion)
+	var death_menu = get_tree().get_first_node_in_group("DeathMenu")
+
+	if not death_menu:
+		# If menu doesn't exist in the scene, we need to add it
+		var canvas_layer = get_tree().get_first_node_in_group("UI_Layer")
+		if not canvas_layer:
+			# Create a canvas layer if it doesn't exist
+			canvas_layer = CanvasLayer.new()
+			canvas_layer.add_to_group("UI_Layer")
+			canvas_layer.layer = 100  # Make sure it's on top
+			get_tree().root.add_child(canvas_layer)
+
+		# Load and instance the death menu
+		var death_menu_scene = load("res://UI/death_menu.tscn")
+		death_menu = death_menu_scene.instantiate()
+		death_menu.add_to_group("DeathMenu")
+		canvas_layer.add_child(death_menu)
+
+	if death_menu.has_method("show_menu"):
+		death_menu.show_menu("success")

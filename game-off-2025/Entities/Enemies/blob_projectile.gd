@@ -73,10 +73,11 @@ func _on_body_entered(body: Node2D):
 		_splatter()
 
 func _damage_player(player: Node2D):
-	# Projectile hits should instantly kill the player
+	# Projectile hits should damage the player (firefly shield can block it)
 	var death_manager = player.get_node_or_null("DeathManager")
-	if death_manager and death_manager.has_method("trigger_enemy_death"):
-		death_manager.trigger_enemy_death()
+	if death_manager and death_manager.has_method("trigger_hazard_death"):
+		# Pass projectile position for proper knockback direction
+		death_manager.trigger_hazard_death(global_position)
 
 func _splatter():
 	if is_splattering:

@@ -383,4 +383,5 @@ func _kill_player(player: Node2D):
 	# Find and trigger the player's death manager
 	var death_manager = player.get_node_or_null("DeathManager")
 	if death_manager and death_manager.has_method("trigger_hazard_death"):
-		death_manager.trigger_hazard_death()
+		# Pass ant's position so player gets knocked back in the right direction
+		death_manager.trigger_hazard_death(global_position)

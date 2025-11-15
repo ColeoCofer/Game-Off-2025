@@ -17,6 +17,10 @@ var camera: Camera2D
 var death_reason: String = "starvation"  # Track how the player died
 var firefly_manager: Node = null  # Reference to FireflyManager
 
+# Invincibility frames
+var is_invincible: bool = false
+var invincibility_duration: float = 1.0  # Seconds of invincibility after taking damage
+
 # Audio
 var hurt_audio_player: AudioStreamPlayer
 
@@ -91,13 +95,17 @@ func _check_hazard_collision():
 					trigger_hazard_death()
 					return
 
-func trigger_hazard_death():
+func trigger_hazard_death(hazard_position: Vector2 = Vector2.ZERO):
 	"""Called when player touches a hazard (spikes, etc.)"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
 		return
 
 	if is_dead:
+		return
+
+	# Check if player is invincible (recently took damage)
+	if is_invincible:
 		return
 
 	# Check if player has firefly shield
@@ -111,6 +119,12 @@ func trigger_hazard_death():
 
 		# Brief hitstop for feedback
 		HitStop.activate(0.05)
+
+		# Apply damage feedback effects
+		_apply_damage_feedback(hazard_position)
+
+		# Grant invincibility frames
+		_start_invincibility()
 
 		return  # Player survives!
 
@@ -325,3 +339,62 @@ func _show_death_menu():
 
 	if death_menu.has_method("show_menu"):
 		death_menu.show_menu(death_reason)
+
+func _apply_damage_feedback(hazard_position: Vector2 = Vector2.ZERO):
+	"""Apply visual and physics feedback when firefly blocks damage"""
+	# Apply knockback - push player AWAY from the hazard
+	var knockback_force = 215.0
+	var knockback_direction = 1.0  # Default: push right
+
+	if hazard_position != Vector2.ZERO:
+		# Push away from the hazard position
+		knockback_direction = sign(player.global_position.x - hazard_position.x)
+		# If we're exactly on top, use player's facing direction
+		if knockback_direction == 0:
+			knockback_direction = -1.0 if player.velocity.x > 0 else 1.0
+	else:
+		# No hazard position provided, use player's movement direction (push backwards)
+		knockback_direction = -1.0 if player.velocity.x > 0 else 1.0
+
+	player.velocity.x = knockback_direction * knockback_force
+	player.velocity.y = -200.0  # Small upward pop
+
+	# White flash effect
+	var sprite = player.get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		# Store original modulate
+		var original_modulate = sprite.modulate
+
+		# Flash white
+		sprite.modulate = Color(2.0, 2.0, 2.0, 1.0)
+
+		# Create tween to return to normal
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate", original_modulate, 0.2)
+
+func _start_invincibility():
+	"""Grant player invincibility frames after taking damage"""
+	is_invincible = true
+
+	# Visual feedback: flicker the sprite
+	var sprite = player.get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		_flicker_sprite(sprite)
+
+	# End invincibility after duration
+	await get_tree().create_timer(invincibility_duration).timeout
+	is_invincible = false
+
+func _flicker_sprite(sprite: AnimatedSprite2D):
+	"""Make sprite flicker during invincibility"""
+	var flicker_count = 6  # Number of flickers
+	var flicker_interval = invincibility_duration / (flicker_count * 2)  # Time for each on/off
+
+	for i in range(flicker_count):
+		sprite.modulate.a = 0.3  # Semi-transparent
+		await get_tree().create_timer(flicker_interval).timeout
+		sprite.modulate.a = 1.0  # Opaque
+		await get_tree().create_timer(flicker_interval).timeout
+
+	# Ensure sprite is fully visible at the end
+	sprite.modulate.a = 1.0

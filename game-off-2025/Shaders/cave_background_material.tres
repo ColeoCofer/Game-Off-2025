@@ -6,7 +6,7 @@
 [resource]
 shader = ExtResource("1_cave_shader")
 shader_parameter/cave_texture = ExtResource("2_cave_texture")
-shader_parameter/texture_opacity = 0.1470000069825
+shader_parameter/texture_opacity = 0.1210000057475
 shader_parameter/texture_tint = Color(0.3647059, 0.078431375, 0.05490196, 1)
 shader_parameter/texture_scale = Vector2(2, 2)
 shader_parameter/scroll_speed = Vector2(0, 0)

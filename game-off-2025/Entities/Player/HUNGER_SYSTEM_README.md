@@ -63,12 +63,12 @@ To implement game over when the bat starves, connect to the `hunger_depleted` si
 
 ```gdscript
 func _ready():
-    var hunger_manager = $Player/HungerManager
-    hunger_manager.hunger_depleted.connect(_on_player_starved)
+	var hunger_manager = $Player/HungerManager
+	hunger_manager.hunger_depleted.connect(_on_player_starved)
 
 func _on_player_starved():
-    # Handle game over
-    print("Game Over - Bat starved!")
+	# Handle game over
+	print("Game Over - Bat starved!")
 ```
 
 ## Integration with Existing Systems

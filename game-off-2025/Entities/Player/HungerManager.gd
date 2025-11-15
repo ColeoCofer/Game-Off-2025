@@ -47,13 +47,14 @@ func take_damage(amount: float):
 	current_hunger = max(current_hunger - amount, min_hunger)
 	hunger_changed.emit(current_hunger, max_hunger)
 
-	# Play hurt sound
-	if hurt_audio_player:
-		hurt_audio_player.play()
-
 	# Check if hunger depleted
 	if current_hunger <= min_hunger:
 		hunger_depleted.emit()
+
+func play_hurt_sound():
+	# Play the hurt sound effect
+	if hurt_audio_player:
+		hurt_audio_player.play()
 
 func set_depletion_active(active: bool):
 	is_depleting = active

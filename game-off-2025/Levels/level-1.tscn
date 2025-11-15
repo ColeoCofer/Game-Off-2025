@@ -538,6 +538,7 @@ tile_set = ExtResource("2_n4bx7")
 
 [node name="EcholocationManager" type="CanvasLayer" parent="." groups=["echolocation_manager"]]
 script = ExtResource("3_r041s")
+echolocation_mode = 1
 vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0

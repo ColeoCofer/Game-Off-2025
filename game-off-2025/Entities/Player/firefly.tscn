@@ -1,0 +1,70 @@
+[gd_scene load_steps=9 format=3 uid="uid://firefly001"]
+
+[ext_resource type="Script" uid="uid://d2jsufkxjtuql" path="res://Entities/Player/Firefly.gd" id="1"]
+[ext_resource type="Shader" uid="uid://bmls8f0asevpw" path="res://Shaders/firefly_trail.gdshader" id="2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_firefly"]
+shader = ExtResource("2")
+shader_parameter/velocity = Vector2(0, 0)
+shader_parameter/trail_length = 0.3
+shader_parameter/trail_samples = 12
+shader_parameter/glow_color = Color(1, 1, 0.4, 1)
+shader_parameter/glow_intensity = 1.5
+
+[sub_resource type="Gradient" id="Gradient_firefly_glow"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_firefly"]
+gradient = SubResource("Gradient_firefly_glow")
+width = 8
+height = 8
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_light"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.8, 0.8, 0.8, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_light"]
+gradient = SubResource("Gradient_light")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 0.4, 0.8, 1, 0.9, 0.3, 0.4, 1, 0.8, 0.2, 0)
+
+[node name="Firefly" type="Node2D"]
+script = ExtResource("1")
+drift_amount = 5.0
+glow_min = 0.15
+glow_max = 0.35
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 0.6, 0)
+self_modulate = Color(1, 1, 1, 0.14509805)
+material = SubResource("ShaderMaterial_firefly")
+texture = SubResource("GradientTexture2D_firefly")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 1, 0.4, 1)
+energy = 0.6
+range_z_min = -100
+range_z_max = 100
+texture = SubResource("GradientTexture2D_light")
+texture_scale = 0.6
+
+[node name="TrailParticles" type="CPUParticles2D" parent="."]
+amount = 30
+lifetime = 0.4
+preprocess = 0.5
+emission_shape = 1
+emission_sphere_radius = 2.0
+direction = Vector2(0, 0)
+spread = 0.0
+gravity = Vector2(0, 0)
+scale_amount_min = 0.8
+scale_amount_max = 1.2
+color_ramp = SubResource("Gradient_trail")

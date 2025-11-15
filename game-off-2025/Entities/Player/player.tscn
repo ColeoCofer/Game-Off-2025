@@ -1,7 +1,8 @@
-[gd_scene load_steps=33 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=34 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
+[ext_resource type="PackedScene" path="res://Entities/Player/firefly.tscn" id="2_firefly"]
 [ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/Audio/echo_sound.wav" id="3_echo"]
 [ext_resource type="Texture2D" uid="uid://u13ebduwlg6s" path="res://Assets/Art/bat-idle.png" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://duol2vvpm3gku" path="res://Assets/Art/bat-walk.png" id="4_7a1se"]
@@ -238,3 +239,5 @@ script = ExtResource("5_hunger")
 
 [node name="DeathManager" type="Node" parent="."]
 script = ExtResource("6_death")
+
+[node name="Firefly" parent="." instance=ExtResource("2_firefly")]

@@ -565,7 +565,7 @@ script = ExtResource("4_aoct0")
 position = Vector2(40, 60)
 
 [node name="LevelCompleteArea" parent="." instance=ExtResource("7_r041s")]
-position = Vector2(3212, 142)
+position = Vector2(2926, 194)
 
 [node name="LightBeam" parent="." instance=ExtResource("11_b6mne")]
 visible = false

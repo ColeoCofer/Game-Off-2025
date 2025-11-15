@@ -25,11 +25,15 @@ var velocity: Vector2 = Vector2.ZERO
 @onready var trail_particles: CPUParticles2D = $TrailParticles
 
 func _ready():
-	# Start at a random angle for variety
+	# Start at a random angle for variety (can be overridden by set_orbit_angle)
 	orbit_angle = randf() * TAU
 	time = randf() * TAU
 	noise_offset = randf() * 1000.0
 	previous_position = position
+
+func set_orbit_angle(angle: float):
+	"""Set the starting orbit angle for this firefly"""
+	orbit_angle = angle
 
 func _process(delta: float):
 	time += delta

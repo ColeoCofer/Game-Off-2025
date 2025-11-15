@@ -1,86 +1,97 @@
 extends Node
 
-## Manages firefly companion that acts as a shield
-## When player has a firefly and takes damage, the firefly dies instead
+## Manages firefly companions that act as shields
+## When player has fireflies and takes damage, one firefly dies instead
+## Supports up to 3 fireflies at once
 
 signal firefly_collected
 signal firefly_lost
 
-var has_firefly: bool = false
-var firefly_node: Node2D = null
+const MAX_FIREFLIES = 3
+
+var firefly_count: int = 0
+var firefly_nodes: Array[Node2D] = []
 
 @onready var player: CharacterBody2D = get_parent()
 
 func _ready():
-	# Hide firefly by default
-	firefly_node = player.get_node_or_null("Firefly")
-	print("FireflyManager ready - firefly_node found: ", firefly_node != null)
-	if firefly_node:
-		_set_firefly_visibility(false)
+	# Find all firefly nodes (Firefly, Firefly2, Firefly3)
+	for i in range(MAX_FIREFLIES):
+		var node_name = "Firefly" if i == 0 else "Firefly" + str(i + 1)
+		var firefly = player.get_node_or_null(node_name)
+		if firefly:
+			firefly_nodes.append(firefly)
+			# Immediately hide them (use call_deferred to ensure it happens after firefly's _ready)
+			_set_firefly_visibility(firefly, false)
+			# Also disable processing until activated
+			firefly.set_process(false)
 
 func collect_firefly():
 	"""Called when player picks up a firefly"""
-	print("collect_firefly called - has_firefly: ", has_firefly, " firefly_node: ", firefly_node != null)
+	if firefly_count >= MAX_FIREFLIES:
+		return  # Already have max
 
-	if has_firefly:
-		print("Already have firefly, returning")
-		return  # Already have one
+	# Show the next firefly
+	if firefly_count < firefly_nodes.size():
+		var firefly = firefly_nodes[firefly_count]
 
-	has_firefly = true
+		# Enable processing and visibility
+		firefly.set_process(true)
+		_set_firefly_visibility(firefly, true)
 
-	# Show the firefly companion
-	if firefly_node:
-		print("Setting firefly visible")
-		_set_firefly_visibility(true)
-	else:
-		print("ERROR: firefly_node is null!")
+		# Set different starting angles for visual variety
+		_set_firefly_orbit_offset(firefly, firefly_count)
 
-	firefly_collected.emit()
+		firefly_count += 1
+		firefly_collected.emit()
 
-func _set_firefly_visibility(visible: bool):
-	"""Helper to show/hide firefly and all its components"""
-	print("_set_firefly_visibility called with visible=", visible)
-	if not firefly_node:
-		print("ERROR: firefly_node is null in _set_firefly_visibility")
+func _set_firefly_visibility(firefly: Node2D, visible: bool):
+	"""Helper to show/hide a specific firefly and all its components"""
+	if not firefly:
 		return
 
-	firefly_node.visible = visible
-	print("Set firefly_node.visible to ", visible)
+	firefly.visible = visible
 
 	# Also make sure the sprite and light are visible/hidden
-	var sprite = firefly_node.get_node_or_null("Sprite2D")
-	var light = firefly_node.get_node_or_null("PointLight2D")
-	var particles = firefly_node.get_node_or_null("TrailParticles")
-
-	print("Found nodes - sprite: ", sprite != null, " light: ", light != null, " particles: ", particles != null)
+	var sprite = firefly.get_node_or_null("Sprite2D")
+	var light = firefly.get_node_or_null("PointLight2D")
+	var particles = firefly.get_node_or_null("TrailParticles")
 
 	if sprite:
 		sprite.visible = visible
-		print("Set sprite.visible to ", visible)
 	if light:
 		light.visible = visible
-		print("Set light.visible to ", visible)
 	if particles:
 		particles.visible = visible
 		particles.emitting = visible
-		print("Set particles.visible and emitting to ", visible)
+
+func _set_firefly_orbit_offset(firefly: Node2D, index: int):
+	"""Set different orbit starting angles for each firefly"""
+	# Spread fireflies evenly around the circle
+	var angle_offset = (TAU / MAX_FIREFLIES) * index
+
+	# Access the firefly script to set its initial orbit angle
+	if firefly.has_method("set_orbit_angle"):
+		firefly.set_orbit_angle(angle_offset)
 
 func lose_firefly():
-	"""Called when firefly shields player from damage"""
-	if not has_firefly:
+	"""Called when firefly shields player from damage - removes one firefly"""
+	if firefly_count <= 0:
 		return
 
-	has_firefly = false
+	# Kill the last active firefly
+	firefly_count -= 1
+	var firefly = firefly_nodes[firefly_count]
 
 	# Play firefly death effect
-	if firefly_node:
-		_play_firefly_death_effect()
+	if firefly:
+		_play_firefly_death_effect(firefly)
 
 	firefly_lost.emit()
 
-func _play_firefly_death_effect():
-	"""Animated death effect for firefly"""
-	if not firefly_node:
+func _play_firefly_death_effect(firefly: Node2D):
+	"""Animated death effect for a specific firefly"""
+	if not firefly:
 		return
 
 	# Create a tween for the death animation
@@ -88,8 +99,8 @@ func _play_firefly_death_effect():
 	tween.set_parallel(true)
 
 	# Flash bright then fade
-	var sprite = firefly_node.get_node_or_null("Sprite2D")
-	var light = firefly_node.get_node_or_null("PointLight2D")
+	var sprite = firefly.get_node_or_null("Sprite2D")
+	var light = firefly.get_node_or_null("PointLight2D")
 
 	if sprite:
 		# Flash bright
@@ -107,8 +118,10 @@ func _play_firefly_death_effect():
 
 	# After animation, hide the firefly
 	tween.finished.connect(func():
-		if firefly_node:
-			_set_firefly_visibility(false)
+		if firefly:
+			_set_firefly_visibility(firefly, false)
+			# Disable processing until collected again
+			firefly.set_process(false)
 			# Reset properties
 			if sprite:
 				sprite.modulate.a = 1.0
@@ -118,5 +131,5 @@ func _play_firefly_death_effect():
 	)
 
 func has_shield() -> bool:
-	"""Check if player currently has firefly shield"""
-	return has_firefly
+	"""Check if player currently has any firefly shields"""
+	return firefly_count > 0

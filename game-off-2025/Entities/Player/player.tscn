@@ -245,3 +245,7 @@ script = ExtResource("6_death")
 script = ExtResource("2_firefly_mgr")
 
 [node name="Firefly" parent="." instance=ExtResource("2_firefly")]
+
+[node name="Firefly2" parent="." instance=ExtResource("2_firefly")]
+
+[node name="Firefly3" parent="." instance=ExtResource("2_firefly")]

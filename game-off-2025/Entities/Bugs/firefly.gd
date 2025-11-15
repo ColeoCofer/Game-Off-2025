@@ -72,6 +72,14 @@ func _on_body_entered(body: Node2D):
 		if hunger_manager:
 			hunger_manager.consume_food(hunger_restore_amount)
 
+		# Give player the firefly shield companion
+		var firefly_manager = body.get_node_or_null("FireflyManager")
+		if firefly_manager:
+			print("Firefly %d: Activating shield via FireflyManager" % firefly_id)
+			firefly_manager.collect_firefly()
+		else:
+			print("Firefly %d: WARNING - FireflyManager not found!" % firefly_id)
+
 		# Save collection to manager (temporarily, until level completion)
 		var current_level = SceneManager.current_level
 		FireflyCollectionManager.collect_firefly(current_level, firefly_id)

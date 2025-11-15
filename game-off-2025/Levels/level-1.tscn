@@ -523,7 +523,7 @@ position = Vector2(1601, 225)
 position = Vector2(2545, 225)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(2471, 225)
+position = Vector2(33, 366)
 
 [node name="Foreground" type="Node2D" parent="."]
 

@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://firefly_pickup001"]
+
+[ext_resource type="Script" path="res://Entities/Bugs/firefly_pickup.gd" id="1"]
+
+[sub_resource type="Gradient" id="Gradient_pickup_glow"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pickup"]
+gradient = SubResource("Gradient_pickup_glow")
+width = 8
+height = 8
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_light"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.8, 0.8, 0.8, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_light"]
+gradient = SubResource("Gradient_light")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
+radius = 8.0
+
+[node name="FireflyPickup" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0.95, 0.4, 1)
+texture = SubResource("GradientTexture2D_pickup")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 1, 0.4, 1)
+energy = 0.8
+texture = SubResource("GradientTexture2D_light")
+texture_scale = 1.2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pickup")

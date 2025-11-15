@@ -15,6 +15,7 @@ var last_ground_y: float = 0.0
 var starting_position: Vector2  # Store the starting position for debug mode respawn
 var camera: Camera2D
 var death_reason: String = "starvation"  # Track how the player died
+var firefly_manager: Node = null  # Reference to FireflyManager
 
 # Audio
 var hurt_audio_player: AudioStreamPlayer
@@ -27,6 +28,9 @@ func _ready():
 
 	# Get reference to hurt audio player
 	hurt_audio_player = player.get_node_or_null("HurtAudioPlayer")
+
+	# Get reference to FireflyManager
+	firefly_manager = player.get_node_or_null("FireflyManager")
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
@@ -95,6 +99,20 @@ func trigger_hazard_death():
 
 	if is_dead:
 		return
+
+	# Check if player has firefly shield
+	if firefly_manager and firefly_manager.has_shield():
+		# Firefly takes the hit instead!
+		firefly_manager.lose_firefly()
+
+		# Play hurt sound
+		if hurt_audio_player:
+			hurt_audio_player.play()
+
+		# Brief hitstop for feedback
+		HitStop.activate(0.05)
+
+		return  # Player survives!
 
 	TimerManager.stop_timer()
 

@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://r857tja3822b" path="res://Assets/Audio/walking_dirt.wav" id="5_walking"]
 [ext_resource type="Texture2D" uid="uid://dxruelql81yw" path="res://Assets/Art/bat-slide.png" id="6_ap3xn"]
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("1_btcbx")
@@ -226,6 +227,10 @@ bus = &"Sounds"
 [node name="WalkingAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_walking")
 volume_db = 10.0
+bus = &"Sounds"
+
+[node name="HurtAudioPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_hurt")
 bus = &"Sounds"
 
 [node name="HungerManager" type="Node" parent="." groups=["hunger_manager"]]

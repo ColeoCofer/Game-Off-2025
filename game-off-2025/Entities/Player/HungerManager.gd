@@ -14,9 +14,15 @@ signal food_consumed(amount: float)
 var current_hunger: float = 100.0
 var is_depleting: bool = true
 
+# Audio
+var hurt_audio_player: AudioStreamPlayer
+
 func _ready():
 	current_hunger = max_hunger
 	hunger_changed.emit(current_hunger, max_hunger)
+
+	# Get reference to hurt audio player
+	hurt_audio_player = get_parent().get_node("HurtAudioPlayer")
 
 func _process(delta):
 	if is_depleting:
@@ -40,6 +46,10 @@ func take_damage(amount: float):
 	# Reduce hunger when taking damage
 	current_hunger = max(current_hunger - amount, min_hunger)
 	hunger_changed.emit(current_hunger, max_hunger)
+
+	# Play hurt sound
+	if hurt_audio_player:
+		hurt_audio_player.play()
 
 	# Check if hunger depleted
 	if current_hunger <= min_hunger:

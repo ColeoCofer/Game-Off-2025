@@ -478,7 +478,6 @@ position = Vector2(738, 481)
 
 [node name="Player" parent="." instance=ExtResource("8_2cysf")]
 position = Vector2(129, 517)
-jumpHeight = 2.2
 maxStepHeight = 16.0
 
 [node name="Foreground" type="Node2D" parent="."]

@@ -16,11 +16,17 @@ var starting_position: Vector2  # Store the starting position for debug mode res
 var camera: Camera2D
 var death_reason: String = "starvation"  # Track how the player died
 
+# Audio
+var hurt_audio_player: AudioStreamPlayer
+
 func _ready():
 	player = get_parent() as CharacterBody2D
 	camera = player.get_node_or_null("Camera2D")
 	last_ground_y = player.position.y
 	starting_position = player.position  # Store starting position for debug mode
+
+	# Get reference to hurt audio player
+	hurt_audio_player = player.get_node_or_null("HurtAudioPlayer")
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
@@ -95,6 +101,10 @@ func trigger_hazard_death():
 	is_dead = true
 	death_reason = "hazard"
 
+	# Play hurt sound
+	if hurt_audio_player:
+		hurt_audio_player.play()
+
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):
 		player._stopWalkingSound()
@@ -126,6 +136,10 @@ func trigger_enemy_death():
 
 	is_dead = true
 	death_reason = "enemy"
+
+	# Play hurt sound
+	if hurt_audio_player:
+		hurt_audio_player.play()
 
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):
@@ -185,8 +199,12 @@ func trigger_fall_death():
 func trigger_death():
 	is_dead = true
 	death_reason = "starvation"
-	
+
 	TimerManager.stop_timer()
+
+	# Play hurt sound
+	if hurt_audio_player:
+		hurt_audio_player.play()
 
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):

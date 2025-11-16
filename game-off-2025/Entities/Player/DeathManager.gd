@@ -16,6 +16,7 @@ var starting_position: Vector2  # Store the starting position for debug mode res
 var camera: Camera2D
 var death_reason: String = "starvation"  # Track how the player died
 var firefly_manager: Node = null  # Reference to FireflyManager
+var checkpoint_manager: Node = null  # Reference to CheckpointManager
 
 # Invincibility frames
 var is_invincible: bool = false
@@ -35,6 +36,9 @@ func _ready():
 
 	# Get reference to FireflyManager
 	firefly_manager = player.get_node_or_null("FireflyManager")
+
+	# Get reference to CheckpointManager
+	checkpoint_manager = player.get_node_or_null("CheckpointManager")
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
@@ -195,11 +199,14 @@ func trigger_fall_death():
 	"""Called when player falls too far"""
 	# DEBUG MODE - TODO: Remove for production
 	if DebugManager.debug_mode:
-		# Reset player to starting position
-		player.position = starting_position
-		player.velocity = Vector2.ZERO
-		# Reset last ground position to prevent immediate re-trigger
-		last_ground_y = starting_position.y
+		# Reset player to checkpoint or starting position
+		if checkpoint_manager:
+			checkpoint_manager.respawn_player()
+			last_ground_y = player.position.y
+		else:
+			player.position = starting_position
+			player.velocity = Vector2.ZERO
+			last_ground_y = starting_position.y
 		return
 
 	if is_dead:

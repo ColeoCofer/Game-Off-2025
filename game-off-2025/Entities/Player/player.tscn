@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dxruelql81yw" path="res://Assets/Art/bat-slide.png" id="6_ap3xn"]
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
 [ext_resource type="AudioStream" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
+[ext_resource type="Script" path="res://Entities/Player/CheckpointManager.gd" id="7_checkpoint"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("1_btcbx")
@@ -243,6 +244,9 @@ script = ExtResource("6_death")
 
 [node name="FireflyManager" type="Node" parent="."]
 script = ExtResource("2_firefly_mgr")
+
+[node name="CheckpointManager" type="Node" parent="."]
+script = ExtResource("7_checkpoint")
 
 [node name="Firefly" parent="." instance=ExtResource("2_firefly")]
 

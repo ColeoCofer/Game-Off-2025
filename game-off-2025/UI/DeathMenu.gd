@@ -111,14 +111,22 @@ func _on_play_again_button_pressed():
 	if level_name != "":
 		FireflyCollectionManager.start_level_run(level_name)
 
+	# Store reference to current scene before cleanup
+	var current_scene = get_tree().current_scene
+
 	# Remove the canvas layer from root before reloading
 	# (it won't be cleaned up automatically since it's attached to root, not the scene)
 	var canvas_layer = get_parent()
 	if canvas_layer:
 		canvas_layer.queue_free()
 
-	# Use reload_current_scene for reliable camera/respawn behavior
-	get_tree().call_deferred("reload_current_scene")
+	# Ensure current_scene is still valid before reloading
+	if current_scene:
+		get_tree().call_deferred("reload_current_scene")
+	else:
+		# Fallback: reload using SceneManager if current_scene is null
+		if level_name != "":
+			SceneManager.load_level.call_deferred(level_name)
 
 func _on_next_level_button_pressed():
 	next_level_pressed.emit()

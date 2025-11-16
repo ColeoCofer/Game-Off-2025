@@ -23,7 +23,9 @@ func _ready():
 	entrance_sprite = get_node_or_null("EntranceSprite")
 
 	if trigger_area:
-		trigger_area.body_entered.connect(_on_trigger_entered)
+		# Only connect if not already connected (might be connected in scene editor)
+		if not trigger_area.body_entered.is_connected(_on_trigger_entered):
+			trigger_area.body_entered.connect(_on_trigger_entered)
 	else:
 		push_error("CaveEntrance: TriggerArea child node not found!")
 

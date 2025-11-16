@@ -487,6 +487,9 @@ position = Vector2(2721, 173)
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(832, 212)
 
+[node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
+position = Vector2(1506, 227)
+
 [node name="Enemies" type="Node" parent="."]
 
 [node name="AntEnemy3" parent="Enemies" instance=ExtResource("5_jfi0m")]
@@ -526,7 +529,7 @@ position = Vector2(1601, 225)
 position = Vector2(2752, 177)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(33, 366)
+position = Vector2(34, 376)
 
 [node name="Foreground" type="Node2D" parent="."]
 

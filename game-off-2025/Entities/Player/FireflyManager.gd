@@ -2,12 +2,12 @@ extends Node
 
 ## Manages firefly companions that act as shields
 ## When player has fireflies and takes damage, one firefly dies instead
-## Supports up to 3 fireflies at once
+## Limited to 1 firefly at once for balanced difficulty
 
 signal firefly_collected
 signal firefly_lost
 
-const MAX_FIREFLIES = 3
+const MAX_FIREFLIES = 1
 
 var firefly_count: int = 0
 var firefly_nodes: Array[Node2D] = []
@@ -16,7 +16,9 @@ var firefly_nodes: Array[Node2D] = []
 
 func _ready():
 	# Find all firefly nodes (Firefly, Firefly2, Firefly3)
-	for i in range(MAX_FIREFLIES):
+	# Note: We search for all 3 nodes even though MAX_FIREFLIES may be 1
+	# This ensures all firefly nodes in the scene start hidden
+	for i in range(3):  # Always check for all 3 possible firefly nodes
 		var node_name = "Firefly" if i == 0 else "Firefly" + str(i + 1)
 		var firefly = player.get_node_or_null(node_name)
 		if firefly:
@@ -28,8 +30,11 @@ func _ready():
 
 func collect_firefly():
 	"""Called when player picks up a firefly"""
+	# Always emit the signal so hunger restoration works
+	# But only spawn a companion firefly if we don't already have one
 	if firefly_count >= MAX_FIREFLIES:
-		return  # Already have max
+		firefly_collected.emit()
+		return  # Already have max, player gets hunger but no extra protection
 
 	# Show the next firefly
 	if firefly_count < firefly_nodes.size():

@@ -34,7 +34,29 @@ func _on_trigger_entered(body: Node2D):
 		print("Player entered cave entrance - starting sequence")
 		is_animating = true
 		player_ref = body
+
+		# CRITICAL: Immediately stop hunger depletion and timer to prevent death during animation
+		_stop_hunger_and_timer()
+
 		_start_entrance_sequence()
+
+func _stop_hunger_and_timer():
+	"""Stop hunger depletion and timer as soon as player enters"""
+	# Stop the timer immediately
+	TimerManager.stop_timer()
+
+	# Stop hunger depletion to prevent death during animation
+	if player_ref:
+		var hunger_manager = player_ref.get_node_or_null("HungerManager")
+		if hunger_manager and hunger_manager.has_method("set_depletion_active"):
+			hunger_manager.set_depletion_active(false)
+			print("Cave entrance: Stopped hunger depletion")
+
+		# Mark the death manager as if player is already "dead" to prevent any death triggers
+		var death_manager = player_ref.get_node_or_null("DeathManager")
+		if death_manager:
+			death_manager.is_dead = true
+			print("Cave entrance: Disabled death triggers")
 
 func _start_entrance_sequence():
 	"""Main entrance animation sequence"""

@@ -16,6 +16,10 @@ var is_depleting: bool = true
 
 # Audio
 var hurt_audio_player: AudioStreamPlayer
+var firefly_sacrifice_audio_player: AudioStreamPlayer
+
+# Firefly protection
+var firefly_manager: Node
 
 func _ready():
 	current_hunger = max_hunger
@@ -23,6 +27,12 @@ func _ready():
 
 	# Get reference to hurt audio player
 	hurt_audio_player = get_parent().get_node("HurtAudioPlayer")
+
+	# Get reference to firefly sacrifice audio player
+	firefly_sacrifice_audio_player = get_parent().get_node("FireflySacrificeAudioPlayer")
+
+	# Get reference to firefly manager
+	firefly_manager = get_parent().get_node_or_null("FireflyManager")
 
 func _process(delta):
 	if is_depleting:
@@ -35,7 +45,11 @@ func _deplete_hunger(delta: float):
 		hunger_changed.emit(current_hunger, max_hunger)
 
 		if current_hunger <= min_hunger:
-			hunger_depleted.emit()
+			# Check if player has a firefly to sacrifice instead of dying
+			if firefly_manager and firefly_manager.has_shield():
+				_sacrifice_firefly_for_hunger()
+			else:
+				hunger_depleted.emit()
 
 func consume_food(amount: float):
 	current_hunger = min(current_hunger + amount, max_hunger)
@@ -49,7 +63,11 @@ func take_damage(amount: float):
 
 	# Check if hunger depleted
 	if current_hunger <= min_hunger:
-		hunger_depleted.emit()
+		# Check if player has a firefly to sacrifice instead of dying
+		if firefly_manager and firefly_manager.has_shield():
+			_sacrifice_firefly_for_hunger()
+		else:
+			hunger_depleted.emit()
 
 func play_hurt_sound():
 	# Play the hurt sound effect
@@ -64,3 +82,19 @@ func get_hunger_percentage() -> float:
 
 func is_starving() -> bool:
 	return current_hunger <= min_hunger
+
+func _sacrifice_firefly_for_hunger():
+	"""Sacrifices a firefly to save the player from starvation"""
+	if not firefly_manager:
+		return
+
+	# Play the light pop sound
+	if firefly_sacrifice_audio_player:
+		firefly_sacrifice_audio_player.play()
+
+	# Sacrifice the firefly (triggers death animation)
+	firefly_manager.lose_firefly()
+
+	# Restore hunger to half
+	current_hunger = max_hunger * 0.5
+	hunger_changed.emit(current_hunger, max_hunger)

@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
 [ext_resource type="AudioStream" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
 [ext_resource type="Script" path="res://Entities/Player/CheckpointManager.gd" id="7_checkpoint"]
+[ext_resource type="AudioStream" uid="uid://nj7jjqdxychg" path="res://Assets/Audio/UI/LightPop.wav" id="8_lightpop"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("1_btcbx")
@@ -234,6 +235,10 @@ bus = &"Sounds"
 
 [node name="HurtAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_hurt")
+bus = &"Sounds"
+
+[node name="FireflySacrificeAudioPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_lightpop")
 bus = &"Sounds"
 
 [node name="HungerManager" type="Node" parent="." groups=["hunger_manager"]]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bqxt2myiyrttg"]
+[gd_scene load_steps=6 format=3 uid="uid://bqxt2myiyrttg"]
 
 [ext_resource type="Script" uid="uid://biy3x1qe7ub2w" path="res://Entities/Objects/falling_block.gd" id="2_falling_block"]
 
@@ -8,11 +8,15 @@ load_path = "res://.godot/imported/sona-sprites-cole.png-ddcfc2f592a748905afe3f8
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_isqo5"]
 size = Vector2(16, 16)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4275p"]
-size = Vector2(16, 12)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_landing"]
+size = Vector2(16, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4hknm"]
+size = Vector2(18, 13)
 
 [node name="FallingBlock" type="AnimatableBody2D"]
 script = ExtResource("2_falling_block")
+shake_intensity = 0.75
 jump_boost = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -23,9 +27,16 @@ region_rect = Rect2(128, 176, 16, 16)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_isqo5")
 
-[node name="PlayerDetectionArea" type="Area2D" parent="."]
+[node name="LandingDetectionArea" type="Area2D" parent="."]
 collision_layer = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetectionArea"]
-position = Vector2(0, -6)
-shape = SubResource("RectangleShape2D_4275p")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingDetectionArea"]
+position = Vector2(0, -8.5)
+shape = SubResource("RectangleShape2D_landing")
+
+[node name="JumpDetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="JumpDetectionArea"]
+position = Vector2(0, -6.5)
+shape = SubResource("RectangleShape2D_4hknm")

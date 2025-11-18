@@ -14,7 +14,8 @@ extends AnimatableBody2D
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var detection_area: Area2D = $PlayerDetectionArea
+@onready var landing_detection_area: Area2D = $LandingDetectionArea
+@onready var jump_detection_area: Area2D = $JumpDetectionArea
 
 var is_shaking: bool = false
 var is_falling: bool = false
@@ -28,13 +29,13 @@ var player_on_block: bool = false
 func _ready() -> void:
 	original_position = sprite.position
 
-	# Connect detection area signals
-	if detection_area:
-		detection_area.body_entered.connect(_on_player_entered)
-		detection_area.body_exited.connect(_on_player_exited)
-		print("FallingBlock: Detection area connected successfully")
+	# Connect landing detection area signals (for triggering shake)
+	if landing_detection_area:
+		landing_detection_area.body_entered.connect(_on_player_entered)
+		landing_detection_area.body_exited.connect(_on_player_exited)
+		print("FallingBlock: Landing detection area connected successfully")
 	else:
-		print("FallingBlock ERROR: No detection area found!")
+		print("FallingBlock ERROR: No landing detection area found!")
 
 	print("FallingBlock ready at: ", global_position)
 
@@ -90,8 +91,8 @@ func _on_player_exited(body: Node2D) -> void:
 		player_on_block = false
 
 func _help_player_jump() -> void:
-	# Check if there are any bodies in the detection area
-	var bodies = detection_area.get_overlapping_bodies()
+	# Use the larger jump detection area to track player while falling
+	var bodies = jump_detection_area.get_overlapping_bodies()
 
 	if bodies.size() == 0:
 		return
@@ -104,20 +105,14 @@ func _help_player_jump() -> void:
 			break
 
 	if player_body == null:
-		print("no player found!!!")
 		return  # No player found
-
-	# Debug: Print once per second that player is detected
-	if int(fall_timer * 10) % 10 == 0 and fall_timer > 0.05:
-		print("FallingBlock: Player detected on falling block, waiting for jump input...")
 
 	# Player is on the block, check for jump input
 	if Input.is_action_just_pressed("jump") or Input.is_action_pressed("jump"):
-		# Apply strong upward boost to counteract fall velocity and enable normal jumping
+		# Apply upward boost to counteract fall velocity and enable normal jumping
 		var boost_amount = fall_speed + jump_boost
-		print("FallingBlock: JUMP PRESSED! APPLYING BOOST of ", boost_amount, " | Player velocity before: ", player_body.velocity.y)
+		print("FallingBlock: JUMP PRESSED! APPLYING BOOST of ", boost_amount)
 		player_body.velocity.y -= boost_amount
-		print("FallingBlock: Player velocity after: ", player_body.velocity.y)
 
 func _start_shaking() -> void:
 	print("FallingBlock: Starting to shake!")

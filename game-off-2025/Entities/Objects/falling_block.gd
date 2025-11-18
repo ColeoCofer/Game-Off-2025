@@ -8,6 +8,8 @@ extends AnimatableBody2D
 @export var shake_duration: float = 0.5  ## Time in seconds before falling (while shaking)
 @export var shake_intensity: float = 1.5  ## How much the block shakes (in pixels)
 @export var fall_speed: float = 200.0  ## Speed at which the block falls
+@export var solid_fall_duration: float = 1.5  ## Time in seconds the block stays solid while falling
+@export var jump_boost: float = 400.0  ## Extra upward boost when player jumps off falling block
 @export var destroy_after_fall: bool = true  ## Whether to remove the block after falling off screen
 
 @onready var sprite: Sprite2D = $Sprite2D
@@ -18,6 +20,8 @@ var is_shaking: bool = false
 var is_falling: bool = false
 var has_triggered: bool = false
 var shake_timer: float = 0.0
+var fall_timer: float = 0.0
+var collision_disabled: bool = false
 var original_position: Vector2
 var player_on_block: bool = false
 
@@ -56,7 +60,19 @@ func _physics_process(delta: float) -> void:
 
 	# Handle falling
 	if is_falling:
+		fall_timer += delta
 		position.y += fall_speed * delta
+
+		# Help player jump off by counteracting fall velocity when they jump
+		# Don't rely on player_on_block flag since body_exited fires incorrectly when area moves
+		if not collision_disabled:
+			_help_player_jump()
+
+		# Disable collision after solid_fall_duration
+		if not collision_disabled and fall_timer >= solid_fall_duration:
+			collision_disabled = true
+			collision_shape.set_deferred("disabled", true)
+			print("FallingBlock: Collision disabled, player will fall through now")
 
 		# Check if block has fallen far enough to be destroyed
 		if destroy_after_fall and position.y > get_viewport_rect().size.y + 100:
@@ -73,6 +89,36 @@ func _on_player_exited(body: Node2D) -> void:
 	if body.is_in_group("Player") or body.name == "Player":
 		player_on_block = false
 
+func _help_player_jump() -> void:
+	# Check if there are any bodies in the detection area
+	var bodies = detection_area.get_overlapping_bodies()
+
+	if bodies.size() == 0:
+		return
+
+	# Find the player in the overlapping bodies
+	var player_body = null
+	for body in bodies:
+		if (body.is_in_group("Player") or body.name == "Player") and body is CharacterBody2D:
+			player_body = body
+			break
+
+	if player_body == null:
+		print("no player found!!!")
+		return  # No player found
+
+	# Debug: Print once per second that player is detected
+	if int(fall_timer * 10) % 10 == 0 and fall_timer > 0.05:
+		print("FallingBlock: Player detected on falling block, waiting for jump input...")
+
+	# Player is on the block, check for jump input
+	if Input.is_action_just_pressed("jump") or Input.is_action_pressed("jump"):
+		# Apply strong upward boost to counteract fall velocity and enable normal jumping
+		var boost_amount = fall_speed + jump_boost
+		print("FallingBlock: JUMP PRESSED! APPLYING BOOST of ", boost_amount, " | Player velocity before: ", player_body.velocity.y)
+		player_body.velocity.y -= boost_amount
+		print("FallingBlock: Player velocity after: ", player_body.velocity.y)
+
 func _start_shaking() -> void:
 	print("FallingBlock: Starting to shake!")
 	has_triggered = true
@@ -83,10 +129,10 @@ func _start_falling() -> void:
 	print("FallingBlock: Starting to fall!")
 	is_shaking = false
 	is_falling = true
+	fall_timer = 0.0
 
 	# Reset sprite to original position (no more shaking)
 	sprite.position = original_position
 
-	# Disable collision so the block doesn't interfere while falling
-	collision_shape.set_deferred("disabled", true)
-	detection_area.set_deferred("monitoring", false)
+	# Keep detection area active so we know when player leaves the block
+	# This helps with jump detection

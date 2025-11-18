@@ -9,10 +9,11 @@ load_path = "res://.godot/imported/sona-sprites-cole.png-ddcfc2f592a748905afe3f8
 size = Vector2(16, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4275p"]
-size = Vector2(16, 9)
+size = Vector2(16, 12)
 
 [node name="FallingBlock" type="AnimatableBody2D"]
 script = ExtResource("2_falling_block")
+jump_boost = 0.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = SubResource("CompressedTexture2D_4hknm")
@@ -26,5 +27,5 @@ shape = SubResource("RectangleShape2D_isqo5")
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetectionArea"]
-position = Vector2(0, -4.5)
+position = Vector2(0, -6)
 shape = SubResource("RectangleShape2D_4275p")

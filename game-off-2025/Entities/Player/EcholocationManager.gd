@@ -12,6 +12,7 @@ enum EcholocationMode {
 @onready var camera: Camera2D = player.get_node("Camera2D")
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 @onready var hunger_manager: Node = player.get_node("HungerManager")
+@onready var player_sprite: AnimatedSprite2D = player.get_node("AnimatedSprite2D")
 
 # Mode selection
 @export var echolocation_mode: EcholocationMode = EcholocationMode.CLASSIC
@@ -43,6 +44,13 @@ var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: fl
 # Shader material
 var shader_material: ShaderMaterial
 
+# Cooldown ready pulse effect
+@export var pulse_duration: float = 0.8  # How long the pulse effect lasts (seconds)
+var pulse_timer: float = 0.0
+var is_pulsing: bool = false
+var pulse_shader_material: ShaderMaterial
+var original_sprite_material: ShaderMaterial
+
 func _ready():
 	# Ensure darkness overlay is visible (in case it was disabled during level editing)
 	darkness_overlay.visible = true
@@ -66,6 +74,12 @@ func _ready():
 	# Initialize echo arrays
 	update_echo_shader_params()
 
+	# Store original sprite material and create pulse shader material
+	original_sprite_material = player_sprite.material
+	pulse_shader_material = ShaderMaterial.new()
+	pulse_shader_material.shader = load("res://Shaders/cooldown_ready_pulse.gdshader")
+	pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
+
 func _process(delta: float):
 	# Update player position in shader
 	var player_screen_pos = get_screen_position(player.global_position)
@@ -81,6 +95,9 @@ func _process(delta: float):
 	# Update cooldown
 	update_cooldown(delta)
 
+	# Update pulse effect
+	update_pulse_effect(delta)
+
 	# Update shader with current echo positions
 	update_echo_shader_params()
 
@@ -88,6 +105,13 @@ func can_use_echolocation() -> bool:
 	return not is_on_cooldown
 
 func trigger_echolocation():
+	# Stop any ongoing pulse effect
+	if is_pulsing:
+		is_pulsing = false
+		pulse_timer = 0.0
+		player_sprite.material = original_sprite_material
+		pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
+
 	# Apply hunger cost in HUNGER_COST mode
 	if echolocation_mode == EcholocationMode.HUNGER_COST:
 		if hunger_manager:
@@ -151,6 +175,9 @@ func update_cooldown(delta: float):
 			cooldown_timer = 0.0
 			cooldown_changed.emit(cooldown_duration, cooldown_duration)  # Signal ready
 
+			# Trigger pulse effect
+			trigger_pulse_effect()
+
 func get_active_cooldown_duration() -> float:
 	# Return appropriate cooldown duration based on mode
 	if echolocation_mode == EcholocationMode.HUNGER_COST:
@@ -195,6 +222,31 @@ func get_screen_position(world_pos: Vector2) -> Vector2:
 	var screen_pos = viewport_size / 2.0 + offset
 
 	return screen_pos
+
+# Pulse effect functions
+func trigger_pulse_effect():
+	# Start the pulse effect
+	is_pulsing = true
+	pulse_timer = 0.0
+	player_sprite.material = pulse_shader_material
+
+func update_pulse_effect(delta: float):
+	if is_pulsing:
+		pulse_timer += delta
+
+		# Calculate pulse progress (0 to 1 and back to 0)
+		var normalized_time = pulse_timer / pulse_duration
+		var pulse_progress = sin(normalized_time * PI)  # Smooth sine wave from 0 to 1 to 0
+
+		# Update shader parameter
+		pulse_shader_material.set_shader_parameter("pulse_progress", pulse_progress)
+
+		# End pulse when duration is complete
+		if pulse_timer >= pulse_duration:
+			is_pulsing = false
+			pulse_timer = 0.0
+			player_sprite.material = original_sprite_material
+			pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
 
 # Signal for UI updates
 signal cooldown_changed(current: float, maximum: float)

@@ -559,8 +559,11 @@ position = Vector2(3986, 129)
 [node name="Torch5" parent="Objects" instance=ExtResource("11_vqiix")]
 position = Vector2(4866, -46)
 
+[node name="Checkpoint" parent="Objects" instance=ExtResource("20_dmhm2")]
+position = Vector2(2727, 161)
+
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(47, 376)
+position = Vector2(2647, 181)
 
 [node name="Foreground" type="Node2D" parent="."]
 
@@ -662,6 +665,3 @@ z_index = 10
 position = Vector2(4176, 185)
 amount = 100
 emission_sphere_radius = 128.0
-
-[node name="Checkpoint" parent="." instance=ExtResource("20_dmhm2")]
-position = Vector2(2729, 177)

@@ -7,12 +7,15 @@ signal checkpoint_activated(checkpoint_position: Vector2)
 
 @export var activated: bool = false
 @export var activation_particles_scene: PackedScene = null
+@export var z_index_offset: float = 0.0  ## Adjust this to fine-tune when player switches from front to back
 
 var sprite: Sprite2D
 var animated_sprite: AnimatedSprite2D
 var particles: GPUParticles2D
 var light: PointLight2D
 var audio_player: AudioStreamPlayer
+var player_ref: CharacterBody2D = null
+var activation_area: Area2D = null
 
 func _ready():
 	# Get child nodes
@@ -21,24 +24,69 @@ func _ready():
 	particles = get_node_or_null("GPUParticles2D")
 	light = get_node_or_null("PointLight2D")
 	audio_player = get_node_or_null("AudioStreamPlayer")
+	activation_area = get_node_or_null("ActivationArea")
 
-	# Connect to player entering the area
+	# Connect to player entering/exiting the main area (for z-index management)
 	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+
+	# Connect to activation area if it exists (for checkpoint activation)
+	if activation_area:
+		activation_area.body_entered.connect(_on_activation_area_entered)
+
+	# Connect to animation finished signal if using AnimatedSprite2D
+	if animated_sprite:
+		animated_sprite.animation_finished.connect(_on_animation_finished)
 
 	# Set initial visual state
 	_update_visual_state()
 
+func _process(_delta):
+	# Update z-index based on player position relative to arch center
+	if player_ref:
+		_update_z_index_for_player()
+
+func _update_z_index_for_player():
+	"""Adjust z-index based on player position to create arch pass-through effect"""
+	if not animated_sprite and not sprite:
+		return
+
+	# Use the sprite node's position for more accurate center calculation
+	var sprite_node = animated_sprite if animated_sprite else sprite
+	var checkpoint_center_x = sprite_node.global_position.x + z_index_offset
+	var player_x = player_ref.global_position.x
+
+	# Set arch to a fixed z-index
+	sprite_node.z_index = 1
+
+	if player_x < checkpoint_center_x:
+		# Player is on the left side - render player on top of arch
+		player_ref.z_index = 2
+	else:
+		# Player is on the right side - render player behind arch
+		player_ref.z_index = 0
+
 func _on_body_entered(body: Node2D):
-	# Only activate once
-	if activated:
-		return
-
 	# Check if it's the player
-	if not body.is_in_group("Player"):
-		return
+	if body.is_in_group("Player"):
+		# Store player reference for z-index management
+		player_ref = body
 
-	# Activate checkpoint
-	activate()
+		# If no separate activation area exists, activate on main area entry
+		if not activation_area and not activated:
+			activate()
+
+func _on_activation_area_entered(body: Node2D):
+	# Only activate checkpoint when player enters the narrow activation area
+	if body.is_in_group("Player") and not activated:
+		activate()
+
+func _on_body_exited(body: Node2D):
+	# Clear player reference when they leave
+	if body == player_ref:
+		# Reset player z-index to default
+		player_ref.z_index = 0
+		player_ref = null
 
 func activate():
 	"""Activate the checkpoint - changes visuals and notifies player"""
@@ -61,9 +109,11 @@ func _update_visual_state():
 	# If using AnimatedSprite2D
 	if animated_sprite:
 		if activated:
-			animated_sprite.play("lit")
+			# Play ignite animation (will transition to lit via signal)
+			animated_sprite.play("ignite")
 		else:
-			animated_sprite.play("unlit")
+			# Play idle animation when not activated
+			animated_sprite.play("idle")
 
 	# If using simple Sprite2D (modulate to show state)
 	elif sprite:
@@ -95,9 +145,9 @@ func _play_activation_effects():
 		if particle_instance.has_signal("finished"):
 			particle_instance.finished.connect(particle_instance.queue_free)
 
-	# Brief hitstop for impact
-	if HitStop:
-		HitStop.activate(0.1)
+	# Brief hitstop for impact (idk maybe we don't need this...)
+	#if HitStop:
+		#HitStop.activate(0.1)
 
 	# Flash effect on sprite
 	if sprite:
@@ -112,6 +162,12 @@ func _flash_sprite(sprite_node: Node2D):
 
 	var tween = create_tween()
 	tween.tween_property(sprite_node, "modulate", original_modulate, 0.3)
+
+func _on_animation_finished():
+	"""Handle animation finished signal - transition from ignite to lit"""
+	if animated_sprite and activated and animated_sprite.animation == "ignite":
+		# After ignite animation completes, play the lit animation on loop
+		animated_sprite.play("lit")
 
 func reset():
 	"""Reset checkpoint to inactive state (called when level restarts)"""

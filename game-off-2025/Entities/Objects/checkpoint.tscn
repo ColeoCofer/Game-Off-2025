@@ -1,40 +1,129 @@
-[gd_scene load_steps=5 format=3 uid="uid://beqpsgax6sxra"]
+[gd_scene load_steps=17 format=3 uid="uid://beqpsgax6sxra"]
 
 [ext_resource type="Script" uid="uid://cu5qxsau4sgca" path="res://Entities/Objects/Checkpoint.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dkir85wsf3f76" path="res://Assets/Art/objects/Checkpoint.png" id="2_5ll7e"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_checkpoint"]
-size = Vector2(16, 32)
+size = Vector2(35, 21.5)
 
-[sub_resource type="Gradient" id="Gradient_flame"]
+[sub_resource type="Gradient" id="Gradient_glow"]
 offsets = PackedFloat32Array(0, 0.5, 1)
-colors = PackedColorArray(1, 0.8, 0.2, 1, 1, 0.4, 0, 0.8, 0.5, 0.1, 0, 0)
+colors = PackedColorArray(1, 0.6, 0.2, 1, 1, 0.4, 0.1, 0.5, 1, 0.3, 0, 0)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_flame"]
-gradient = SubResource("Gradient_flame")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5ll7e"]
+gradient = SubResource("Gradient_glow")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1eepo"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dcw8n"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ue6oy"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ladi2"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4d783"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lbg7m"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01a03"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yimk"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xf1pk"]
+atlas = ExtResource("2_5ll7e")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ddj52"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1eepo")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dcw8n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ue6oy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ladi2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4d783")
+}],
+"loop": false,
+"name": &"ignite",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lbg7m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_01a03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yimk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xf1pk")
+}],
+"loop": true,
+"name": &"lit",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5ll7e"]
+size = Vector2(2, 22)
 
 [node name="Checkpoint" type="Area2D" groups=["checkpoint"]]
 script = ExtResource("1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 21)
 shape = SubResource("RectangleShape2D_checkpoint")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.5, 0.5, 0.5, 1)
-position = Vector2(-3.8146973e-06, -4)
-scale = Vector2(0.023437494, 7.9999995)
-texture = SubResource("GradientTexture1D_flame")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 enabled = false
 color = Color(1, 0.7, 0.3, 1)
 energy = 1.5
-texture = SubResource("GradientTexture1D_flame")
+texture = SubResource("GradientTexture2D_5ll7e")
 texture_scale = 2.0
-
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-emitting = false
-amount = 32
-local_coords = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 bus = &"Sounds"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ddj52")
+animation = &"lit"
+
+[node name="ActivationArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ActivationArea"]
+position = Vector2(0, 21)
+shape = SubResource("RectangleShape2D_5ll7e")

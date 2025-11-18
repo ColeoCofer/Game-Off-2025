@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://bqxt2myiyrttg"]
+
+[ext_resource type="Script" uid="uid://biy3x1qe7ub2w" path="res://Entities/Objects/falling_block.gd" id="2_falling_block"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4hknm"]
+load_path = "res://.godot/imported/sona-sprites-cole.png-ddcfc2f592a748905afe3f80dd2bf0a1.ctex"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_isqo5"]
+size = Vector2(16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4275p"]
+size = Vector2(16, 9)
+
+[node name="FallingBlock" type="AnimatableBody2D"]
+script = ExtResource("2_falling_block")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_4hknm")
+region_enabled = true
+region_rect = Rect2(128, 176, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_isqo5")
+
+[node name="PlayerDetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetectionArea"]
+position = Vector2(0, -4.5)
+shape = SubResource("RectangleShape2D_4275p")

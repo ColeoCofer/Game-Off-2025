@@ -1,9 +1,9 @@
-[gd_scene load_steps=35 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=38 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
-[ext_resource type="PackedScene" path="res://Entities/Player/firefly.tscn" id="2_firefly"]
-[ext_resource type="Script" path="res://Entities/Player/FireflyManager.gd" id="2_firefly_mgr"]
+[ext_resource type="PackedScene" uid="uid://firefly001" path="res://Entities/Player/firefly.tscn" id="2_firefly"]
+[ext_resource type="Script" uid="uid://co5jti48lvqol" path="res://Entities/Player/FireflyManager.gd" id="2_firefly_mgr"]
 [ext_resource type="AudioStream" uid="uid://xux8wqieklfg" path="res://Assets/Audio/echo_sound.wav" id="3_echo"]
 [ext_resource type="Texture2D" uid="uid://u13ebduwlg6s" path="res://Assets/Art/bat-idle.png" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://duol2vvpm3gku" path="res://Assets/Art/bat-walk.png" id="4_7a1se"]
@@ -14,8 +14,8 @@
 [ext_resource type="AudioStream" uid="uid://r857tja3822b" path="res://Assets/Audio/walking_dirt.wav" id="5_walking"]
 [ext_resource type="Texture2D" uid="uid://dxruelql81yw" path="res://Assets/Art/bat-slide.png" id="6_ap3xn"]
 [ext_resource type="Script" uid="uid://cco8lq6pws1fb" path="res://Entities/Player/DeathManager.gd" id="6_death"]
-[ext_resource type="AudioStream" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
-[ext_resource type="Script" path="res://Entities/Player/CheckpointManager.gd" id="7_checkpoint"]
+[ext_resource type="AudioStream" uid="uid://bglc1legcrol" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
+[ext_resource type="Script" uid="uid://cwtu820ahiv42" path="res://Entities/Player/CheckpointManager.gd" id="7_checkpoint"]
 [ext_resource type="AudioStream" uid="uid://nj7jjqdxychg" path="res://Assets/Audio/UI/LightPop.wav" id="8_lightpop"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]

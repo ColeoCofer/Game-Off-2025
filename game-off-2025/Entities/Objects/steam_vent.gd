@@ -71,7 +71,6 @@ func _stop_emission() -> void:
 func _boost_bodies_in_area() -> void:
 	# Get all bodies currently overlapping with the damage area
 	var bodies = damage_area.get_overlapping_bodies()
-	print("Checking for bodies in area. Found: ", bodies.size())
 
 	for body in bodies:
 		print("Body found: ", body.name, " | Groups: ", body.get_groups())

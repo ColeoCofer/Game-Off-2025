@@ -16,6 +16,7 @@ extends AnimatableBody2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var landing_detection_area: Area2D = $LandingDetectionArea
 @onready var jump_detection_area: Area2D = $JumpDetectionArea
+@onready var falling_rock_sound: AudioStreamPlayer = $FallingRockSound
 
 var is_shaking: bool = false
 var is_falling: bool = false
@@ -27,6 +28,9 @@ var collision_disabled: bool = false
 var original_position: Vector2
 var original_global_position: Vector2
 var player_on_block: bool = false
+var sound_duration: float = 0.0
+var sound_start_volume: float = 0.0
+var fade_start_time: float = 0.0
 
 func _ready() -> void:
 	original_position = sprite.position
@@ -58,6 +62,9 @@ func _physics_process(delta: float) -> void:
 		)
 		sprite.position = original_position + shake_offset
 
+		# Fade out the sound as it plays
+		_update_sound_fade()
+
 		# After shake duration, start falling
 		if shake_timer >= shake_duration:
 			_start_falling()
@@ -66,6 +73,9 @@ func _physics_process(delta: float) -> void:
 	if is_falling:
 		fall_timer += delta
 		position.y += fall_speed * delta
+
+		# Continue fading out the sound while falling
+		_update_sound_fade()
 
 		# Help player jump off by counteracting fall velocity when they jump
 		# Don't rely on player_on_block flag since body_exited fires incorrectly when area moves
@@ -123,6 +133,15 @@ func _start_shaking() -> void:
 	is_shaking = true
 	shake_timer = 0.0
 
+	# Play the falling rock sound
+	if falling_rock_sound and falling_rock_sound.stream:
+		falling_rock_sound.play()
+		sound_start_volume = falling_rock_sound.volume_db
+		sound_duration = falling_rock_sound.stream.get_length()
+		# Start fading when 60% through the sound
+		fade_start_time = sound_duration * 0.6
+		print("FallingBlock: Playing sound, duration: ", sound_duration)
+
 func _start_falling() -> void:
 	print("FallingBlock: Starting to fall!")
 	is_shaking = false
@@ -150,8 +169,27 @@ func _start_respawn() -> void:
 	await get_tree().create_timer(respawn_time).timeout
 	_respawn()
 
+func _update_sound_fade() -> void:
+	if not falling_rock_sound or not falling_rock_sound.playing:
+		return
+
+	var playback_position = falling_rock_sound.get_playback_position()
+
+	# Start fading out after fade_start_time
+	if playback_position >= fade_start_time:
+		var fade_duration = sound_duration - fade_start_time
+		var fade_progress = (playback_position - fade_start_time) / fade_duration
+
+		# Interpolate from start volume to -80 db (near silence)
+		var target_volume = lerp(sound_start_volume, -80.0, fade_progress)
+		falling_rock_sound.volume_db = target_volume
+
 func _respawn() -> void:
 	print("FallingBlock: Respawning!")
+
+	# Stop any playing sound
+	if falling_rock_sound and falling_rock_sound.playing:
+		falling_rock_sound.stop()
 
 	# Reset position
 	global_position = original_global_position

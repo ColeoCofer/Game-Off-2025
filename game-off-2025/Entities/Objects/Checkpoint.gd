@@ -17,6 +17,10 @@ var audio_player: AudioStreamPlayer
 var player_ref: CharacterBody2D = null
 var activation_area: Area2D = null
 
+# Flicker variables
+var base_light_energy: float = 1.5
+var flicker_time: float = 0.0
+
 func _ready():
 	# Get child nodes
 	sprite = get_node_or_null("Sprite2D")
@@ -41,10 +45,14 @@ func _ready():
 	# Set initial visual state
 	_update_visual_state()
 
-func _process(_delta):
+func _process(delta):
 	# Update z-index based on player position relative to arch center
 	if player_ref:
 		_update_z_index_for_player()
+
+	# Update light flickering when activated
+	if activated and light and light.enabled:
+		_update_light_flicker(delta)
 
 func _update_z_index_for_player():
 	"""Adjust z-index based on player position to create arch pass-through effect"""
@@ -162,6 +170,19 @@ func _flash_sprite(sprite_node: Node2D):
 
 	var tween = create_tween()
 	tween.tween_property(sprite_node, "modulate", original_modulate, 0.3)
+
+func _update_light_flicker(delta):
+	"""Create a fire-like flickering/pulsing effect on the light"""
+	flicker_time += delta
+
+	# Combine multiple sine waves at different frequencies for realistic flicker
+	var fast_flicker = sin(flicker_time * 15.0) * 0.15  # Fast subtle flicker
+	var slow_pulse = sin(flicker_time * 2.5) * 0.2      # Slow breathing pulse
+	var random_noise = (randf() - 0.5) * 0.1            # Random jitter
+
+	# Combine the effects
+	var flicker_amount = fast_flicker + slow_pulse + random_noise
+	light.energy = base_light_energy + flicker_amount
 
 func _on_animation_finished():
 	"""Handle animation finished signal - transition from ignite to lit"""

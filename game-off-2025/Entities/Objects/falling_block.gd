@@ -10,7 +10,7 @@ extends AnimatableBody2D
 @export var fall_speed: float = 200.0  ## Speed at which the block falls
 @export var solid_fall_duration: float = 1.5  ## Time in seconds the block stays solid while falling
 @export var jump_boost: float = 400.0  ## Extra upward boost when player jumps off falling block
-@export var destroy_after_fall: bool = true  ## Whether to remove the block after falling off screen
+@export var respawn_time: float = 15.0  ## Time in seconds before the block respawns after falling
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -20,14 +20,17 @@ extends AnimatableBody2D
 var is_shaking: bool = false
 var is_falling: bool = false
 var has_triggered: bool = false
+var is_respawning: bool = false
 var shake_timer: float = 0.0
 var fall_timer: float = 0.0
 var collision_disabled: bool = false
 var original_position: Vector2
+var original_global_position: Vector2
 var player_on_block: bool = false
 
 func _ready() -> void:
 	original_position = sprite.position
+	original_global_position = global_position
 
 	# Connect landing detection area signals (for triggering shake)
 	if landing_detection_area:
@@ -75,9 +78,9 @@ func _physics_process(delta: float) -> void:
 			collision_shape.set_deferred("disabled", true)
 			print("FallingBlock: Collision disabled, player will fall through now")
 
-		# Check if block has fallen far enough to be destroyed
-		if destroy_after_fall and position.y > get_viewport_rect().size.y + 100:
-			queue_free()
+		# Check if block has fallen far enough to start respawn timer
+		if position.y > get_viewport_rect().size.y + 100:
+			_start_respawn()
 
 func _on_player_entered(body: Node2D) -> void:
 	print("FallingBlock: Body entered - Name: ", body.name, " | Type: ", body.get_class(), " | Groups: ", body.get_groups())
@@ -131,3 +134,41 @@ func _start_falling() -> void:
 
 	# Keep detection area active so we know when player leaves the block
 	# This helps with jump detection
+
+func _start_respawn() -> void:
+	print("FallingBlock: Starting respawn sequence...")
+	is_falling = false
+	is_respawning = true
+
+	# Hide and disable everything
+	visible = false
+	collision_shape.set_deferred("disabled", true)
+	landing_detection_area.set_deferred("monitoring", false)
+	jump_detection_area.set_deferred("monitoring", false)
+
+	# Wait for respawn time, then reset
+	await get_tree().create_timer(respawn_time).timeout
+	_respawn()
+
+func _respawn() -> void:
+	print("FallingBlock: Respawning!")
+
+	# Reset position
+	global_position = original_global_position
+	sprite.position = original_position
+
+	# Reset all state variables
+	is_shaking = false
+	is_falling = false
+	is_respawning = false
+	has_triggered = false
+	collision_disabled = false
+	player_on_block = false
+	shake_timer = 0.0
+	fall_timer = 0.0
+
+	# Re-enable everything
+	visible = true
+	collision_shape.disabled = false
+	landing_detection_area.monitoring = true
+	jump_detection_area.monitoring = true

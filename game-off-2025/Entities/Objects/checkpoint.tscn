@@ -103,6 +103,7 @@ size = Vector2(2, 22)
 
 [node name="Checkpoint" type="Area2D" groups=["checkpoint"]]
 script = ExtResource("1")
+torch_volume_db = 15.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, 21)

@@ -8,12 +8,16 @@ signal checkpoint_activated(checkpoint_position: Vector2)
 @export var activated: bool = false
 @export var activation_particles_scene: PackedScene = null
 @export var z_index_offset: float = 0.0  ## Adjust this to fine-tune when player switches from front to back
+@export var max_audio_distance: float = 200.0  ## Distance at which fire sound is inaudible
+@export var min_audio_distance: float = 50.0   ## Distance at which fire sound is at full volume
+@export var torch_volume_db: float = 0.0        ## Volume of the torch fire sound in decibels (-80 to 24)
 
 var sprite: Sprite2D
 var animated_sprite: AnimatedSprite2D
 var particles: GPUParticles2D
 var light: PointLight2D
-var audio_player: AudioStreamPlayer
+var audio_player: AudioStreamPlayer  # For one-shot activation sound
+var torch_audio_player: AudioStreamPlayer2D = null  # For looping torch fire sound
 var player_ref: CharacterBody2D = null
 var activation_area: Area2D = null
 
@@ -28,7 +32,30 @@ func _ready():
 	particles = get_node_or_null("GPUParticles2D")
 	light = get_node_or_null("PointLight2D")
 	audio_player = get_node_or_null("AudioStreamPlayer")
+	torch_audio_player = get_node_or_null("TorchAudioPlayer")
 	activation_area = get_node_or_null("ActivationArea")
+
+	# Setup activation whoosh sound on existing audio player
+	if audio_player:
+		audio_player.stream = load("res://Assets/Audio/fire/quick-fire-whoosh.mp3")
+
+	# Create torch audio player if it doesn't exist
+	if not torch_audio_player:
+		torch_audio_player = AudioStreamPlayer2D.new()
+		torch_audio_player.name = "TorchAudioPlayer"
+		torch_audio_player.bus = &"Sounds"
+
+		# Load and configure the torch sound for looping
+		var torch_stream = load("res://Assets/Audio/fire/fire-torch.mp3")
+		if torch_stream is AudioStreamMP3:
+			torch_stream.loop = true
+		torch_audio_player.stream = torch_stream
+
+		torch_audio_player.volume_db = torch_volume_db
+		torch_audio_player.autoplay = false
+		torch_audio_player.max_distance = max_audio_distance
+		torch_audio_player.attenuation = 2.0  # Exponential falloff
+		add_child(torch_audio_player)
 
 	# Connect to player entering/exiting the main area (for z-index management)
 	body_entered.connect(_on_body_entered)
@@ -53,6 +80,10 @@ func _process(delta):
 	# Update light flickering when activated
 	if activated and light and light.enabled:
 		_update_light_flicker(delta)
+
+	# Update torch audio volume based on player proximity
+	if activated:
+		_update_torch_audio()
 
 func _update_z_index_for_player():
 	"""Adjust z-index based on player position to create arch pass-through effect"""
@@ -140,9 +171,12 @@ func _update_visual_state():
 
 func _play_activation_effects():
 	"""Play visual and audio effects when checkpoint activates"""
-	# Play audio
+	# Play one-shot whoosh sound
 	if audio_player:
 		audio_player.play()
+
+	# Start looping torch fire sound (will be managed by _update_torch_audio)
+	# The update function will handle volume based on player proximity
 
 	# Emit one-shot particles if we have the scene
 	if activation_particles_scene:
@@ -184,6 +218,35 @@ func _update_light_flicker(delta):
 	var flicker_amount = fast_flicker + slow_pulse + random_noise
 	light.energy = base_light_energy + flicker_amount
 
+func _update_torch_audio():
+	"""Update torch fire sound volume based on player distance"""
+	if not torch_audio_player:
+		return
+
+	# Find the player in the scene
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player:
+		# Stop playing if no player found
+		if torch_audio_player.playing:
+			torch_audio_player.stop()
+		return
+
+	# Calculate distance to player
+	var distance = global_position.distance_to(player.global_position)
+
+	# Start/stop playing based on distance
+	if distance <= max_audio_distance:
+		# Start looping if not already playing
+		if not torch_audio_player.playing:
+			torch_audio_player.play()
+
+		# The AudioStreamPlayer2D handles volume falloff automatically based on distance
+		# But we can stop it completely when too far for performance
+	else:
+		# Stop playing when too far away
+		if torch_audio_player.playing:
+			torch_audio_player.stop()
+
 func _on_animation_finished():
 	"""Handle animation finished signal - transition from ignite to lit"""
 	if animated_sprite and activated and animated_sprite.animation == "ignite":
@@ -194,3 +257,7 @@ func reset():
 	"""Reset checkpoint to inactive state (called when level restarts)"""
 	activated = false
 	_update_visual_state()
+
+	# Stop torch audio when resetting
+	if torch_audio_player and torch_audio_player.playing:
+		torch_audio_player.stop()

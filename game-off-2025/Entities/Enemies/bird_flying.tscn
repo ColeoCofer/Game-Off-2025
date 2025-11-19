@@ -1,30 +1,30 @@
-[gd_scene load_steps=13 format=3 uid="uid://cqjir0lds7bp3"]
+[gd_scene load_steps=13 format=3 uid="uid://c8h2vjx3n7rqp"]
 
-[ext_resource type="Script" uid="uid://cmaiuo7c2qtmg" path="res://Entities/Enemies/bird_enemy.gd" id="1_bird"]
-[ext_resource type="Texture2D" uid="uid://dtfawlnuqbj5m" path="res://Assets/Art/enemies/Spooky-bird.png" id="1_idb1m"]
+[ext_resource type="Script" path="res://Entities/Enemies/bird_flying_enemy.gd" id="1_flying"]
+[ext_resource type="Texture2D" uid="uid://dtfawlnuqbj5m" path="res://Assets/Art/enemies/Spooky-bird.png" id="2_texture"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_grcue"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a80ys"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3po0u"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sh6xc"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rwvth"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(64, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4u0gk"]
-atlas = ExtResource("1_idb1m")
+atlas = ExtResource("2_texture")
 region = Rect2(80, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_pdgdj"]
@@ -64,21 +64,20 @@ size = Vector2(14, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stomp"]
 size = Vector2(16, 3)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_grcue"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_damage"]
 radius = 5.0
 height = 10.0
 
-[node name="Bird" type="CharacterBody2D"]
+[node name="BirdFlying" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 0
-script = ExtResource("1_bird")
-fly_speed = 75.0
-chase_timeout = 4.0
+script = ExtResource("1_flying")
+fly_speed = 150.0
 stomp_bounce_force = 220.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pdgdj")
-animation = &"idle"
+animation = &"flying"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
@@ -96,10 +95,7 @@ collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
 position = Vector2(0, 3)
-shape = SubResource("CapsuleShape2D_grcue")
+shape = SubResource("CapsuleShape2D_damage")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 bus = &"Sounds"
-
-[node name="VisionRayCast" type="RayCast2D" parent="."]
-target_position = Vector2(0, 0)

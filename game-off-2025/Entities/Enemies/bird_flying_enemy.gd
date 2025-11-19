@@ -1,43 +1,30 @@
 extends CharacterBody2D
 
-## Bird enemy that perches and then swoops at the player
-## - Starts perched (idle animation)
-## - When player becomes visible, waits 0-1 seconds
-## - Plays caw sound, then flies towards player
-## - After 10 seconds of chasing, gives up and flies off screen
-## - Kills player on collision (then leaves off screen)
-## - Dies when player stomps on top (maybe do this differently than the ant... ?)
+## Flying bird enemy that swoops horizontally across the screen
+## - Spawns off-screen to the left or right of player
+## - Flies straight across at player's Y position (doesn't track)
+## - Removes itself when it goes off the other side
+## - Kills player on collision
+## - Dies when player stomps on top
 
-@export var fly_speed: float = 200.0
-@export var gravity: float = 980.0
-@export var detection_range: float = 200.0
-@export var attack_delay_min: float = 0.0
-@export var attack_delay_max: float = 1.0
-@export var chase_timeout: float = 10.0
-@export var retreat_speed: float = 150.0
-@export var stomp_bounce_force: float = 150.0
+@export var fly_speed: float = 150.0
+@export var stomp_bounce_force: float = 220.0
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
 @export var fall_speed: float = 100.0
 @export var squash_duration: float = 0.15
 @export var squash_amount: Vector2 = Vector2(1.5, 0.4)
 
-enum State { PERCHED, PREPARING_ATTACK, FLYING, GIVING_UP }
-
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
 @onready var damage_detector: Area2D = $DamageDetector
 @onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
-@onready var vision_raycast: RayCast2D = $VisionRayCast
 
-var current_state: State = State.PERCHED
 var is_alive: bool = true
-var target_player: Node2D = null
+var fly_direction: int = 1  # 1 for right, -1 for left
 var death_material: ShaderMaterial
-var chase_timer: float = 0.0
 
 # Audio
-var caw_sound: AudioStream = preload("res://Assets/Audio/caw.mp3")
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
 
 func _ready():
@@ -49,150 +36,45 @@ func _ready():
 	if damage_detector:
 		damage_detector.body_entered.connect(_on_damage_detector_body_entered)
 
-	# Start perched
-	_enter_perched_state()
-
-func _physics_process(delta: float):
-	if not is_alive:
-		return
-
-	match current_state:
-		State.PERCHED:
-			_process_perched(delta)
-		State.FLYING:
-			_process_flying(delta)
-		State.GIVING_UP:
-			_process_giving_up(delta)
-
-func _process_perched(_delta: float):
-	"""Check if player is visible while perched"""
-	# Find player
-	var player = get_tree().get_first_node_in_group("Player")
-	if not player:
-		return
-
-	# Check if player is in range
-	var distance = global_position.distance_to(player.global_position)
-	if distance > detection_range:
-		return
-
-	# Check if player is visible (using raycast for line of sight)
-	if vision_raycast:
-		vision_raycast.target_position = to_local(player.global_position)
-		vision_raycast.force_raycast_update()
-
-		if vision_raycast.is_colliding():
-			var collider = vision_raycast.get_collider()
-			# If we hit the player, they're visible!
-			if collider and collider.is_in_group("Player"):
-				_start_attack(player)
-
-func _process_flying(delta: float):
-	"""Fly towards the player"""
-	if not target_player:
-		return
-
-	# Track chase time
-	chase_timer += delta
-
-	# Check if chase timeout exceeded
-	if chase_timer >= chase_timeout:
-		_give_up()
-		return
-
-	# Calculate direction to player
-	var direction = (target_player.global_position - global_position).normalized()
-
-	# Set velocity towards player
-	velocity = direction * fly_speed
-
-	# Apply slight gravity so bird arcs downward
-	velocity.y += gravity * delta * 0.3  # Reduced gravity for flying
-
-	# Flip sprite based on direction
-	if animated_sprite:
-		animated_sprite.flip_h = direction.x < 0
-
-	# Move
-	move_and_slide()
-
-func _enter_perched_state():
-	"""Enter perched state - idle on a branch"""
-	current_state = State.PERCHED
-	velocity = Vector2.ZERO
-
-	if animated_sprite:
-		animated_sprite.play("idle")
-		animated_sprite.flip_h = true  # Face left (where player comes from)
-
-func _start_attack(player: Node2D):
-	"""Begin attack sequence: delay -> caw -> fly"""
-	current_state = State.PREPARING_ATTACK
-	target_player = player
-
-	# Random delay before attacking
-	var delay = randf_range(attack_delay_min, attack_delay_max)
-	await get_tree().create_timer(delay).timeout
-
-	# Check if still alive after delay
-	if not is_alive:
-		return
-
-	# Play caw sound
-	if audio_player and caw_sound:
-		audio_player.stream = caw_sound
-		audio_player.play()
-
-	# Wait for caw to finish (roughly 0.5 seconds)
-	await get_tree().create_timer(0.3).timeout
-
-	# Check if still alive
-	if not is_alive:
-		return
-
-	# Start flying
-	_enter_flying_state()
-
-func _enter_flying_state():
-	"""Start flying towards player"""
-	current_state = State.FLYING
-	chase_timer = 0.0  # Reset chase timer
-
+	# Start flying animation
 	if animated_sprite:
 		animated_sprite.play("flying")
 
-func _give_up():
-	"""Give up chasing and fly away"""
-	current_state = State.GIVING_UP
+func setup_flight(direction: int):
+	"""Called by spawner to set flight direction. -1 = left, 1 = right"""
+	fly_direction = direction
 
-	# Disable collision detectors so bird doesn't hurt player while fleeing
-	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
-		damage_detector.set_deferred("monitorable", false)
+	# Flip sprite based on direction
+	if animated_sprite:
+		animated_sprite.flip_h = direction < 0
 
-	if stomp_detector:
-		stomp_detector.set_deferred("monitoring", false)
-		stomp_detector.set_deferred("monitorable", false)
+func _physics_process(_delta: float):
+	if not is_alive:
+		return
 
-func _process_giving_up(delta: float):
-	"""Fly upward and off screen, then remove self"""
-	# Fly upward and slightly in current direction
-	var retreat_direction = Vector2(velocity.x * 0.3, -1.0).normalized()
-	velocity = retreat_direction * retreat_speed
+	# Fly horizontally
+	velocity.x = fly_direction * fly_speed
+	velocity.y = 0  # Stay at spawn Y position
 
-	# Move
 	move_and_slide()
 
-	# Check if off screen (bird has flown far enough up)
-	var camera = get_viewport().get_camera_2d()
-	if camera:
-		var viewport_rect = get_viewport_rect()
-		var camera_pos = camera.get_screen_center_position()
-		var screen_top = camera_pos.y - (viewport_rect.size.y / 2.0) - 50  # Add margin
+	# Check if off screen and remove
+	_check_if_offscreen()
 
-		# If bird is above screen, remove it
-		if global_position.y < screen_top:
-			queue_free()
+func _check_if_offscreen():
+	"""Remove bird if it's gone off screen"""
+	var camera = get_viewport().get_camera_2d()
+	if not camera:
+		return
+
+	var viewport_rect = get_viewport_rect()
+	var camera_pos = camera.get_screen_center_position()
+	var screen_left = camera_pos.x - (viewport_rect.size.x / 2.0) - 50  # Add margin
+	var screen_right = camera_pos.x + (viewport_rect.size.x / 2.0) + 50  # Add margin
+
+	# If bird has flown off either side, remove it
+	if global_position.x < screen_left or global_position.x > screen_right:
+		queue_free()
 
 func _on_stomp_detector_body_entered(body: Node2D):
 	if not is_alive:
@@ -433,7 +315,3 @@ func _kill_player(player: Node2D):
 	if death_manager and death_manager.has_method("trigger_hazard_death"):
 		# Pass bird's position so player gets knocked back in the right direction
 		death_manager.trigger_hazard_death(global_position)
-
-		# If player actually died (wasn't protected by firefly), fly away
-		if death_manager.is_dead:
-			_give_up()

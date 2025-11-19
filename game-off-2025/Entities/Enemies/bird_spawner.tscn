@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://w3pb85y7tvmy"]
+
+[ext_resource type="Script" uid="uid://b4gekw741cqxj" path="res://Entities/Enemies/bird_spawner.gd" id="1_spawner"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_icon"]
+
+[node name="BirdSpawner" type="Node2D"]
+script = ExtResource("1_spawner")
+auto_spawn = true
+
+[node name="Icon" type="Sprite2D" parent="."]
+modulate = Color(1, 0.5, 0.2, 0.5)
+texture = SubResource("PlaceholderTexture2D_icon")

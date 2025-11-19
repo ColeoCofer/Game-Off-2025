@@ -92,6 +92,12 @@ func _process_flying(delta: float):
 	if not target_player:
 		return
 
+	# Check if player has died - if so, fly away
+	var death_manager = target_player.get_node_or_null("DeathManager")
+	if death_manager and death_manager.is_dead:
+		_give_up()
+		return
+
 	# Track chase time
 	chase_timer += delta
 

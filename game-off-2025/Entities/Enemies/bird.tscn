@@ -58,15 +58,15 @@ animations = [{
 "speed": 3.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_main"]
-size = Vector2(14, 8)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_grcue"]
+radius = 2.0
+height = 4.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stomp"]
-size = Vector2(16, 3)
+size = Vector2(16, 2.5)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_grcue"]
-radius = 5.0
-height = 10.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a80ys"]
+size = Vector2(16, 5)
 
 [node name="Bird" type="CharacterBody2D"]
 collision_layer = 2
@@ -81,13 +81,13 @@ animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
-shape = SubResource("RectangleShape2D_main")
+shape = SubResource("CapsuleShape2D_grcue")
 
 [node name="StompDetector" type="Area2D" parent="."]
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
-position = Vector2(0, -3)
+position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_stomp")
 
 [node name="DamageDetector" type="Area2D" parent="."]
@@ -95,7 +95,7 @@ collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
 position = Vector2(0, 3)
-shape = SubResource("CapsuleShape2D_grcue")
+shape = SubResource("RectangleShape2D_a80ys")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 bus = &"Sounds"

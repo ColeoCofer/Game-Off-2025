@@ -433,3 +433,7 @@ func _kill_player(player: Node2D):
 	if death_manager and death_manager.has_method("trigger_hazard_death"):
 		# Pass bird's position so player gets knocked back in the right direction
 		death_manager.trigger_hazard_death(global_position)
+
+		# If player actually died (wasn't protected by firefly), fly away
+		if death_manager.is_dead:
+			_give_up()

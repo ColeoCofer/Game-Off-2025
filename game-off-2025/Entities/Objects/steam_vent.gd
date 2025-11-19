@@ -46,13 +46,25 @@ func _emit_steam() -> void:
 	damage_area.monitoring = true
 
 	# Need to wait one frame for the area to register overlapping bodies
+	if not is_inside_tree():
+		return
 	await get_tree().process_frame
+
+	# Check if still in tree after await
+	if not is_inside_tree():
+		return
 
 	# Apply boost to any bodies already in the area
 	_boost_bodies_in_area()
 
 	# Wait for emission duration, then stop
+	if not is_inside_tree():
+		return
 	await get_tree().create_timer(emission_duration).timeout
+
+	# Check if still in tree after await
+	if not is_inside_tree():
+		return
 	_stop_emission()
 
 func _stop_emission() -> void:

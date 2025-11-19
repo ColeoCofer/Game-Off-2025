@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://82s6sdfcovi7"]
+[gd_scene load_steps=26 format=4 uid="uid://82s6sdfcovi7"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" uid="uid://dut7ugtlgkwnb" path="res://Entities/Enemies/blob_enemy.tscn" id="7_7ag1g"]
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="7_ffstk"]
+[ext_resource type="PackedScene" uid="uid://cqjir0lds7bp3" path="res://Entities/Enemies/bird.tscn" id="8_dyr54"]
 [ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="8_kpkdj"]
 [ext_resource type="PackedScene" uid="uid://bqxt2myiyrttg" path="res://Entities/Objects/falling_block.tscn" id="8_vowun"]
 [ext_resource type="PackedScene" uid="uid://cbtee321fvftq" path="res://Entities/Objects/steam_vent.tscn" id="9_sus6d"]
@@ -494,6 +495,12 @@ position = Vector2(1016, 304)
 [node name="BlobEnemy3" parent="Enemies" instance=ExtResource("7_7ag1g")]
 position = Vector2(2728, 289)
 
+[node name="Bird" parent="Enemies" instance=ExtResource("8_dyr54")]
+position = Vector2(2550, 220)
+
+[node name="Bird2" parent="Enemies" instance=ExtResource("8_dyr54")]
+position = Vector2(3002, 171)
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="FallingBlock" parent="Hurt Objects" instance=ExtResource("8_vowun")]
@@ -591,7 +598,7 @@ position = Vector2(1855, 225)
 position = Vector2(2375, 225)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(2418, 249)
+position = Vector2(2349, 248)
 
 [node name="Foreground" type="Node2D" parent="."]
 

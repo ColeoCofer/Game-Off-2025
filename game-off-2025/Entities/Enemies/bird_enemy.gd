@@ -26,8 +26,7 @@ extends CharacterBody2D
 enum State { PERCHED, PREPARING_ATTACK, FLYING, RETREATING, GIVING_UP }
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var stomp_detector: Area2D = $StompDetector
-@onready var damage_detector: Area2D = $DamageDetector
+@onready var hitbox_area: Area2D = $HitboxArea
 @onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var vision_raycast: RayCast2D = $VisionRayCast
 
@@ -43,13 +42,15 @@ var caw_sound: AudioStream = preload("res://Assets/Audio/caw.mp3")
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
 
 func _ready():
-	# Connect stomp detection
-	if stomp_detector:
-		stomp_detector.body_entered.connect(_on_stomp_detector_body_entered)
+	# Add to mob group for player collision detection
+	add_to_group("mob")
 
-	# Connect damage detection
-	if damage_detector:
-		damage_detector.body_entered.connect(_on_damage_detector_body_entered)
+	# Connect hitbox detection
+	if hitbox_area:
+		hitbox_area.body_entered.connect(_on_hitbox_body_entered)
+		print("DEBUG BIRD: Hitbox connected! Area monitoring: ", hitbox_area.monitoring, " monitorable: ", hitbox_area.monitorable)
+	else:
+		print("DEBUG BIRD: ERROR - No hitbox_area found!")
 
 	# Start perched
 	_enter_perched_state()
@@ -176,30 +177,12 @@ func _start_retreat():
 	current_state = State.RETREATING
 	retreat_timer = 0.0
 
-	# Temporarily disable collision detectors so bird doesn't spam hits while retreating
-	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
-		damage_detector.set_deferred("monitorable", false)
-
-	if stomp_detector:
-		stomp_detector.set_deferred("monitoring", false)
-		stomp_detector.set_deferred("monitorable", false)
-
 func _process_retreating(delta: float):
 	"""Fly away from player temporarily, then return to attack"""
 	retreat_timer += delta
 
 	# Check if retreat duration is over
 	if retreat_timer >= retreat_duration:
-		# Re-enable detectors
-		if damage_detector:
-			damage_detector.set_deferred("monitoring", true)
-			damage_detector.set_deferred("monitorable", true)
-
-		if stomp_detector:
-			stomp_detector.set_deferred("monitoring", true)
-			stomp_detector.set_deferred("monitorable", true)
-
 		# Return to flying/chasing state
 		_enter_flying_state()
 		return
@@ -227,15 +210,6 @@ func _give_up():
 	"""Give up chasing and fly away"""
 	current_state = State.GIVING_UP
 
-	# Disable collision detectors so bird doesn't hurt player while fleeing
-	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
-		damage_detector.set_deferred("monitorable", false)
-
-	if stomp_detector:
-		stomp_detector.set_deferred("monitoring", false)
-		stomp_detector.set_deferred("monitorable", false)
-
 func _process_giving_up(delta: float):
 	"""Fly upward and off screen, then remove self"""
 	# Fly upward and slightly in current direction
@@ -256,150 +230,63 @@ func _process_giving_up(delta: float):
 		if global_position.y < screen_top:
 			queue_free()
 
-func _on_stomp_detector_body_entered(body: Node2D):
+func _on_hitbox_body_entered(body: Node2D):
+	"""Single hitbox detection - checks if stomp or side hit"""
+	print("DEBUG BIRD: Hitbox triggered by: ", body.name)
+
+	if not is_alive:
+		print("DEBUG BIRD: Bird already dead, ignoring")
+		return
+
+	if not body.is_in_group("Player"):
+		print("DEBUG BIRD: Body is not player, ignoring")
+		return
+
+	print("DEBUG BIRD: Player detected! Checking collision type...")
+
+	# Calculate player and enemy positions
+	var player_center_y = body.global_position.y
+	var enemy_center_y = global_position.y
+	var height_difference = enemy_center_y - player_center_y
+
+	# Player must be significantly above (at least 3 pixels) to count as stomp
+	# This prevents step-up micro-movements from triggering false stomps
+	var MIN_STOMP_HEIGHT = 3.0
+	var player_is_above = height_difference >= MIN_STOMP_HEIGHT
+	print("DEBUG BIRD: Player center: ", player_center_y, " Enemy center: ", enemy_center_y, " Height diff: ", height_difference, " Player is above? ", player_is_above)
+
+	# Stomp if player is significantly above enemy
+	if player_is_above:
+		print("DEBUG BIRD: STOMP detected - killing bird")
+		squash(body)
+	else:
+		print("DEBUG BIRD: SIDE HIT detected - killing player")
+		hit_player(body)
+
+## Called by player when they stomp on the bird from above
+func squash(player: Node2D):
 	if not is_alive:
 		return
 
-	# Check if it's the player
-	if body.is_in_group("Player"):
-		# Player must be falling (velocity.y > 0)
-		var player_falling = false
-		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 0  # Moving downward
-
-		# Get player's bottom position
-		var player_bottom_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
-
-		# Bird's top position
-		var bird_top_y = global_position.y - 6
-		var player_is_above = player_bottom_y <= bird_top_y + 8
-
-		# Valid stomp: player is falling AND above the bird
-		if player_falling and player_is_above:
-			# Mark as dead immediately
-			is_alive = false
-
-			# Stop physics
-			set_physics_process(false)
-
-			# Disable collision
-			var main_collision = get_node_or_null("CollisionShape2D")
-			if main_collision:
-				main_collision.set_deferred("disabled", true)
-
-			set_collision_layer_value(1, false)
-			set_collision_layer_value(2, false)
-			set_collision_mask_value(1, false)
-
-			# Disable detectors
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			_die_from_stomp(body)
-
-func _on_damage_detector_body_entered(body: Node2D):
-	if not is_alive:
-		return
-
-	# Check if it's the player
-	if body.is_in_group("Player"):
-		# Check if this is actually a stomp scenario
-		var player_was_falling = false
-		if body is CharacterBody2D:
-			player_was_falling = body.velocity.y > 20.0
-
-		var player_bottom_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
-
-		var bird_top_y = global_position.y - 6
-		var stomp_tolerance = 6.0
-		var player_is_clearly_above = player_bottom_y <= bird_top_y + stomp_tolerance
-
-		var is_stomp_scenario = player_was_falling and player_is_clearly_above
-
-		# If it's a stomp, kill the bird instead of the player
-		if is_stomp_scenario:
-			is_alive = false
-			set_physics_process(false)
-
-			var main_collision = get_node_or_null("CollisionShape2D")
-			if main_collision:
-				main_collision.set_deferred("disabled", true)
-
-			set_collision_layer_value(1, false)
-			set_collision_layer_value(2, false)
-			set_collision_mask_value(1, false)
-
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			_die_from_stomp(body)
-			return
-
-		# Safety check
-		if not is_alive:
-			return
-
-		# Otherwise, kill the player
-		_kill_player(body)
-
-		# Check if player actually died (might have firefly shield)
-		var death_manager = body.get_node_or_null("DeathManager")
-		if death_manager and death_manager.is_dead:
-			# Disable detectors
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-func _die_from_stomp(player: Node2D):
+	# Mark as dead and stop physics immediately
 	is_alive = false
+	set_physics_process(false)
 
-	# Trigger hit stop
+	# Disable collision immediately
+	var main_collision = get_node_or_null("CollisionShape2D")
+	if main_collision:
+		main_collision.set_deferred("disabled", true)
+
+	set_collision_layer_value(1, false)
+	set_collision_layer_value(2, false)
+	set_collision_mask_value(1, false)
+
+	# Disable hitbox to prevent further collisions
+	if hitbox_area:
+		hitbox_area.set_deferred("monitoring", false)
+		hitbox_area.set_deferred("monitorable", false)
+
+	# Trigger hit stop for satisfying feedback
 	HitStop.activate(0.03)
 
 	# Play squish sound
@@ -411,23 +298,27 @@ func _die_from_stomp(player: Node2D):
 	if player is CharacterBody2D:
 		player.velocity.y = -stomp_bounce_force
 
-	# Disable physics
-	set_physics_process(false)
-
-	# Disable collision
-	set_collision_layer_value(1, false)
-	set_collision_mask_value(1, false)
-
-	# Disable damage detector
-	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
-		damage_detector.set_deferred("monitorable", false)
-
 	# Apply death shader
 	_apply_death_shader()
 
 	# Play squash effect, then death animation
 	_play_squash_effect()
+
+## Called by player when they hit the bird from the side/bottom
+func hit_player(player: Node2D):
+	if not is_alive:
+		return
+
+	_kill_player(player)
+
+	# Check if player actually died (might have firefly shield)
+	var death_manager = player.get_node_or_null("DeathManager")
+	if death_manager and death_manager.is_dead:
+		# Player died - fly away
+		_give_up()
+	else:
+		# Player survived with firefly shield - retreat temporarily
+		_start_retreat()
 
 func _play_squash_effect():
 	"""Quick squash effect before death animation"""

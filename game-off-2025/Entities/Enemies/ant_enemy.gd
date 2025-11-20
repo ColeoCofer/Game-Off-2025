@@ -18,8 +18,7 @@ extends CharacterBody2D
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var floor_raycast: RayCast2D = $FloorRayCast
-@onready var stomp_detector: Area2D = $StompDetector
-@onready var damage_detector: Area2D = $DamageDetector
+@onready var hitbox_area: Area2D = $HitboxArea
 @onready var audio_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var direction: int = 1  # 1 for right, -1 for left
@@ -30,13 +29,15 @@ var death_material: ShaderMaterial
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
 
 func _ready():
-	# Connect stomp detection
-	if stomp_detector:
-		stomp_detector.body_entered.connect(_on_stomp_detector_body_entered)
+	# Add to mob group for player collision detection
+	add_to_group("mob")
 
-	# Connect damage detection
-	if damage_detector:
-		damage_detector.body_entered.connect(_on_damage_detector_body_entered)
+	# Connect hitbox detection
+	if hitbox_area:
+		hitbox_area.body_entered.connect(_on_hitbox_body_entered)
+		print("DEBUG ANT: Hitbox connected! Area monitoring: ", hitbox_area.monitoring, " monitorable: ", hitbox_area.monitorable)
+	else:
+		print("DEBUG ANT: ERROR - No hitbox_area found!")
 
 	# Set up floor detection raycast
 	if floor_raycast:
@@ -84,185 +85,61 @@ func _turn_around():
 	if floor_raycast:
 		floor_raycast.position.x = edge_detection_distance * direction
 
-func _on_stomp_detector_body_entered(body: Node2D):
+func _on_hitbox_body_entered(body: Node2D):
+	"""Single hitbox detection - checks if stomp or side hit"""
+	print("DEBUG ANT: Hitbox triggered by: ", body.name)
+
 	if not is_alive:
-		print("Ant stomp detector: already dead")
+		print("DEBUG ANT: Ant already dead, ignoring")
 		return
 
-	# Check if it's the player
-	if body.is_in_group("Player"):
-		print("Ant stomp detector: Player entered!")
-		# Player must be falling (velocity.y > 0)
-		# and layer must be above the ant (bottom of player above top of ant)
-		var player_falling = false
-		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 0  # Moving downward
-
-		# Get player's collision shape to check bottom edge
-		var player_bottom_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
-
-		# Ant's top is roughly at global_position.y - 6 (considering sprite offset)
-		var ant_top_y = global_position.y - 6
-		var player_is_above = player_bottom_y <= ant_top_y + 8  # Give some tolerance
-
-		# Valid stomp: player is falling AND above the ant
-		if player_falling and player_is_above:
-			print("Ant stomp: Valid stomp detected! Killing ant.")
-			# Immediately mark as dead FIRST to prevent any race conditions
-			is_alive = false
-
-			# Stop physics processing immediately to prevent any movement
-			set_physics_process(false)
-
-			# Disable the ant's main collision body immediately
-			# This prevents the CharacterBody2D collision from pushing the ant into the ground
-			# which can cause physics glitches and false damage triggers (causing that weird glitch where the ant goes into the ground)
-			var main_collision = get_node_or_null("CollisionShape2D")
-			if main_collision:
-				main_collision.set_deferred("disabled", true)
-
-			# Immediately disable collision layers/masks to stop physics interactions
-			set_collision_layer_value(1, false)
-			set_collision_layer_value(2, false)
-			set_collision_mask_value(1, false)
-
-			# Immediately disable BOTH detectors to prevent race conditions
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			_die_from_stomp(body)
-
-func _on_damage_detector_body_entered(body: Node2D):
-	if not is_alive:
-		print("Ant damage detector: already dead, ignoring")
+	if not body.is_in_group("Player"):
+		print("DEBUG ANT: Body is not player, ignoring")
 		return
 
-	# Check if it's the player - side collision kills them
-	if body.is_in_group("Player"):
-		print("Ant damage detector: Player entered!")
-		# Don't kill player if they're clearly stomping from above! plz
-		# Player must be falling from above
-		var player_was_falling = false
-		if body is CharacterBody2D:
-			# Only accept if player was actually falling down (positive velocity)
-			# Don't accept walking on ground (velocity ~0) or jumping up (negative)
-			player_was_falling = body.velocity.y > 20.0  # Must be moving downward with some speed
-			print("  Player velocity.y: ", body.velocity.y, " (was falling: ", player_was_falling, ")")
+	print("DEBUG ANT: Player detected! Checking collision type...")
 
-		var player_bottom_y = body.global_position.y
-		var player_center_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
-					player_center_y = body.global_position.y
+	# Calculate player and enemy positions
+	var player_center_y = body.global_position.y
+	var enemy_center_y = global_position.y
+	var height_difference = enemy_center_y - player_center_y
 
-		var ant_top_y = global_position.y - 6
-		var ant_center_y = global_position.y
-		var stomp_tolerance = 6.0  # Tighter tolerance - must be clearly above
-		print("  Player bottom Y: ", player_bottom_y, " Ant top Y: ", ant_top_y, " (tolerance +", stomp_tolerance, ")")
-		print("  Player center Y: ", player_center_y, " Ant center Y: ", ant_center_y)
+	# Player must be significantly above (at least 3 pixels) to count as stomp
+	# This prevents step-up micro-movements from triggering false stomps
+	var MIN_STOMP_HEIGHT = 3.0
+	var player_is_above = height_difference >= MIN_STOMP_HEIGHT
+	print("DEBUG ANT: Player center: ", player_center_y, " Enemy center: ", enemy_center_y, " Height diff: ", height_difference, " Player is above? ", player_is_above)
 
-		var player_is_clearly_above = player_bottom_y <= ant_top_y + stomp_tolerance
-		print("  Player is clearly above: ", player_is_clearly_above)
+	# Stomp if player is significantly above enemy
+	if player_is_above:
+		print("DEBUG ANT: STOMP detected - killing ant")
+		squash(body)
+	else:
+		print("DEBUG ANT: SIDE HIT detected - killing player")
+		hit_player(body)
 
-		# Must be falling from above AND be positioned clearly above the ant's center
-		var is_stomp_scenario = player_was_falling and player_is_clearly_above
-		print("  Is stomp scenario: ", is_stomp_scenario, " (falling: ", player_was_falling, ", above: ", player_is_clearly_above, ")")
+## Called by player when they stomp on the ant from above
+func squash(player: Node2D):
+	if not is_alive:
+		return
 
-		# If this looks like a stomp, KILL THE ANT instead of the player!
-		if is_stomp_scenario:
-			print("Ant damage detector: Looks like stomp scenario, killing ANT instead!")
-			# Immediately mark as dead FIRST to prevent any race conditions
-			is_alive = false
-
-			# Stop physics processing immediately to prevent any movement
-			set_physics_process(false)
-
-			# Disable the ant's main collision body immediately
-			var main_collision = get_node_or_null("CollisionShape2D")
-			if main_collision:
-				main_collision.set_deferred("disabled", true)
-
-			# Immediately disable collision layers/masks to stop physics interactions
-			set_collision_layer_value(1, false)
-			set_collision_layer_value(2, false)
-			set_collision_mask_value(1, false)
-
-			# Immediately disable BOTH detectors to prevent race conditions
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			_die_from_stomp(body)
-			return
-
-		# Double-check is_alive flag before killing player (safety check for race conditions)
-		if not is_alive:
-			print("Ant damage detector: Double-checked, ant is already dead")
-			return
-
-		# Otherwise, this is a legitimate side/bottom collision - kill the player
-		print("Ant damage detector: Legitimate side collision, calling _kill_player")
-
-		# Try to kill the player (might be blocked by firefly shield)
-		_kill_player(body)
-
-		# Only disable detectors if player actually died (wasn't protected by firefly)
-		# Check if player's death manager confirms they're dead
-		var death_manager = body.get_node_or_null("DeathManager")
-		if death_manager and death_manager.is_dead:
-			print("Ant damage detector: Player died, disabling ant detectors")
-			# Disable BOTH detectors to prevent further damage
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-		else:
-			print("Ant damage detector: Player survived (firefly shield?), keeping ant detectors active")
-
-func _die_from_stomp(player: Node2D):
+	# Mark as dead and stop physics immediately
 	is_alive = false
+	set_physics_process(false)
+
+	# Disable collision immediately
+	var main_collision = get_node_or_null("CollisionShape2D")
+	if main_collision:
+		main_collision.set_deferred("disabled", true)
+
+	set_collision_layer_value(1, false)
+	set_collision_layer_value(2, false)
+	set_collision_mask_value(1, false)
+
+	# Disable hitbox to prevent further collisions
+	if hitbox_area:
+		hitbox_area.set_deferred("monitoring", false)
+		hitbox_area.set_deferred("monitorable", false)
 
 	# Trigger hit stop for satisfying feedback
 	HitStop.activate(0.03)
@@ -272,33 +149,23 @@ func _die_from_stomp(player: Node2D):
 		audio_player.stream = squish_sound
 		audio_player.play()
 
-	# Good effect to have but doesn't look that good on the ant...
-	# Spawn impact particles
-	# _spawn_stomp_particles()  # Disabled - not adding much
-
 	# Give player a bounce
 	if player is CharacterBody2D:
 		player.velocity.y = -stomp_bounce_force
 
-	# Disable physics
-	set_physics_process(false)
-
-	# Disable collision
-	set_collision_layer_value(1, false)
-	set_collision_mask_value(1, false)
-
-	# Disable damage detector so we don't hurt player after death
-	# (This is redundant with the immediate disable in _on_stomp_detector_body_entered,
-	# but kept as a safety measure... i guess)
-	if damage_detector:
-		damage_detector.set_deferred("monitoring", false)
-		damage_detector.set_deferred("monitorable", false)
-
-	# Apply death shader (same as player)
+	# Apply death shader
 	_apply_death_shader()
 
 	# Play squash effect, then death animation
 	_play_squash_effect()
+
+## Called by player when they hit the ant from the side/bottom
+func hit_player(player: Node2D):
+	if not is_alive:
+		return
+
+	_kill_player(player)
+
 
 func _spawn_stomp_particles():
 	"""Spawn particle effect at stomp location"""

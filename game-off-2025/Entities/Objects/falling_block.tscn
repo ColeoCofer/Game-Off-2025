@@ -20,6 +20,7 @@ script = ExtResource("2_falling_block")
 shake_duration = 0.65
 shake_intensity = 0.75
 jump_boost = 0.0
+respawn_time = 7.0
 
 [node name="FallingRockSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_falling_rock_sound")

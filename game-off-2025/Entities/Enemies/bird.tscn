@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cqjir0lds7bp3"]
+[gd_scene load_steps=12 format=3 uid="uid://cqjir0lds7bp3"]
 
 [ext_resource type="Script" uid="uid://cmaiuo7c2qtmg" path="res://Entities/Enemies/bird_enemy.gd" id="1_bird"]
 [ext_resource type="Texture2D" uid="uid://dtfawlnuqbj5m" path="res://Assets/Art/enemies/Spooky-bird.png" id="1_idb1m"]
@@ -70,6 +70,7 @@ collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_bird")
 fly_speed = 75.0
+attack_delay_max = 0.45
 stomp_bounce_force = 220.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -82,10 +83,8 @@ shape = SubResource("CapsuleShape2D_grcue")
 
 [node name="HitboxArea" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
-position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_hitbox")
 debug_color = Color(1, 0, 0, 0.42)
 

@@ -525,7 +525,7 @@ position = Vector2(40, 60)
 [node name="TutorialText" type="CanvasLayer" parent="."]
 
 [node name="HoldJumpHigher2" parent="TutorialText" instance=ExtResource("17_wgnk2")]
-position = Vector2(253, 509)
+position = Vector2(244, 479)
 hint_text = "press Y to echolocate"
 show_once = false
 

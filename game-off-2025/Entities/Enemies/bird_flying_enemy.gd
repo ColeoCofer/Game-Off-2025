@@ -26,6 +26,7 @@ var fly_direction: int = 1  # 1 for right, -1 for left
 var death_material: ShaderMaterial
 
 # Audio
+var caw_sound: AudioStream = preload("res://Assets/Audio/caw.mp3")
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
 
 func _ready():
@@ -36,6 +37,11 @@ func _ready():
 	# Connect damage detection
 	if damage_detector:
 		damage_detector.body_entered.connect(_on_damage_detector_body_entered)
+
+	# Play caw sound when spawning
+	if audio_player and caw_sound:
+		audio_player.stream = caw_sound
+		audio_player.play()
 
 	# Start flying animation
 	if animated_sprite:

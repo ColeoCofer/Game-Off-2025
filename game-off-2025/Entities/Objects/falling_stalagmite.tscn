@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dby0n4if8rhwp"]
+[gd_scene load_steps=24 format=3 uid="uid://dby0n4if8rhwp"]
 
 [ext_resource type="Script" uid="uid://bjmapvwcve54s" path="res://Entities/Objects/falling_stalagmite.gd" id="1_stalagmite"]
 [ext_resource type="Texture2D" uid="uid://bfx8uu4amxwvn" path="res://Assets/Art/falling-stag.png" id="2_kr5jn"]
@@ -292,6 +292,9 @@ radius = 9.055386
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kr5jn"]
 size = Vector2(177, 7)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rm730"]
+size = Vector2(179, 5)
+
 [node name="FallingStalagmite" type="Node2D"]
 script = ExtResource("1_stalagmite")
 one_time_trigger = false
@@ -337,3 +340,9 @@ collision_layer = 0
 position = Vector2(0.5, -32.5)
 shape = SubResource("RectangleShape2D_kr5jn")
 disabled = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0.5, -39.5)
+shape = SubResource("RectangleShape2D_rm730")

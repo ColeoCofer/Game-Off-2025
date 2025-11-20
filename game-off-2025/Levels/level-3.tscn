@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=4 uid="uid://byuo1pkbi5pxb"]
+[gd_scene load_steps=20 format=4 uid="uid://byuo1pkbi5pxb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://w3pb85y7tvmy" path="res://Entities/Enemies/bird_spawner.tscn" id="6_78sh8"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="6_hg1m3"]
+[ext_resource type="PackedScene" uid="uid://bqxt2myiyrttg" path="res://Entities/Objects/falling_block.tscn" id="9_sus6d"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="14_wind_noise"]
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="cave_bg_material"]
@@ -466,8 +467,7 @@ tile_set = ExtResource("2_n4bx7")
 
 [node name="BirdSpawner" parent="Enemies" instance=ExtResource("6_78sh8")]
 position = Vector2(192, 254)
-spawn_interval_min = 1.5
-spawn_interval_max = 4.0
+spawn_interval_max = 5.0
 
 [node name="Hurt Objects" type="Node" parent="."]
 
@@ -482,8 +482,14 @@ position = Vector2(327, 352)
 [node name="Torch2" parent="Objects" instance=ExtResource("6_hg1m3")]
 position = Vector2(54, 352)
 
+[node name="FallingBlock" parent="Objects" instance=ExtResource("9_sus6d")]
+position = Vector2(49, 160)
+
+[node name="FallingBlock2" parent="Objects" instance=ExtResource("9_sus6d")]
+position = Vector2(336, 160)
+
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(192, 407)
+position = Vector2(350, 214)
 
 [node name="Foreground" type="Node2D" parent="."]
 

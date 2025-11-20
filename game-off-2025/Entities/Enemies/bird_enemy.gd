@@ -15,6 +15,7 @@ extends CharacterBody2D
 @export var attack_delay_max: float = 1.0
 @export var chase_timeout: float = 10.0
 @export var retreat_speed: float = 150.0
+@export var retreat_duration: float = 2.5
 @export var stomp_bounce_force: float = 150.0
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
@@ -22,7 +23,7 @@ extends CharacterBody2D
 @export var squash_duration: float = 0.15
 @export var squash_amount: Vector2 = Vector2(1.5, 0.4)
 
-enum State { PERCHED, PREPARING_ATTACK, FLYING, GIVING_UP }
+enum State { PERCHED, PREPARING_ATTACK, FLYING, RETREATING, GIVING_UP }
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var stomp_detector: Area2D = $StompDetector
@@ -35,6 +36,7 @@ var is_alive: bool = true
 var target_player: Node2D = null
 var death_material: ShaderMaterial
 var chase_timer: float = 0.0
+var retreat_timer: float = 0.0
 
 # Audio
 var caw_sound: AudioStream = preload("res://Assets/Audio/caw.mp3")
@@ -61,6 +63,8 @@ func _physics_process(delta: float):
 			_process_perched(delta)
 		State.FLYING:
 			_process_flying(delta)
+		State.RETREATING:
+			_process_retreating(delta)
 		State.GIVING_UP:
 			_process_giving_up(delta)
 
@@ -166,6 +170,58 @@ func _enter_flying_state():
 
 	if animated_sprite:
 		animated_sprite.play("flying")
+
+func _start_retreat():
+	"""Temporarily retreat after hitting a firefly shield"""
+	current_state = State.RETREATING
+	retreat_timer = 0.0
+
+	# Temporarily disable collision detectors so bird doesn't spam hits while retreating
+	if damage_detector:
+		damage_detector.set_deferred("monitoring", false)
+		damage_detector.set_deferred("monitorable", false)
+
+	if stomp_detector:
+		stomp_detector.set_deferred("monitoring", false)
+		stomp_detector.set_deferred("monitorable", false)
+
+func _process_retreating(delta: float):
+	"""Fly away from player temporarily, then return to attack"""
+	retreat_timer += delta
+
+	# Check if retreat duration is over
+	if retreat_timer >= retreat_duration:
+		# Re-enable detectors
+		if damage_detector:
+			damage_detector.set_deferred("monitoring", true)
+			damage_detector.set_deferred("monitorable", true)
+
+		if stomp_detector:
+			stomp_detector.set_deferred("monitoring", true)
+			stomp_detector.set_deferred("monitorable", true)
+
+		# Return to flying/chasing state
+		_enter_flying_state()
+		return
+
+	# Fly away from player (upward and back)
+	if target_player:
+		# Calculate direction away from player
+		var direction_from_player = (global_position - target_player.global_position).normalized()
+		# Bias upward
+		direction_from_player.y -= 0.5
+		direction_from_player = direction_from_player.normalized()
+
+		velocity = direction_from_player * retreat_speed
+	else:
+		# No player, just fly up
+		velocity = Vector2(0, -1) * retreat_speed
+
+	# Flip sprite based on direction
+	if animated_sprite:
+		animated_sprite.flip_h = velocity.x < 0
+
+	move_and_slide()
 
 func _give_up():
 	"""Give up chasing and fly away"""
@@ -443,3 +499,6 @@ func _kill_player(player: Node2D):
 		# If player actually died (wasn't protected by firefly), fly away
 		if death_manager.is_dead:
 			_give_up()
+		else:
+			# Player survived with firefly shield - retreat temporarily
+			_start_retreat()

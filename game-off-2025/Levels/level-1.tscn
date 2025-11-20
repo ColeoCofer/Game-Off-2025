@@ -559,6 +559,9 @@ position = Vector2(3986, 129)
 [node name="Torch5" parent="Objects" instance=ExtResource("11_vqiix")]
 position = Vector2(4866, -46)
 
+[node name="Torch6" parent="Objects" instance=ExtResource("11_vqiix")]
+position = Vector2(4781, -47)
+
 [node name="Checkpoint" parent="Objects" instance=ExtResource("20_dmhm2")]
 position = Vector2(2727, 161)
 

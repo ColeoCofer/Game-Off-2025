@@ -2,12 +2,13 @@ extends CharacterBody2D
 
 ## Flying bird enemy that swoops horizontally across the screen
 ## - Spawns off-screen to the left or right of player
-## - Flies straight across at player's Y position (doesn't track)
+## - Flies straight across while tracking player's Y position
 ## - Removes itself when it goes off the other side
 ## - Kills player on collision
 ## - Dies when player stomps on top
 
 @export var fly_speed: float = 150.0
+@export var vertical_tracking_speed: float = 35.0  # How fast the bird tracks player's Y position
 @export var stomp_bounce_force: float = 220.0
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
@@ -54,7 +55,14 @@ func _physics_process(_delta: float):
 
 	# Fly horizontally
 	velocity.x = fly_direction * fly_speed
-	velocity.y = 0  # Stay at spawn Y position
+
+	# Track player's Y position
+	var player = get_tree().get_first_node_in_group("Player")
+	if player:
+		var direction_to_player = sign(player.global_position.y - global_position.y)
+		velocity.y = direction_to_player * vertical_tracking_speed
+	else:
+		velocity.y = 0  # No player found, fly straight
 
 	move_and_slide()
 

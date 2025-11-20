@@ -290,7 +290,7 @@ radius = 100.0
 radius = 9.055386
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kr5jn"]
-size = Vector2(177, 11)
+size = Vector2(177, 7)
 
 [node name="FallingStalagmite" type="Node2D"]
 script = ExtResource("1_stalagmite")
@@ -334,6 +334,6 @@ disabled = true
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visuals/TopDamageArea"]
-position = Vector2(0.5, -34.5)
+position = Vector2(0.5, -32.5)
 shape = SubResource("RectangleShape2D_kr5jn")
 disabled = true

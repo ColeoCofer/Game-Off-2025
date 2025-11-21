@@ -1,6 +1,6 @@
 extends Control
 
-## LevelSelectMenu - Shows available levels with progression tracking
+## LevelSelectMenu - Shows available levels with progression tbracking
 
 @onready var level_grid: GridContainer = get_node("MarginContainer/VBoxContainer/CenterContainer/LevelGrid")
 @onready var back_button: Button = get_node("MarginContainer/VBoxContainer/BackButton")

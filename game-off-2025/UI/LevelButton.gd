@@ -10,10 +10,7 @@ var is_unlocked: bool = false
 @onready var level_label: Label = $VBoxContainer/HBoxContainer/LevelLabel
 @onready var status_label: Label = $VBoxContainer/HBoxContainer/StatusLabel
 @onready var time_label: Label = $VBoxContainer/HBoxContainer/TimeLabel
-@onready var diamond_container: HBoxContainer = $VBoxContainer/FireflyContainer
-@onready var diamond_icon1: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon1
-@onready var diamond_icon2: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon2
-@onready var diamond_icon3: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon3
+@onready var diamond_label: Label = $VBoxContainer/DiamondLabel
 
 
 func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best_time: float) -> void:
@@ -55,27 +52,18 @@ func _ready() -> void:
 
 
 func _update_diamond_display() -> void:
-	# Hide diamond container for tutorial level (no diamonds to collect)
+	# Hide diamond label for tutorial level (no diamonds to collect)
 	if level_name == "tutorial":
-		diamond_container.visible = false
+		diamond_label.visible = false
 		return
 
 	# Get diamond collection data from DiamondCollectionManager
 	var collected_diamonds = DiamondCollectionManager.get_collected_diamonds(level_name)
+	var collected_count = collected_diamonds.size()
 
-	# Update icon display - show diamond if collected, dark/hidden if not
-	# Note: Diamond IDs in levels are 0, 1, 2
-	var icons = [diamond_icon1, diamond_icon2, diamond_icon3]
-	for i in range(icons.size()):
-		var diamond_id = i  # Diamond IDs are 0, 1, 2
-		if diamond_id in collected_diamonds:
-			# Collected - show bright diamond image
-			icons[i].modulate = Color(1.0, 1.0, 1.0, 1.0)  # Full brightness
-			icons[i].visible = true
-		else:
-			# Not collected - very dark/barely visible
-			icons[i].modulate = Color(0.2, 0.2, 0.2, 0.3)  # Much darker and more transparent
-			icons[i].visible = true
+	# Update label text to show "Diamonds X/3"
+	diamond_label.text = "Diamonds %d/3" % collected_count
+	diamond_label.visible = true
 
 
 func _on_pressed() -> void:

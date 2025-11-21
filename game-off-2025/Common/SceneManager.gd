@@ -66,8 +66,8 @@ func load_level(level_name: String) -> void:
 	current_level = level_name
 	reset_level_timer()
 
-	# Start a new firefly collection run (clears temporary collected fireflies)
-	FireflyCollectionManager.start_level_run(level_name)
+	# Start a new diamond collection run (clears temporary collected diamonds)
+	DiamondCollectionManager.start_level_run(level_name)
 
 	await _change_scene(level_info["path"])
 
@@ -97,7 +97,7 @@ func reload_current_level() -> void:
 		return
 
 	# Reload by calling load_level with current level
-	# This ensures FireflyCollectionManager.start_level_run() is called to clear temp collections
+	# This ensures DiamondCollectionManager.start_level_run() is called to clear temp collections
 	load_level(current_level)
 
 
@@ -141,8 +141,8 @@ func complete_level(level_name: String = "") -> void:
 	SaveManager.save_best_time(level_name, completion_time)
 	print("SceneManager: Best time saved")
 
-	# Save collected fireflies permanently (only if level completed without dying)
-	FireflyCollectionManager.commit_level_completion(level_name)
+	# Save collected diamonds permanently (only if level completed without dying)
+	DiamondCollectionManager.commit_level_completion(level_name)
 
 	# Unlock next level
 	var current_info = get_level_info(level_name)
@@ -241,5 +241,5 @@ func _on_node_added(node: Node) -> void:
 			if scene_path == level_info["path"]:
 				# Level was reloaded, reset the timer
 				reset_level_timer()
-				# Clear temporary firefly collection (player died/restarted)
-				FireflyCollectionManager.start_level_run(current_level)
+				# Clear temporary diamond collection (player died/restarted)
+				DiamondCollectionManager.start_level_run(current_level)

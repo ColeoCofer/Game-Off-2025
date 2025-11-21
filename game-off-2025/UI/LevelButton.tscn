@@ -1,11 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://cqxb8g7j8lal0"]
 
 [ext_resource type="Script" path="res://UI/LevelButton.gd" id="1_levelbutton"]
-[ext_resource type="Texture2D" uid="uid://dftdljbdpvkbp" path="res://Assets/Art/bugs/firefly.png" id="2_firefly_icon"]
+[ext_resource type="Texture2D" path="res://Assets/Art/sona-sprite-sheet.png" id="2_diamond_icon"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_firefly_icon"]
-atlas = ExtResource("2_firefly_icon")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_diamond_icon"]
+atlas = ExtResource("2_diamond_icon")
+region = Rect2(112, 16, 16, 16)
 
 [node name="LevelButton" type="Button"]
 custom_minimum_size = Vector2(180, 70)
@@ -53,20 +53,20 @@ theme_override_constants/separation = 4
 [node name="FireflyIcon1" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
 custom_minimum_size = Vector2(12, 12)
 layout_mode = 2
-texture = SubResource("AtlasTexture_firefly_icon")
+texture = SubResource("AtlasTexture_diamond_icon")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="FireflyIcon2" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
 custom_minimum_size = Vector2(12, 12)
 layout_mode = 2
-texture = SubResource("AtlasTexture_firefly_icon")
+texture = SubResource("AtlasTexture_diamond_icon")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="FireflyIcon3" type="TextureRect" parent="VBoxContainer/FireflyContainer"]
 custom_minimum_size = Vector2(12, 12)
 layout_mode = 2
-texture = SubResource("AtlasTexture_firefly_icon")
+texture = SubResource("AtlasTexture_diamond_icon")
 expand_mode = 1
 stretch_mode = 5

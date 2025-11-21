@@ -109,7 +109,7 @@ func _on_play_again_button_pressed():
 			level_name = filename
 
 	if level_name != "":
-		FireflyCollectionManager.start_level_run(level_name)
+		DiamondCollectionManager.start_level_run(level_name)
 
 	# Store reference to current scene before cleanup
 	var current_scene = get_tree().current_scene

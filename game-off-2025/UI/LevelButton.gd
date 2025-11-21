@@ -10,10 +10,10 @@ var is_unlocked: bool = false
 @onready var level_label: Label = $VBoxContainer/HBoxContainer/LevelLabel
 @onready var status_label: Label = $VBoxContainer/HBoxContainer/StatusLabel
 @onready var time_label: Label = $VBoxContainer/HBoxContainer/TimeLabel
-@onready var firefly_container: HBoxContainer = $VBoxContainer/FireflyContainer
-@onready var firefly_icon1: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon1
-@onready var firefly_icon2: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon2
-@onready var firefly_icon3: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon3
+@onready var diamond_container: HBoxContainer = $VBoxContainer/FireflyContainer
+@onready var diamond_icon1: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon1
+@onready var diamond_icon2: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon2
+@onready var diamond_icon3: TextureRect = $VBoxContainer/FireflyContainer/FireflyIcon3
 
 
 func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best_time: float) -> void:
@@ -42,8 +42,8 @@ func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best
 	else:
 		time_label.text = "--:--:--"
 
-	# Set firefly collection status
-	_update_firefly_display()
+	# Set diamond collection status
+	_update_diamond_display()
 
 	# Update visual style
 	if not is_unlocked:
@@ -54,22 +54,22 @@ func _ready() -> void:
 	pressed.connect(_on_pressed)
 
 
-func _update_firefly_display() -> void:
-	# Hide firefly container for tutorial level (no fireflies to collect)
+func _update_diamond_display() -> void:
+	# Hide diamond container for tutorial level (no diamonds to collect)
 	if level_name == "tutorial":
-		firefly_container.visible = false
+		diamond_container.visible = false
 		return
 
-	# Get firefly collection data from FireflyCollectionManager
-	var collected_fireflies = FireflyCollectionManager.get_collected_fireflies(level_name)
+	# Get diamond collection data from DiamondCollectionManager
+	var collected_diamonds = DiamondCollectionManager.get_collected_diamonds(level_name)
 
-	# Update icon display - show firefly if collected, dark/hidden if not
-	# Note: Firefly IDs in levels are 1, 2, 3 (not 0, 1, 2)
-	var icons = [firefly_icon1, firefly_icon2, firefly_icon3]
+	# Update icon display - show diamond if collected, dark/hidden if not
+	# Note: Diamond IDs in levels are 0, 1, 2
+	var icons = [diamond_icon1, diamond_icon2, diamond_icon3]
 	for i in range(icons.size()):
-		var firefly_id = i + 1  # Map icon index (0,1,2) to firefly ID (1,2,3)
-		if firefly_id in collected_fireflies:
-			# Collected - show bright firefly image
+		var diamond_id = i  # Diamond IDs are 0, 1, 2
+		if diamond_id in collected_diamonds:
+			# Collected - show bright diamond image
 			icons[i].modulate = Color(1.0, 1.0, 1.0, 1.0)  # Full brightness
 			icons[i].visible = true
 		else:

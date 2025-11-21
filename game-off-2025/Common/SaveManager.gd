@@ -20,6 +20,7 @@ var save_data = {
 		"unlocked_levels": [],
 		"total_playtime": 0.0,
 		"fireflies_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
+		"diamonds_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
 		"cutscenes_played": [],  # Track which cutscenes have been viewed
 		"tutorials_shown": []  # Track which tutorials have been displayed
 	}
@@ -186,6 +187,38 @@ func get_total_fireflies_collected() -> int:
 		total += save_data["game_data"]["fireflies_collected"][level].size()
 	return total
 
+# ============= DIAMOND COLLECTION FUNCTIONS =============
+
+func save_diamond(level_name: String, diamond_id: int):
+	# Initialize array for this level if it doesn't exist
+	if level_name not in save_data["game_data"]["diamonds_collected"]:
+		save_data["game_data"]["diamonds_collected"][level_name] = []
+
+	# Add diamond ID if not already collected
+	var collected_diamonds = save_data["game_data"]["diamonds_collected"][level_name]
+	if diamond_id not in collected_diamonds:
+		collected_diamonds.append(diamond_id)
+		save_game()
+
+func is_diamond_collected(level_name: String, diamond_id: int) -> bool:
+	if level_name not in save_data["game_data"]["diamonds_collected"]:
+		return false
+	return diamond_id in save_data["game_data"]["diamonds_collected"][level_name]
+
+func get_collected_diamonds(level_name: String) -> Array:
+	if level_name in save_data["game_data"]["diamonds_collected"]:
+		return save_data["game_data"]["diamonds_collected"][level_name]
+	return []
+
+func get_diamond_count(level_name: String) -> int:
+	return get_collected_diamonds(level_name).size()
+
+func get_total_diamonds_collected() -> int:
+	var total = 0
+	for level in save_data["game_data"]["diamonds_collected"]:
+		total += save_data["game_data"]["diamonds_collected"][level].size()
+	return total
+
 # ============= CUTSCENE TRACKING FUNCTIONS =============
 
 func mark_cutscene_played(cutscene_id: String):
@@ -226,6 +259,7 @@ func reset_save_data():
 			"unlocked_levels": [],
 			"total_playtime": 0.0,
 			"fireflies_collected": {},
+			"diamonds_collected": {},
 			"cutscenes_played": [],
 			"tutorials_shown": []
 		}

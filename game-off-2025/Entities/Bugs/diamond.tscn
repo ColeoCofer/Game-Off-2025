@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://eiecwvk87qnl"]
+
+[ext_resource type="Script" uid="uid://dvbpe1yo71u5j" path="res://Entities/Bugs/diamond.gd" id="1_diamond_script"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_oij7u"]
+load_path = "res://.godot/imported/sona-sprite-sheet.png-c8ed2e1a339e2ea8168905746baa8ee7.ctex"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_diamond"]
+radius = 8.0
+
+[sub_resource type="Gradient" id="Gradient_diamond_glow"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.4, 0.8, 1, 1, 0.6, 0.9, 1, 0.5, 0.8, 0.95, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_diamond"]
+gradient = SubResource("Gradient_diamond_glow")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Diamond" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_diamond_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_oij7u")
+region_enabled = true
+region_rect = Rect2(112, 16, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_diamond")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(0.6, 0.9, 1, 1)
+energy = 2.0
+texture = SubResource("GradientTexture2D_diamond")
+texture_scale = 0.9

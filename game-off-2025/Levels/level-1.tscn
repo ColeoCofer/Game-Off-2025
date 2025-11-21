@@ -482,7 +482,7 @@ position = Vector2(-345, 225)
 diamond_id = 1
 
 [node name="Diamond2" parent="Diamonds" instance=ExtResource("9_dmhm2")]
-position = Vector2(3731, -19)
+position = Vector2(3956, 127)
 diamond_id = 2
 
 [node name="Diamond3" parent="Diamonds" instance=ExtResource("9_dmhm2")]

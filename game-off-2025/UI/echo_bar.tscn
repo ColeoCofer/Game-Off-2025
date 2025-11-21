@@ -1,37 +1,37 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpmhxtjak45ff"]
+[gd_scene load_steps=11 format=3 uid="uid://bk3g8y7vh2qwe"]
 
-[ext_resource type="Script" uid="uid://djw5ux5qlitr7" path="res://UI/HeartUI.gd" id="1_heart_script"]
-[ext_resource type="Texture2D" uid="uid://c4qc18tdpjbou" path="res://Assets/Art/ui/hunger-bar.png" id="2_hunger_bar"]
+[ext_resource type="Script" uid="uid://dspwaryxfyur2" path="res://UI/EchoBarUI.gd" id="1_echo_script"]
+[ext_resource type="Texture2D" uid="uid://cnxpqddqjey22" path="res://Assets/Art/ui/echo-bar.png" id="2_echo_bar"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame0"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(0, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame1"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(75, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame2"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(150, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame3"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(225, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame4"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(300, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame5"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(375, 0, 75, 21)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame6"]
-atlas = ExtResource("2_hunger_bar")
+atlas = ExtResource("2_echo_bar")
 region = Rect2(450, 0, 75, 21)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_hunger_bar"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_echo_bar"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -56,15 +56,14 @@ animations = [{
 "texture": SubResource("AtlasTexture_frame6")
 }],
 "loop": false,
-"name": &"hunger_bar",
+"name": &"echo_bar",
 "speed": 5.0
 }]
 
-[node name="Heart" type="Node2D"]
-script = ExtResource("1_heart_script")
+[node name="EchoBar" type="Node2D"]
+script = ExtResource("1_echo_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(2.5, 2.5)
-sprite_frames = SubResource("SpriteFrames_hunger_bar")
-animation = &"hunger_bar"
-frame = 6
+sprite_frames = SubResource("SpriteFrames_echo_bar")
+animation = &"echo_bar"

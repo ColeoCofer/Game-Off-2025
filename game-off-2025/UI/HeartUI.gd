@@ -4,13 +4,13 @@ extends Node2D
 @onready var heart_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 # Configuration
-var total_frames: int = 18  # Total frames in the heart animation (0-17)
+var total_frames: int = 7  # Total frames in the hunger bar animation (0-6)
 
 func _ready():
 	# Stop the animation from playing automatically
 	if heart_sprite:
 		heart_sprite.stop()
-		heart_sprite.animation = "heart"
+		heart_sprite.animation = "hunger_bar"
 
 	# Connect to HungerManager - find it dynamically
 	var hunger_manager = get_tree().get_first_node_in_group("hunger_manager")
@@ -37,9 +37,10 @@ func _on_hunger_changed(current: float, maximum: float):
 	var hunger_percentage = current / maximum
 
 	# Map hunger percentage to frame number
-	# fralme 17 -> full health
-	# End on frame 0 -> RIP
-	var target_frame = int(hunger_percentage * (total_frames - 1))
+	# Frame 0 -> full health (100%)
+	# Frame 6 -> empty (0%)
+	# Use total_frames multiplier so bar stays full longer
+	var target_frame = int((1.0 - hunger_percentage) * total_frames)
 
 	# Clamp to valid range
 	target_frame = clamp(target_frame, 0, total_frames - 1)

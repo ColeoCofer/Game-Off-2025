@@ -49,6 +49,10 @@ func _ready():
 func _input(event):
 	# Toggle pause menu when pause is pressed
 	if Input.is_action_just_pressed("pause"):
+		# Don't allow pausing if not in a level
+		if SceneManager.current_level == "":
+			return
+
 		# Don't allow pausing during cutscenes
 		if CutsceneDirector and CutsceneDirector.is_active():
 			return
@@ -135,10 +139,14 @@ func _on_continue_button_pressed():
 
 func _on_exit_button_pressed():
 	exit_pressed.emit()
-	# Unpause before quitting
+	# Hide the menu immediately to prevent input bleed-through
+	visible = false
+	is_paused = false
+	modulate.a = 0.0
+	# Unpause before going to main menu
 	get_tree().paused = false
-	# Quit the game
-	get_tree().quit()
+	# Go to main menu
+	SceneManager.goto_main_menu()
 
 func _update_button_focus():
 	if current_button_index == 0:

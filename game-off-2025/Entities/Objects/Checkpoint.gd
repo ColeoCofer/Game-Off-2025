@@ -11,6 +11,7 @@ signal checkpoint_activated(checkpoint_position: Vector2)
 @export var max_audio_distance: float = 200.0  ## Distance at which fire sound is inaudible
 @export var min_audio_distance: float = 50.0   ## Distance at which fire sound is at full volume
 @export var torch_volume_db: float = 0.0        ## Volume of the torch fire sound in decibels (-80 to 24)
+@export var hunger_restore_amount: float = 50.0 ## Amount of hunger restored when checkpoint is first activated
 
 var sprite: Sprite2D
 var animated_sprite: AnimatedSprite2D
@@ -113,12 +114,12 @@ func _on_body_entered(body: Node2D):
 
 		# If no separate activation area exists, activate on main area entry
 		if not activation_area and not activated:
-			activate()
+			activate(body)
 
 func _on_activation_area_entered(body: Node2D):
 	# Only activate checkpoint when player enters the narrow activation area
 	if body.is_in_group("Player") and not activated:
-		activate()
+		activate(body)
 
 func _on_body_exited(body: Node2D):
 	# Clear player reference when they leave
@@ -127,12 +128,18 @@ func _on_body_exited(body: Node2D):
 		player_ref.z_index = 0
 		player_ref = null
 
-func activate():
-	"""Activate the checkpoint - changes visuals and notifies player"""
+func activate(player: Node2D = null):
+	"""Activate the checkpoint - changes visuals, notifies player, and restores hunger"""
 	if activated:
 		return
 
 	activated = true
+
+	# Restore player's hunger when checkpoint is first activated
+	if player and player is PlatformerController2D:
+		var hunger_manager = player.get_node_or_null("HungerManager")
+		if hunger_manager:
+			hunger_manager.consume_food(hunger_restore_amount)
 
 	# Emit signal with checkpoint position
 	checkpoint_activated.emit(global_position)

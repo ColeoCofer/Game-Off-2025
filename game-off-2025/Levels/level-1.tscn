@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://de6p1l8qfd8pb"]
+[gd_scene load_steps=23 format=4 uid="uid://de6p1l8qfd8pb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="2_oxkis"]
 [ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="3_r041s"]
 [ext_resource type="Shader" uid="uid://uacftcxjkp8x" path="res://Shaders/foliage_wind.gdshader" id="3_ys3un"]
-[ext_resource type="PackedScene" uid="uid://bk3g8y7vh2qwe" path="res://UI/echo_bar.tscn" id="4_echo_bar"]
 [ext_resource type="PackedScene" uid="uid://b73psve87rk1g" path="res://Entities/Objects/moving-plank.tscn" id="5_6p1x0"]
 [ext_resource type="PackedScene" uid="uid://bqy5xk8j1234" path="res://Entities/Enemies/ant_enemy.tscn" id="5_jfi0m"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="5_n4bx7"]
@@ -438,7 +437,7 @@ shader_parameter/rotation_strength = 1.0
 shader_parameter/rotation_pivot = Vector2(0.5, 1)
 shader_parameter/brightness = 0.6
 
-[node name="Level1" type="Node2D"]
+[node name="Level2" type="Node2D"]
 
 [node name="TileMap" type="Node2D" parent="."]
 
@@ -581,12 +580,10 @@ tile_set = ExtResource("2_n4bx7")
 
 [node name="EcholocationManager" type="CanvasLayer" parent="." groups=["echolocation_manager"]]
 script = ExtResource("3_r041s")
-echolocation_mode = 1
 vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
 echo_fade_duration = 8.0
-echolocation_cooldown = 7.0
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false
@@ -598,11 +595,8 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="EchoBar" parent="EcholocationManager" instance=ExtResource("4_echo_bar")]
-position = Vector2(110, 20)
-
 [node name="Heart" parent="EcholocationManager" instance=ExtResource("6_heart")]
-position = Vector2(110, 60)
+position = Vector2(89, 41)
 
 [node name="LightBeam" parent="." instance=ExtResource("11_b6mne")]
 visible = false

@@ -1,21 +1,11 @@
 extends CanvasLayer
 
-# Echolocation mode
-enum EcholocationMode {
-	CLASSIC,        # Original: 5s cooldown, no hunger cost
-	HUNGER_COST     # New: cooldown matches fade duration, costs 15% hunger
-}
-
 # References
 @onready var darkness_overlay: ColorRect = $DarknessOverlay
 @onready var player: CharacterBody2D = get_parent().get_node("Player")
 @onready var camera: Camera2D = player.get_node("Camera2D")
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 @onready var hunger_manager: Node = player.get_node("HungerManager")
-@onready var player_sprite: AnimatedSprite2D = player.get_node("AnimatedSprite2D")
-
-# Mode selection
-@export var echolocation_mode: EcholocationMode = EcholocationMode.CLASSIC
 
 # Vision settings
 @export var vision_radius: float = 75.
@@ -26,30 +16,18 @@ enum EcholocationMode {
 @export var echo_reveal_distance: float = 800.0
 @export var echo_fade_duration: float = 3.5  # seconds
 @export var echo_expansion_speed: float = 1200.0  # pixels per second (how fast the wave expands)
-@export var echolocation_cooldown: float = 5.0  # seconds for full recharge (Classic mode)
-@export var hunger_cost_percentage: float = 15.0  # Percentage of max hunger consumed per echo (Hunger Cost mode)
+@export var hunger_cost_percentage: float = 15.0  # Percentage of max hunger consumed per echo
 
 # Wave visual settings
 @export var wave_thickness: float = 60.0  # How thick the visible wave ring is
 @export var wave_brightness: float = 0.4  # How visible/bright the wave ring appears (0-1)
 @export var wave_offset: float = 40.0  # How far ahead of the reveal the wave appears
 
-# Cooldown system
-var cooldown_timer: float = 0.0  # 0 = ready, increases to echolocation_cooldown
-var is_on_cooldown: bool = false
-
 # Echolocation pulses (relative offset from player, intensity, and expansion radius)
 var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: float, radius: float, age: float}
 
 # Shader material
 var shader_material: ShaderMaterial
-
-# Cooldown ready pulse effect
-@export var pulse_duration: float = 0.8  # How long the pulse effect lasts (seconds)
-var pulse_timer: float = 0.0
-var is_pulsing: bool = false
-var pulse_shader_material: ShaderMaterial
-var original_sprite_material: ShaderMaterial
 
 func _ready():
 	# Ensure darkness overlay is visible (in case it was disabled during level editing)
@@ -74,12 +52,6 @@ func _ready():
 	# Initialize echo arrays
 	update_echo_shader_params()
 
-	# Store original sprite material and create pulse shader material
-	original_sprite_material = player_sprite.material
-	pulse_shader_material = ShaderMaterial.new()
-	pulse_shader_material.shader = load("res://Shaders/cooldown_ready_pulse.gdshader")
-	pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
-
 func _process(delta: float):
 	# Update player position in shader
 	var player_screen_pos = get_screen_position(player.global_position)
@@ -92,35 +64,18 @@ func _process(delta: float):
 	# Update echolocation pulses (fade over time)
 	update_echo_pulses(delta)
 
-	# Update cooldown
-	update_cooldown(delta)
-
-	# Update pulse effect
-	update_pulse_effect(delta)
-
 	# Update shader with current echo positions
 	update_echo_shader_params()
 
 func can_use_echolocation() -> bool:
-	return not is_on_cooldown
+	# Can always use echolocation (will drain hunger as cost)
+	return true
 
 func trigger_echolocation():
-	# Stop any ongoing pulse effect
-	if is_pulsing:
-		is_pulsing = false
-		pulse_timer = 0.0
-		player_sprite.material = original_sprite_material
-		pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
-
-	# Apply hunger cost in HUNGER_COST mode
-	if echolocation_mode == EcholocationMode.HUNGER_COST:
-		if hunger_manager:
-			var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
-			hunger_manager.take_damage(hunger_cost)
-
-	# Start cooldown
-	is_on_cooldown = true
-	cooldown_timer = 0.0
+	# Apply hunger cost
+	if hunger_manager:
+		var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
+		hunger_manager.take_damage(hunger_cost)
 
 	# Play echo sound
 	if echo_audio:
@@ -135,10 +90,6 @@ func trigger_echolocation():
 		"age": 0.0  # Track how long the pulse has existed
 	}
 	echo_pulses.append(pulse)
-
-	# Emit signal for UI update with appropriate cooldown duration
-	var cooldown_duration = get_active_cooldown_duration()
-	cooldown_changed.emit(0.0, cooldown_duration)
 
 	# Emit signal for enemies to detect echolocation
 	echolocation_triggered.emit(player.global_position)
@@ -158,32 +109,6 @@ func update_echo_pulses(delta: float):
 		# Remove fully faded pulses
 		if echo_pulses[i].intensity <= 0.0:
 			echo_pulses.remove_at(i)
-
-func update_cooldown(delta: float):
-	if is_on_cooldown:
-		cooldown_timer += delta
-
-		# Get the appropriate cooldown duration based on mode
-		var cooldown_duration = get_active_cooldown_duration()
-
-		# Emit progress update
-		cooldown_changed.emit(cooldown_timer, cooldown_duration)
-
-		# Check if cooldown is complete
-		if cooldown_timer >= cooldown_duration:
-			is_on_cooldown = false
-			cooldown_timer = 0.0
-			cooldown_changed.emit(cooldown_duration, cooldown_duration)  # Signal ready
-
-			# Trigger pulse effect
-			trigger_pulse_effect()
-
-func get_active_cooldown_duration() -> float:
-	# Return appropriate cooldown duration based on mode
-	if echolocation_mode == EcholocationMode.HUNGER_COST:
-		return echo_fade_duration  # Cooldown matches fade time
-	else:
-		return echolocation_cooldown  # Classic 5 second cooldown
 
 func update_echo_shader_params():
 	# Prepare arrays for shader (up to 10 pulses)
@@ -222,34 +147,6 @@ func get_screen_position(world_pos: Vector2) -> Vector2:
 	var screen_pos = viewport_size / 2.0 + offset
 
 	return screen_pos
-
-# Pulse effect functions
-func trigger_pulse_effect():
-	# Start the pulse effect
-	is_pulsing = true
-	pulse_timer = 0.0
-	player_sprite.material = pulse_shader_material
-
-func update_pulse_effect(delta: float):
-	if is_pulsing:
-		pulse_timer += delta
-
-		# Calculate pulse progress (0 to 1 and back to 0)
-		var normalized_time = pulse_timer / pulse_duration
-		var pulse_progress = sin(normalized_time * PI)  # Smooth sine wave from 0 to 1 to 0
-
-		# Update shader parameter
-		pulse_shader_material.set_shader_parameter("pulse_progress", pulse_progress)
-
-		# End pulse when duration is complete
-		if pulse_timer >= pulse_duration:
-			is_pulsing = false
-			pulse_timer = 0.0
-			player_sprite.material = original_sprite_material
-			pulse_shader_material.set_shader_parameter("pulse_progress", 0.0)
-
-# Signal for UI updates
-signal cooldown_changed(current: float, maximum: float)
 
 # Signal for enemy detection (emitted when player uses echolocation)
 signal echolocation_triggered(player_position: Vector2)

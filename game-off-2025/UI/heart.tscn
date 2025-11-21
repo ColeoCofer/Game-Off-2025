@@ -61,6 +61,8 @@ animations = [{
 }]
 
 [node name="Heart" type="Node2D"]
+position = Vector2(0, 332)
+scale = Vector2(0.8, 0.8)
 script = ExtResource("1_heart_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" uid="uid://ckvjjlnqr2h50" path="res://Entities/LevelComplete/cave_entrance.tscn" id="7_mj45q"]
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="8_2cysf"]
 [ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="9_w7pao"]
-[ext_resource type="PackedScene" uid="uid://bk3g8y7vh2qwe" path="res://UI/echo_bar.tscn" id="10_echo_bar"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="11_nkhxo"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="12_x2puj"]
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="14_mj45q"]
@@ -518,11 +517,8 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="EchoBar" parent="EcholocationManager" instance=ExtResource("10_echo_bar")]
-position = Vector2(110, 20)
-
 [node name="Heart" parent="EcholocationManager" instance=ExtResource("11_nkhxo")]
-position = Vector2(110, 60)
+position = Vector2(89, 41)
 
 [node name="TutorialText" type="CanvasLayer" parent="."]
 

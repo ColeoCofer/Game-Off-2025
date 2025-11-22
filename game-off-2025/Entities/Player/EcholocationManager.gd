@@ -68,8 +68,11 @@ func _process(delta: float):
 	update_echo_shader_params()
 
 func can_use_echolocation() -> bool:
-	# Can always use echolocation (will drain hunger as cost)
-	return true
+	# Check if player has enough hunger to use echolocation
+	if hunger_manager:
+		var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
+		return hunger_manager.current_hunger > hunger_cost
+	return false
 
 func trigger_echolocation():
 	# Apply hunger cost

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://byuo1pkbi5pxb"]
+[gd_scene load_steps=24 format=4 uid="uid://byuo1pkbi5pxb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -426,6 +426,17 @@ texture = ExtResource("1_0aets")
 [sub_resource type="TileSet" id="TileSet_wcctb"]
 sources/0 = SubResource("TileSetAtlasSource_sf44c")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ag1g"]
+shader = ExtResource("3_ys3un")
+shader_parameter/render_noise = false
+shader_parameter/noise_texture = ExtResource("14_wind_noise")
+shader_parameter/amplitude = 0.2
+shader_parameter/time_scale = 0.04
+shader_parameter/noise_scale = 0.001
+shader_parameter/rotation_strength = 0.10000000149012
+shader_parameter/rotation_pivot = Vector2(0.5, 1)
+shader_parameter/brightness = 0.63200003002
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_b6mne"]
 shader = ExtResource("3_ys3un")
 shader_parameter/render_noise = false
@@ -453,6 +464,7 @@ tile_map_data = PackedByteArray("AAD+//z/AQAIAAAAAAD+//3/AQAIAAEAAAD+//7/AQAIAAI
 tile_set = ExtResource("2_n4bx7")
 
 [node name="GroundBG" type="TileMapLayer" parent="TileMap"]
+material = SubResource("ShaderMaterial_7ag1g")
 position = Vector2(-1, 0)
 rotation = 0.0003004115
 tile_map_data = PackedByteArray("AAAOABkABgAMAA4AAAAOABYABgANAAwAAAAOABcABgANAA0AAAAPABYABgAOAAwAAAAPABcABgAOAA0AAAAPABgABgAOAA4AAAAPABkABgAOAA8AAAAQABYABgAPAAwAAAAQABcABgAPAA0AAAA=")

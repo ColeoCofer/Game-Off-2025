@@ -194,11 +194,13 @@ func save_diamond(level_name: String, diamond_id: int):
 	if level_name not in save_data["game_data"]["diamonds_collected"]:
 		save_data["game_data"]["diamonds_collected"][level_name] = []
 
-	# Add diamond ID if not already collected
-	var collected_diamonds = save_data["game_data"]["diamonds_collected"][level_name]
-	if diamond_id not in collected_diamonds:
-		collected_diamonds.append(diamond_id)
+	# Add diamond ID if not already collected (modify array directly in dictionary)
+	if diamond_id not in save_data["game_data"]["diamonds_collected"][level_name]:
+		save_data["game_data"]["diamonds_collected"][level_name].append(diamond_id)
+		print("SaveManager: Saved diamond %d for %s. Current diamonds: %s" % [diamond_id, level_name, save_data["game_data"]["diamonds_collected"][level_name]])
 		save_game()
+	else:
+		print("SaveManager: Diamond %d already permanently saved for %s" % [diamond_id, level_name])
 
 func is_diamond_collected(level_name: String, diamond_id: int) -> bool:
 	if level_name not in save_data["game_data"]["diamonds_collected"]:

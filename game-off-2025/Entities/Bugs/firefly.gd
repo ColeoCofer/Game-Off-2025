@@ -54,17 +54,10 @@ func _check_if_collected():
 func _on_body_entered(body: Node2D):
 	# Check if the body that entered is the player
 	if is_collected:
-		print("Firefly %d: already marked as collected (is_collected=true)" % firefly_id)
-		return
-
-	# Check if already collected in this run (temporary collection)
-	if FireflyCollectionManager.is_firefly_collected_this_run(firefly_id):
-		print("Firefly %d: already in current_run_collected array" % firefly_id)
 		return
 
 	if body is PlatformerController2D:
-		print("Firefly %d: COLLECTING NOW!" % firefly_id)
-		# Mark as collected (temporarily)
+		# Mark as collected (temporarily for this instance only)
 		is_collected = true
 
 		# Restore hunger
@@ -76,10 +69,6 @@ func _on_body_entered(body: Node2D):
 		var firefly_manager = body.get_node_or_null("FireflyManager")
 		if firefly_manager:
 			firefly_manager.collect_firefly()
-
-		# Save collection to manager (temporarily, until level completion)
-		var current_level = SceneManager.current_level
-		FireflyCollectionManager.collect_firefly(current_level, firefly_id)
 
 		# Emit signal for any listeners
 		firefly_collected.emit(firefly_id)

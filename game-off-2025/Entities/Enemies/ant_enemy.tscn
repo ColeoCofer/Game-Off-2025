@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bqy5xk8j1234"]
+[gd_scene load_steps=8 format=3 uid="uid://bqy5xk8j1234"]
 
 [ext_resource type="Script" uid="uid://db0ucpcdwwmf1" path="res://Entities/Enemies/ant_enemy.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bdervfm0tjd2u" path="res://Assets/Art/ant-walk.png" id="2_wwsnq"]
@@ -33,7 +33,6 @@ size = Vector2(20, 12)
 
 [node name="AntEnemy" type="CharacterBody2D"]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("1")
 walk_speed = 40.0
 stomp_bounce_force = 220.0
@@ -50,11 +49,9 @@ frame_progress = 0.5302995
 position = Vector2(0.9375, 1)
 shape = SubResource("RectangleShape2D_1")
 one_way_collision = true
-one_way_collision_margin = 1.0
 
 [node name="HitboxArea" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxArea"]
 position = Vector2(1, 1)

@@ -488,6 +488,16 @@ position = Vector2(190, -121)
 spawn_interval_min = 4.0
 activation_radius = 300.0
 
+[node name="BirdSpawner2" parent="Enemies" instance=ExtResource("6_78sh8")]
+position = Vector2(191, 398)
+spawn_interval_min = 4.0
+activation_radius = 300.0
+
+[node name="BirdSpawner3" parent="Enemies" instance=ExtResource("6_78sh8")]
+position = Vector2(191, 398)
+spawn_interval_min = 4.0
+activation_radius = 300.0
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="FallingStalagmite" parent="Hurt Objects" instance=ExtResource("6_8jvyo")]
@@ -578,6 +588,12 @@ position = Vector2(180, -164)
 
 [node name="Firefly" parent="Butterflies" instance=ExtResource("14_sus6d")]
 position = Vector2(190, 166)
+
+[node name="Firefly2" parent="Butterflies" instance=ExtResource("14_sus6d")]
+position = Vector2(167, 405)
+
+[node name="Firefly3" parent="Butterflies" instance=ExtResource("14_sus6d")]
+position = Vector2(223, 405)
 
 [node name="CaveParticles" parent="." instance=ExtResource("1_particles")]
 visible = false

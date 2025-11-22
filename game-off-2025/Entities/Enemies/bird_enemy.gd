@@ -231,7 +231,7 @@ func _process_giving_up(delta: float):
 			queue_free()
 
 func _on_hitbox_body_entered(body: Node2D):
-	"""Single hitbox detection - checks if stomp or side hit"""
+	"""Single hitbox detection - checks if stomp or side hit using velocity + position"""
 	print("DEBUG BIRD: Hitbox triggered by: ", body.name)
 
 	if not is_alive:
@@ -244,23 +244,38 @@ func _on_hitbox_body_entered(body: Node2D):
 
 	print("DEBUG BIRD: Player detected! Checking collision type...")
 
-	# Calculate player and enemy positions
-	var player_center_y = body.global_position.y
-	var enemy_center_y = global_position.y
-	var height_difference = enemy_center_y - player_center_y
+	# VELOCITY CHECK: Player must be moving downward to stomp
+	# This matches classic platformer mechanics (Mario, Sonic, etc.)
+	# ANY downward movement counts - even gentle landings will stomp if positioned correctly
+	var player_is_falling = body.velocity.y > 0
 
-	# Player must be significantly above (at least 3 pixels) to count as stomp
-	# This prevents step-up micro-movements from triggering false stomps
-	var MIN_STOMP_HEIGHT = 3.0
-	var player_is_above = height_difference >= MIN_STOMP_HEIGHT
-	print("DEBUG BIRD: Player center: ", player_center_y, " Enemy center: ", enemy_center_y, " Height diff: ", height_difference, " Player is above? ", player_is_above)
+	# POSITION CHECK: Player's bottom should be near or above bird's HITBOX TOP
+	# Calculate actual positions (accounting for collision shapes)
+	# Player collision: 6x9 rect at position (1, 3.5), so bottom is at: 3.5 + (9/2) = 8.0
+	var player_bottom_y = body.global_position.y + 8.0  # Player feet position
 
-	# Stomp if player is significantly above enemy
-	if player_is_above:
-		print("DEBUG BIRD: STOMP detected - killing bird")
+	# Bird hitbox: 16x9 rect positioned at (0, 2.5) in local space
+	# Hitbox top is at: bird.y + 2.5 - 4.5 = bird.y - 2
+	# Hitbox bottom is at: bird.y + 2.5 + 4.5 = bird.y + 7
+	var bird_hitbox_top_y = global_position.y - 2.0
+	var bird_hitbox_bottom_y = global_position.y + 7.0
+
+	# VERY forgiving threshold: player feet can be in the upper half of the hitbox
+	# If player feet are above the middle of the hitbox, it's a stomp
+	var bird_hitbox_middle_y = global_position.y + 2.5
+	var STOMP_ZONE_BUFFER = 3.0  # Can be 3 pixels below hitbox middle
+	var stomp_threshold_y = bird_hitbox_middle_y + STOMP_ZONE_BUFFER
+	var position_allows_stomp = player_bottom_y < stomp_threshold_y
+
+	print("DEBUG BIRD: Player velocity.y: ", body.velocity.y, " (falling: ", player_is_falling, ")")
+	print("DEBUG BIRD: Player bottom: ", player_bottom_y, " Bird hitbox top: ", bird_hitbox_top_y, " middle: ", bird_hitbox_middle_y, " stomp zone: < ", stomp_threshold_y)
+
+	# STOMP if BOTH conditions met: falling downward AND positioned correctly
+	if player_is_falling and position_allows_stomp:
+		print("DEBUG BIRD: STOMP detected - player falling + above bird!")
 		squash(body)
 	else:
-		print("DEBUG BIRD: SIDE HIT detected - killing player")
+		print("DEBUG BIRD: SIDE/BOTTOM HIT - player takes damage (falling: ", player_is_falling, ", position ok: ", position_allows_stomp, ")")
 		hit_player(body)
 
 ## Called by player when they stomp on the bird from above

@@ -620,7 +620,7 @@ position = Vector2(4179, -127)
 position = Vector2(2375, 225)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(115, 376)
+position = Vector2(608, 262)
 collision_mask = 1
 
 [node name="Foreground" type="Node2D" parent="."]

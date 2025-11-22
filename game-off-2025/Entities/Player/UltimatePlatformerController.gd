@@ -93,6 +93,8 @@ class_name PlatformerController2D
 @export_range(0.0, 1.0) var flapCooldown: float = 0.25
 ##If true, flapping resets a small amount of horizontal momentum (like SMB3)
 @export var flapAffectsHorizontalSpeed: bool = false
+##Minimum height above ground required to flap (in pixels). Prevents flapping when too close to ground.
+@export_range(0, 100) var minimumFlapHeight: float = 20.0
 
 @export_category("Step Up")
 ##Allows player to walk over small ledges/bumps without getting stuck
@@ -732,8 +734,12 @@ func _physics_process(delta):
 			
 	#INFO Wing Flap (SMB3 Tail Whip Style)
 	# Use jump button for flapping when in the air and falling
+	# Check distance to ground - only allow flapping if high enough above ground
 	if canFlap and jumpTap and !is_on_floor() and !is_on_wall() and canFlapNow and velocity.y > 0:
-		_flap()
+		var ground_distance = _get_distance_to_ground()
+		# Allow flap if either no ground detected (falling into void) or high enough above ground
+		if ground_distance < 0 or ground_distance >= minimumFlapHeight:
+			_flap()
 
 	# Reset flap availability when grounded
 	if is_on_floor():
@@ -892,6 +898,20 @@ func _endGroundPound():
 
 func _placeHolder():
 	print("")
+
+func _get_distance_to_ground() -> float:
+	"""Check distance to ground below player using raycast. Returns distance in pixels, or -1 if no ground detected."""
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2(0, 1000))
+	query.exclude = [self]  # Don't collide with self
+	query.collide_with_areas = false  # Only check solid bodies
+	query.collide_with_bodies = true
+
+	var result = space_state.intersect_ray(query)
+	if result:
+		return result.position.y - global_position.y
+	else:
+		return -1.0  # No ground found
 
 func _flap():
 	# SMB3 tail whip style: reduces fall speed significantly

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bqy5xk8j1234"]
+[gd_scene load_steps=9 format=3 uid="uid://bqy5xk8j1234"]
 
 [ext_resource type="Script" uid="uid://db0ucpcdwwmf1" path="res://Entities/Enemies/ant_enemy.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bdervfm0tjd2u" path="res://Assets/Art/ant-walk.png" id="2_wwsnq"]
@@ -29,7 +29,7 @@ animations = [{
 size = Vector2(19.875, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(34, 3)
+size = Vector2(34, 8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3"]
 size = Vector2(29.166668, 7.166667)
@@ -52,7 +52,6 @@ frame_progress = 0.5302995
 position = Vector2(0.9375, 1)
 shape = SubResource("RectangleShape2D_1")
 one_way_collision = true
-one_way_collision_margin = 1.0
 
 [node name="FloorRayCast" type="RayCast2D" parent="."]
 position = Vector2(10, 0)
@@ -62,7 +61,7 @@ target_position = Vector2(0, 20)
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
-position = Vector2(0, -5)
+position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_2")
 
 [node name="DamageDetector" type="Area2D" parent="."]

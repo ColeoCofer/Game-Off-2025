@@ -90,11 +90,11 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Stricter velocity check for ground enemy: player must be CLEARLY falling
-		# Not just standing on ground (gravity gives small positive velocity)
+		# Forgiving velocity check: any downward movement counts as falling
+		# Even soft landings should stomp the ant
 		var player_falling = false
 		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 20.0  # Must be actively falling (not just standing)
+			player_falling = body.velocity.y > 0  # Any downward movement (including soft landings)
 
 		# Get player's bottom position
 		var player_bottom_y = body.global_position.y
@@ -116,6 +116,16 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			# Mark as dead immediately
 			is_alive = false
 
+			# IMMEDIATELY disable damage detector to prevent it from triggering
+			# This must happen before any physics interactions!
+			if damage_detector:
+				damage_detector.monitoring = false  # Disable immediately (not deferred!)
+				damage_detector.monitorable = false
+
+			if stomp_detector:
+				stomp_detector.monitoring = false
+				stomp_detector.monitorable = false
+
 			# Stop physics
 			set_physics_process(false)
 
@@ -128,17 +138,13 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			set_collision_layer_value(2, false)
 			set_collision_mask_value(1, false)
 
-			# Disable detectors
+			# Disable detector collision shapes (deferred for safety)
 			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
 				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
 					collision_shape.set_deferred("disabled", true)
 
 			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
 				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
 					collision_shape.set_deferred("disabled", true)
@@ -151,10 +157,10 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Check if this is actually a stomp scenario - stricter for ground enemy
+		# Check if this is actually a stomp scenario - forgiving fallback
 		var player_was_falling = false
 		if body is CharacterBody2D:
-			player_was_falling = body.velocity.y > 20.0  # Must be actively falling
+			player_was_falling = body.velocity.y > 0  # Any downward movement (soft landings ok)
 
 		var player_bottom_y = body.global_position.y
 		if body.has_node("CollisionShape2D"):
@@ -174,6 +180,16 @@ func _on_damage_detector_body_entered(body: Node2D):
 		# If it's a stomp, kill the ant instead of the player
 		if is_stomp_scenario:
 			is_alive = false
+
+			# IMMEDIATELY disable both detectors to prevent further triggers
+			if damage_detector:
+				damage_detector.monitoring = false  # Immediate (not deferred!)
+				damage_detector.monitorable = false
+
+			if stomp_detector:
+				stomp_detector.monitoring = false
+				stomp_detector.monitorable = false
+
 			set_physics_process(false)
 
 			var main_collision = get_node_or_null("CollisionShape2D")
@@ -184,16 +200,13 @@ func _on_damage_detector_body_entered(body: Node2D):
 			set_collision_layer_value(2, false)
 			set_collision_mask_value(1, false)
 
+			# Disable detector collision shapes (deferred for safety)
 			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
 				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
 					collision_shape.set_deferred("disabled", true)
 
 			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
 				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
 				if collision_shape:
 					collision_shape.set_deferred("disabled", true)

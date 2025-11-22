@@ -8,6 +8,7 @@ enum MovementDirection {
 @export var movement_direction: MovementDirection = MovementDirection.HORIZONTAL
 @export var move_speed: float = 50.0
 @export var move_distance: float = 100.0
+@export var reverse_direction: bool = false  ## Reverse the movement direction
 @export_range(0.0, 1.0, 0.01) var time_offset: float = 0.0  ## Offset as percentage of cycle (0-1)
 
 var start_position: float
@@ -47,8 +48,10 @@ func _update_position_from_time():
 	var half_cycle = cycle_time / 2.0
 
 	if time_elapsed < half_cycle:
-		# Moving forward (first half of cycle - right for horizontal, down for vertical)
+		# Moving forward (first half of cycle)
 		var progress = time_elapsed / half_cycle
+		if reverse_direction:
+			progress = 1.0 - progress
 		var new_position = start_position + (move_distance * progress)
 
 		if movement_direction == MovementDirection.HORIZONTAL:
@@ -56,10 +59,12 @@ func _update_position_from_time():
 		else:
 			global_position.y = new_position
 
-		direction = 1
+		direction = 1 if not reverse_direction else -1
 	else:
-		# Moving backward (second half of cycle - left for horizontal, up for vertical)
+		# Moving backward (second half of cycle)
 		var progress = (time_elapsed - half_cycle) / half_cycle
+		if reverse_direction:
+			progress = 1.0 - progress
 		var new_position = start_position + move_distance - (move_distance * progress)
 
 		if movement_direction == MovementDirection.HORIZONTAL:
@@ -67,4 +72,4 @@ func _update_position_from_time():
 		else:
 			global_position.y = new_position
 
-		direction = -1
+		direction = -1 if not reverse_direction else 1

@@ -11,6 +11,7 @@ extends CharacterBody2D
 @export var walk_speed: float = 60.0
 @export var gravity: float = 980.0
 @export var edge_detection_distance: float = 12.0
+@export var player_activation_range: float = 150.0
 @export var player_detection_range: float = 100.0
 @export var player_tracking_range: float = 50.0
 @export var jump_velocity: float = -300.0
@@ -104,6 +105,17 @@ func _physics_process(delta: float):
 
 func _process_walking():
 	"""Walking behavior: patrol and check for jumps"""
+	# Check if player is within activation range
+	var player = get_tree().get_first_node_in_group("Player")
+	if player:
+		var distance = global_position.distance_to(player.global_position)
+		if distance > player_activation_range:
+			# Player is too far - stay idle
+			velocity.x = 0
+			if animated_sprite:
+				animated_sprite.play("idle")
+			return
+
 	# Check if player is nearby and track them
 	_track_nearby_player()
 

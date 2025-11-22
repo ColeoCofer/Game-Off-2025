@@ -216,7 +216,7 @@ collision_layer = 2
 script = ExtResource("1_8x3km")
 walk_speed = 35.0
 edge_detection_distance = 3.0
-player_detection_range = 75.0
+player_tracking_range = 100.0
 jump_velocity = -250.0
 jump_horizontal_boost = 250.0
 

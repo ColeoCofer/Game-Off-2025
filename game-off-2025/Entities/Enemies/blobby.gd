@@ -39,6 +39,7 @@ var current_state: State = State.WALKING
 var death_material: ShaderMaterial
 var is_preparing_jump: bool = false
 var jump_cooldown_timer: float = 0.0
+var jump_direction: int = 1  # Direction locked in when jumping starts
 
 # Audio
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
@@ -87,15 +88,18 @@ func _physics_process(delta: float):
 		State.JUMPING:
 			_process_jumping()
 
-	# Update sprite
+	# Update sprite (use jump_direction when preparing or jumping to prevent mid-air flipping)
 	if animated_sprite:
-		animated_sprite.flip_h = direction > 0
+		if current_state == State.JUMPING or current_state == State.PREPARING_JUMP:
+			animated_sprite.flip_h = jump_direction > 0
+		else:
+			animated_sprite.flip_h = direction > 0
 
 	# Move and check for wall collision
 	move_and_slide()
 
-	# Turn around if hit a wall
-	if is_on_wall():
+	# Turn around if hit a wall (only during walking, not while jumping)
+	if is_on_wall() and current_state == State.WALKING:
 		_turn_around()
 
 func _process_walking():
@@ -138,14 +142,18 @@ func _process_preparing_jump():
 
 func _process_jumping():
 	"""Jumping behavior: maintain horizontal momentum"""
-	# Apply horizontal movement while jumping
-	velocity.x = direction * jump_horizontal_boost
+	# Apply horizontal movement while jumping using locked jump direction
+	velocity.x = jump_direction * jump_horizontal_boost
 
 	if animated_sprite and animated_sprite.animation != "jump":
 		animated_sprite.play("jump")
 
 func _track_nearby_player():
-	"""Always face the player when they're nearby"""
+	"""Always face the player when they're nearby (only during walking)"""
+	# Safety check: only track during walking state
+	if current_state != State.WALKING:
+		return
+
 	var player = get_tree().get_first_node_in_group("Player")
 	if not player:
 		return
@@ -195,6 +203,9 @@ func _prepare_jump_off_ledge():
 	is_preparing_jump = true
 	current_state = State.PREPARING_JUMP
 
+	# Lock jump direction NOW (before the await)
+	jump_direction = direction
+
 	# Wait for preparation time, then jump
 	await get_tree().create_timer(jump_preparation_time).timeout
 
@@ -227,6 +238,9 @@ func _prepare_jump_at_player():
 	if floor_raycast:
 		floor_raycast.position.x = edge_detection_distance * direction
 
+	# Lock jump direction NOW (after aiming, before the await)
+	jump_direction = direction
+
 	# Wait for preparation time, then jump
 	await get_tree().create_timer(jump_preparation_time).timeout
 
@@ -241,6 +255,8 @@ func _execute_jump():
 	is_preparing_jump = false
 	current_state = State.JUMPING
 	velocity.y = jump_velocity
+
+	# jump_direction was already locked in the prepare function
 
 	if animated_sprite:
 		animated_sprite.play("jump")

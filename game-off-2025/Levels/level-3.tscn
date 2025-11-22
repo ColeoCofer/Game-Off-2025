@@ -500,7 +500,12 @@ player_detection_range = 75.0
 starting_direction = -1
 
 [node name="Blobby3" parent="Enemies" instance=ExtResource("8_nyv1e")]
-position = Vector2(23, -388)
+position = Vector2(133, -419)
+starting_direction = -1
+
+[node name="Blobby4" parent="Enemies" instance=ExtResource("8_nyv1e")]
+position = Vector2(367, -468)
+starting_direction = -1
 
 [node name="Hurt Objects" type="Node" parent="."]
 

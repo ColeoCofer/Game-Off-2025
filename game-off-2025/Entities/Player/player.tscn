@@ -184,7 +184,6 @@ animations = [{
 size = Vector2(6, 9)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("PlayerSprite", "PlayerCollider", "FlapAudioPlayer", "WalkingAudioPlayer") groups=["Player"]]
-collision_layer = 1
 collision_mask = 3
 script = ExtResource("1_4ntmi")
 PlayerSprite = NodePath("AnimatedSprite2D")
@@ -198,6 +197,7 @@ fallGravity = 20.0
 coyoteTime = 0.085
 flapLift = 25.0
 flapCooldown = 0.2
+enableStepUp = false
 run = true
 jump = true
 idle = true

@@ -17,6 +17,7 @@ extends CanvasLayer
 @export var echo_fade_duration: float = 3.5  # seconds
 @export var echo_expansion_speed: float = 1200.0  # pixels per second (how fast the wave expands)
 @export var hunger_cost_percentage: float = 15.0  # Percentage of max hunger consumed per echo
+@export var cooldown_duration: float = 0.3  # Cooldown between echolocation uses (seconds)
 
 # Wave visual settings
 @export var wave_thickness: float = 60.0  # How thick the visible wave ring is
@@ -25,6 +26,9 @@ extends CanvasLayer
 
 # Echolocation pulses (relative offset from player, intensity, and expansion radius)
 var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: float, radius: float, age: float}
+
+# Cooldown timer
+var cooldown_remaining: float = 0.0
 
 # Shader material
 var shader_material: ShaderMaterial
@@ -53,6 +57,10 @@ func _ready():
 	update_echo_shader_params()
 
 func _process(delta: float):
+	# Update cooldown timer
+	if cooldown_remaining > 0:
+		cooldown_remaining -= delta
+
 	# Update player position in shader
 	var player_screen_pos = get_screen_position(player.global_position)
 	shader_material.set_shader_parameter("player_position", player_screen_pos)
@@ -68,6 +76,10 @@ func _process(delta: float):
 	update_echo_shader_params()
 
 func can_use_echolocation() -> bool:
+	# Check cooldown
+	if cooldown_remaining > 0:
+		return false
+
 	# Check if player has enough hunger to use echolocation
 	if hunger_manager:
 		var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
@@ -75,6 +87,9 @@ func can_use_echolocation() -> bool:
 	return false
 
 func trigger_echolocation():
+	# Reset cooldown
+	cooldown_remaining = cooldown_duration
+
 	# Apply hunger cost
 	if hunger_manager:
 		var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://byuo1pkbi5pxb"]
+[gd_scene load_steps=25 format=4 uid="uid://byuo1pkbi5pxb"]
 
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="1_0aets"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="1_particles"]
@@ -11,8 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://w3pb85y7tvmy" path="res://Entities/Enemies/bird_spawner.tscn" id="6_78sh8"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="6_heart"]
 [ext_resource type="PackedScene" uid="uid://bj8i0g3uaelrt" path="res://Entities/Objects/torch.tscn" id="6_hg1m3"]
-[ext_resource type="PackedScene" uid="uid://cqjir0lds7bp3" path="res://Entities/Enemies/bird.tscn" id="7_nexb1"]
-[ext_resource type="PackedScene" uid="uid://dut7ugtlgkwnb" path="res://Entities/Enemies/blob_enemy.tscn" id="8_nyv1e"]
+[ext_resource type="PackedScene" uid="uid://c200loqombjgm" path="res://Entities/Enemies/blobby.tscn" id="8_nyv1e"]
 [ext_resource type="PackedScene" uid="uid://bqxt2myiyrttg" path="res://Entities/Objects/falling_block.tscn" id="9_sus6d"]
 [ext_resource type="PackedScene" uid="uid://b73psve87rk1g" path="res://Entities/Objects/moving-plank.tscn" id="10_kpkdj"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="11_b6mne"]
@@ -490,15 +489,16 @@ position = Vector2(190, -121)
 spawn_interval_min = 4.0
 activation_radius = 200.0
 
-[node name="Bird" parent="Enemies" instance=ExtResource("7_nexb1")]
-position = Vector2(184, -449)
-detection_range = 175.0
+[node name="Blobby" parent="Enemies" instance=ExtResource("8_nyv1e")]
+position = Vector2(343, -388)
+starting_direction = -1
 
-[node name="BlobEnemy" parent="Enemies" instance=ExtResource("8_nyv1e")]
-position = Vector2(23, -460)
+[node name="Blobby2" parent="Enemies" instance=ExtResource("8_nyv1e")]
+position = Vector2(280, -339)
+starting_direction = -1
 
-[node name="BlobEnemy2" parent="Enemies" instance=ExtResource("8_nyv1e")]
-position = Vector2(352, -460)
+[node name="Blobby3" parent="Enemies" instance=ExtResource("8_nyv1e")]
+position = Vector2(183, -372)
 
 [node name="Hurt Objects" type="Node" parent="."]
 

@@ -1,5 +1,6 @@
-[gd_scene load_steps=29 format=3 uid="uid://c200loqombjgm"]
+[gd_scene load_steps=32 format=3 uid="uid://c200loqombjgm"]
 
+[ext_resource type="Script" uid="uid://bw65mdaky222" path="res://Entities/Enemies/blobby.gd" id="1_8x3km"]
 [ext_resource type="Texture2D" uid="uid://c03e6qy8sgjj4" path="res://Assets/Art/enemies/Blobby.png" id="1_nor11"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t0gp4"]
@@ -204,14 +205,45 @@ animations = [{
 radius = 4.0
 height = 12.0
 
-[node name="Blobby" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stomp"]
+size = Vector2(10, 4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
+size = Vector2(14, 14)
+
+[node name="Blobby" type="CharacterBody2D"]
+collision_layer = 2
+script = ExtResource("1_8x3km")
+walk_speed = 35.0
+edge_detection_distance = 3.0
+jump_velocity = -175.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_cigao")
 animation = &"walk"
-frame_progress = 0.7867827
+frame_progress = 0.69320726
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_nor11")
+
+[node name="FloorRayCast" type="RayCast2D" parent="."]
+position = Vector2(12, 0)
+target_position = Vector2(0, 20)
+
+[node name="StompDetector" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_stomp")
+
+[node name="DamageDetector" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_damage")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

@@ -494,11 +494,13 @@ position = Vector2(343, -388)
 starting_direction = -1
 
 [node name="Blobby2" parent="Enemies" instance=ExtResource("8_nyv1e")]
-position = Vector2(280, -339)
+position = Vector2(182, -452)
+edge_detection_distance = 5.0
+player_detection_range = 75.0
 starting_direction = -1
 
 [node name="Blobby3" parent="Enemies" instance=ExtResource("8_nyv1e")]
-position = Vector2(183, -372)
+position = Vector2(23, -388)
 
 [node name="Hurt Objects" type="Node" parent="."]
 

@@ -12,8 +12,9 @@ extends CharacterBody2D
 @export var gravity: float = 980.0
 @export var edge_detection_distance: float = 12.0
 @export var player_detection_range: float = 100.0
+@export var player_tracking_range: float = 50.0
 @export var jump_velocity: float = -300.0
-@export var jump_horizontal_boost: float = 150.0
+@export var jump_horizontal_boost: float = 200.0
 @export var stomp_bounce_force: float = 150.0
 @export var death_animation_duration: float = 2.0
 @export var rotation_speed: float = 3.0
@@ -99,6 +100,9 @@ func _physics_process(delta: float):
 
 func _process_walking():
 	"""Walking behavior: patrol and check for jumps"""
+	# Check if player is nearby and track them
+	_track_nearby_player()
+
 	# Don't check for jumps if we're already preparing one or on cooldown
 	if is_preparing_jump or jump_cooldown_timer > 0:
 		# Still walk while on cooldown
@@ -139,6 +143,27 @@ func _process_jumping():
 
 	if animated_sprite and animated_sprite.animation != "jump":
 		animated_sprite.play("jump")
+
+func _track_nearby_player():
+	"""Always face the player when they're nearby"""
+	var player = get_tree().get_first_node_in_group("Player")
+	if not player:
+		return
+
+	var distance = global_position.distance_to(player.global_position)
+	if distance > player_tracking_range:
+		return
+
+	# Turn to face the player
+	var to_player = player.global_position - global_position
+	var new_direction = 1 if to_player.x > 0 else -1
+
+	# Only update if direction actually changed
+	if new_direction != direction:
+		direction = new_direction
+		# Update raycast position
+		if floor_raycast:
+			floor_raycast.position.x = edge_detection_distance * direction
 
 func _should_jump_off_edge() -> bool:
 	"""Check if there's no floor ahead (edge of platform)"""
@@ -249,7 +274,7 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 		# Blobby's top position
 		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 8.0
+		var STOMP_TOLERANCE = 10.0  # Very forgiving for blob enemy
 		var player_is_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
 
 		# Valid stomp: player must be falling AND above
@@ -312,7 +337,7 @@ func _on_damage_detector_body_entered(body: Node2D):
 					player_bottom_y = body.global_position.y + (shape_height / 2.0)
 
 		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 6.0
+		var STOMP_TOLERANCE = 10.0  # Forgiving fallback for blob enemy
 		var player_is_clearly_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
 
 		var is_stomp_scenario = player_was_falling and player_is_clearly_above

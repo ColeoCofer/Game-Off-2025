@@ -59,7 +59,6 @@ target_position = Vector2(0, 20)
 
 [node name="StompDetector" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StompDetector"]
 position = Vector2(0, -2)
@@ -67,7 +66,6 @@ shape = SubResource("RectangleShape2D_2")
 
 [node name="DamageDetector" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageDetector"]
 position = Vector2(-0.4166665, 3.5833335)

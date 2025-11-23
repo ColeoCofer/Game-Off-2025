@@ -1,16 +1,43 @@
-[gd_scene load_steps=12 format=3 uid="uid://bh6fggks3shfp"]
+[gd_scene load_steps=21 format=3 uid="uid://bh6fggks3shfp"]
 
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
+[ext_resource type="Texture2D" uid="uid://l1kkto2cdjk2" path="res://Assets/Art/ui/sona-title.png" id="2_6vw7e"]
 [ext_resource type="Texture2D" uid="uid://2ejioy4fw863" path="res://Assets/Art/ui/start-button-normal.png" id="2_normal"]
 [ext_resource type="Texture2D" uid="uid://obshipkw2e4s" path="res://Assets/Art/ui/start-button-hover.png" id="3_hover"]
 [ext_resource type="Texture2D" uid="uid://b0ukp3tvyow3j" path="res://Assets/Art/ui/start-button-pressed.png" id="4_pressed"]
-[ext_resource type="Texture2D" uid="uid://200qousm40ib" path="res://Assets/Art/ui/title-background.png" id="5_background"]
 [ext_resource type="Texture2D" uid="uid://bbw3qvthebjij" path="res://Assets/Art/ui/settings-button-normal.png" id="6_settings_normal"]
 [ext_resource type="Texture2D" uid="uid://dxtgtg5x453m3" path="res://Assets/Art/ui/settings-button-hover.png" id="7_settings_hover"]
 [ext_resource type="Texture2D" uid="uid://bkj8dvqw0l8l4" path="res://Assets/Art/ui/settings-button-pressed.png" id="8_settings_pressed"]
 [ext_resource type="Texture2D" uid="uid://bcryyl6vcgjob" path="res://Assets/Art/ui/quit-button-normal.png" id="9_quit_normal"]
 [ext_resource type="Texture2D" uid="uid://lknpojvl1ewk" path="res://Assets/Art/ui/quit-button-hover.png" id="10_quit_hover"]
 [ext_resource type="Texture2D" uid="uid://d3smk2abbipcl" path="res://Assets/Art/ui/quit-button-pressed.png" id="11_quit_pressed"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_start_normal"]
+texture = ExtResource("2_normal")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_start_pressed"]
+texture = ExtResource("4_pressed")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_start_hover"]
+texture = ExtResource("3_hover")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_normal"]
+texture = ExtResource("6_settings_normal")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_pressed"]
+texture = ExtResource("8_settings_pressed")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_settings_hover"]
+texture = ExtResource("7_settings_hover")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_quit_normal"]
+texture = ExtResource("9_quit_normal")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_quit_pressed"]
+texture = ExtResource("11_quit_pressed")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_quit_hover"]
+texture = ExtResource("10_quit_hover")
 
 [node name="MainMenu" type="CanvasLayer"]
 layer = 100
@@ -31,7 +58,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_background")
+texture = ExtResource("2_6vw7e")
 expand_mode = 1
 
 [node name="ButtonContainer" type="VBoxContainer" parent="Control"]
@@ -42,48 +69,34 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -150.0
-offset_top = -103.48001
+offset_top = -208.8
 offset_right = 150.0
-offset_bottom = 76.52005
+offset_bottom = -28.799805
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = -4
+theme_override_constants/separation = 2
 
 [node name="StartButtonContainer" type="AspectRatioContainer" parent="Control/ButtonContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 ratio = 4.166667
 
-[node name="StartButton" type="TextureButton" parent="Control/ButtonContainer/StartButtonContainer"]
+[node name="StartButton" type="Button" parent="Control/ButtonContainer/StartButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_normal")
-texture_pressed = ExtResource("4_pressed")
-texture_hover = ExtResource("3_hover")
-texture_focused = ExtResource("3_hover")
-ignore_texture_size = true
-stretch_mode = 5
+theme_override_styles/normal = SubResource("StyleBoxTexture_start_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_start_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_start_hover")
 
 [node name="SettingsButtonContainer" type="AspectRatioContainer" parent="Control/ButtonContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 ratio = 2.857143
 
-[node name="SettingsButton" type="TextureButton" parent="Control/ButtonContainer/SettingsButtonContainer"]
+[node name="SettingsButton" type="Button" parent="Control/ButtonContainer/SettingsButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("6_settings_normal")
-texture_pressed = ExtResource("8_settings_pressed")
-texture_hover = ExtResource("7_settings_hover")
-texture_focused = ExtResource("7_settings_hover")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="SelectionRect" type="Panel" parent="Control"]
-visible = false
-layout_mode = 1
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 100.0
-offset_bottom = 50.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_settings_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_settings_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_settings_hover")
 
 [node name="QuitButtonContainer" type="AspectRatioContainer" parent="Control"]
 layout_mode = 1
@@ -100,14 +113,11 @@ grow_horizontal = 0
 grow_vertical = 0
 ratio = 1.642857
 
-[node name="QuitButton" type="TextureButton" parent="Control/QuitButtonContainer"]
+[node name="QuitButton" type="Button" parent="Control/QuitButtonContainer"]
 layout_mode = 2
-texture_normal = ExtResource("9_quit_normal")
-texture_pressed = ExtResource("11_quit_pressed")
-texture_hover = ExtResource("10_quit_hover")
-texture_focused = ExtResource("10_quit_hover")
-ignore_texture_size = true
-stretch_mode = 5
+theme_override_styles/normal = SubResource("StyleBoxTexture_quit_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_quit_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_quit_hover")
 
 [node name="SettingsPanel" type="Control" parent="Control"]
 visible = false
@@ -153,7 +163,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 25
 
 [node name="SettingsTitle" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2

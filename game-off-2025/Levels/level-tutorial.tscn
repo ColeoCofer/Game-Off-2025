@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://s3w5y6221p5b"]
+[gd_scene load_steps=20 format=4 uid="uid://s3w5y6221p5b"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_lkbww"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_wgnk2"]
@@ -15,7 +15,6 @@
 [ext_resource type="PackedScene" uid="uid://drbwbu2bv8x53" path="res://Entities/Bugs/firefly.tscn" id="14_mj45q"]
 [ext_resource type="PackedScene" uid="uid://dh8wy4kxnbopq" path="res://Entities/Particles/cave_particles.tscn" id="14_ojlpd"]
 [ext_resource type="PackedScene" uid="uid://c5y8qg3xjvn4n" path="res://Effects/LightBeam.tscn" id="15_x2afx"]
-[ext_resource type="Script" uid="uid://df6yg4a53s0wp" path="res://Levels/opening_cutscene.gd" id="16_102q8"]
 [ext_resource type="PackedScene" uid="uid://diwxkn3rbqyf" path="res://UI/tutorial_hint.tscn" id="17_wgnk2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
@@ -500,12 +499,10 @@ tile_set = ExtResource("3_mj45q")
 
 [node name="EcholocationManager" type="CanvasLayer" parent="." groups=["echolocation_manager"]]
 script = ExtResource("9_w7pao")
-echolocation_mode = 1
 vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
 echo_fade_duration = 8.0
-echolocation_cooldown = 7.0
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false
@@ -584,6 +581,3 @@ offset_left = 1514.0
 offset_top = -16.0
 offset_right = 1643.0
 offset_bottom = 384.0
-
-[node name="OpeningCutscene" type="Node" parent="."]
-script = ExtResource("16_102q8")

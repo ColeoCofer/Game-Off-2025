@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctfwfdfd8fcrs"]
+[gd_scene load_steps=3 format=3 uid="uid://ctfwfdfd8fcrs"]
 
 [ext_resource type="Script" uid="uid://dh7836b1sxf38" path="res://UI/LevelSelectMenu.gd" id="1_levelselectmenu"]
+[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 
 [node name="LevelSelectMenu" type="CanvasLayer"]
 layer = 100
@@ -41,6 +42,7 @@ theme_override_constants/separation = 15
 
 [node name="Title" type="Label" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 40
 text = "Select Level"
 horizontal_alignment = 1
@@ -59,5 +61,6 @@ columns = 3
 custom_minimum_size = Vector2(150, 35)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
 text = "Back"

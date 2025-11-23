@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dnfqppqhg1yee"]
+[gd_scene load_steps=3 format=3 uid="uid://dnfqppqhg1yee"]
 
 [ext_resource type="Script" uid="uid://6hg1r05voio2" path="res://UI/DeathMenu.gd" id="1_death_menu"]
+[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 
 [node name="DeathMenu" type="Control"]
 layout_mode = 3
@@ -35,6 +36,7 @@ theme_override_constants/separation = 5
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 48
 text = "YOU STARVED"
 horizontal_alignment = 1
@@ -42,6 +44,7 @@ horizontal_alignment = 1
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
 text = "The bat ran out of energy..."
 horizontal_alignment = 1
@@ -53,24 +56,28 @@ layout_mode = 2
 [node name="PlayAgainButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "Play Again"
 
 [node name="NextLevelButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "Next Level"
 
 [node name="LevelSelectButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "Level Select"
 
 [node name="ExitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "Main Menu"
 

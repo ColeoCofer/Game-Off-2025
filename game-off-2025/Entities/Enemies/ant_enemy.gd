@@ -110,12 +110,12 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			# IMMEDIATELY disable damage detector to prevent it from triggering
 			# This must happen before any physics interactions!
 			if damage_detector:
-				damage_detector.monitoring = false  # Disable immediately (not deferred!)
-				damage_detector.monitorable = false
+				damage_detector.set_deferred("monitoring", false)
+				damage_detector.set_deferred("monitorable", false)
 
 			if stomp_detector:
-				stomp_detector.monitoring = false
-				stomp_detector.monitorable = false
+				stomp_detector.set_deferred("monitoring", false)
+				stomp_detector.set_deferred("monitorable", false)
 
 			# Stop physics
 			set_physics_process(false)
@@ -174,12 +174,12 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 			# IMMEDIATELY disable both detectors to prevent further triggers
 			if damage_detector:
-				damage_detector.monitoring = false  # Immediate (not deferred!)
-				damage_detector.monitorable = false
+				damage_detector.set_deferred("monitoring", false)
+				damage_detector.set_deferred("monitorable", false)
 
 			if stomp_detector:
-				stomp_detector.monitoring = false
-				stomp_detector.monitorable = false
+				stomp_detector.set_deferred("monitoring", false)
+				stomp_detector.set_deferred("monitorable", false)
 
 			set_physics_process(false)
 

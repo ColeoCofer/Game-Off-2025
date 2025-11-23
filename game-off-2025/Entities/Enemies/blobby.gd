@@ -372,7 +372,7 @@ func _on_damage_detector_body_entered(body: Node2D):
 					player_bottom_y = body.global_position.y + (shape_height / 2.0)
 
 		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 10.0  # Forgiving fallback for blob enemy
+		var STOMP_TOLERANCE = 12.0  # Forgiving fallback for blob enemy
 		var player_is_clearly_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
 
 		var is_stomp_scenario = player_was_falling and player_is_clearly_above

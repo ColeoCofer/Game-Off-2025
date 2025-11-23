@@ -5,6 +5,7 @@ extends Control
 @onready var start_button: TextureButton = get_node("ButtonContainer/StartButtonContainer/StartButton")
 @onready var settings_button: TextureButton = get_node("ButtonContainer/SettingsButtonContainer/SettingsButton")
 @onready var quit_button: TextureButton = get_node("QuitButtonContainer/QuitButton")
+@onready var selection_rect: Panel = get_node("SelectionRect")
 @onready var settings_panel: Control = get_node("SettingsPanel")
 @onready var music_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider")
 @onready var sounds_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider")
@@ -17,6 +18,11 @@ var using_keyboard_nav: bool = false
 
 func _ready() -> void:
 	# Signals are already connected in the scene file
+
+	# Connect focus signals for main menu buttons
+	start_button.focus_entered.connect(_on_button_focus_entered.bind(start_button))
+	settings_button.focus_entered.connect(_on_button_focus_entered.bind(settings_button))
+	quit_button.focus_entered.connect(_on_button_focus_entered.bind(quit_button))
 
 	# Set up focus navigation for settings panel
 	music_volume_slider.focus_neighbor_bottom = music_volume_slider.get_path_to(sounds_volume_slider)
@@ -39,12 +45,22 @@ func _load_settings() -> void:
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
 
 
+func _on_button_focus_entered(button: Control) -> void:
+	if using_keyboard_nav:
+		selection_rect.visible = true
+		# Position and size the selection rect to match the button
+		var button_rect = button.get_global_rect()
+		selection_rect.global_position = button_rect.position - Vector2(4, 4)
+		selection_rect.size = button_rect.size + Vector2(8, 8)
+
+
 func _on_start_pressed() -> void:
 	SceneManager.goto_level_select()
 
 
 func _on_settings_pressed() -> void:
 	settings_panel.visible = true
+	selection_rect.visible = false
 	music_volume_slider.grab_focus()
 
 
@@ -77,6 +93,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if using_keyboard_nav:
 			using_keyboard_nav = false
+			selection_rect.visible = false
 			# Release focus from all buttons
 			if get_viewport().gui_get_focus_owner():
 				get_viewport().gui_get_focus_owner().release_focus()
@@ -95,6 +112,6 @@ func _input(event: InputEvent) -> void:
 
 	# Close settings with Escape key
 	if settings_panel.visible and event.is_action_pressed("ui_cancel"):
-		
+
 		_on_close_settings_pressed()
 		get_viewport().set_input_as_handled()

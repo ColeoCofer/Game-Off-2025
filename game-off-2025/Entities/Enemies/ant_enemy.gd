@@ -90,29 +90,20 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Forgiving velocity check: any downward movement counts as falling
-		# Even soft landings should stomp the ant
-		var player_falling = false
-		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 0  # Any downward movement (including soft landings)
+		# Can't use velocity (it's 0 when standing on platform)
+		# Instead, check if player is positioned ABOVE the ant
 
-		# Get player's bottom position
-		var player_bottom_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
+		# Get player's center Y position
+		var player_y = body.global_position.y
+		var ant_center_y = global_position.y
 
-		# Ant's top position - forgiving but not excessive
-		var ant_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 8.0  # Forgiving but reasonable for ground enemy
-		var player_is_above = player_bottom_y <= ant_top_y + STOMP_TOLERANCE
+		# Player must be significantly ABOVE ant's center to count as stomp
+		# If at same level (walking into side), it's not a stomp
+		var ABOVE_THRESHOLD = -3.0  # Player must be at least 3px above ant center
+		var player_is_above = (player_y - ant_center_y) < ABOVE_THRESHOLD
 
-		# Valid stomp: player must be ACTIVELY falling AND clearly above
-		if player_falling and player_is_above:
+		# Only stomp if player is clearly above the ant
+		if player_is_above:
 			# Mark as dead immediately
 			is_alive = false
 

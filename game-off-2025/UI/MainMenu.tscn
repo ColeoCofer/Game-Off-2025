@@ -77,6 +77,14 @@ texture_focused = ExtResource("7_settings_hover")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="SelectionRect" type="Panel" parent="Control"]
+visible = false
+layout_mode = 1
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 100.0
+offset_bottom = 50.0
+
 [node name="QuitButtonContainer" type="AspectRatioContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 3

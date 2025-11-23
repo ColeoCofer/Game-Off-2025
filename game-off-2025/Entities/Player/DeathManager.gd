@@ -24,6 +24,7 @@ var invincibility_duration: float = 1.0  # Seconds of invincibility after taking
 
 # Audio
 var hurt_audio_player: AudioStreamPlayer
+var hunger_manager: Node = null  # Reference to HungerManager
 
 func _ready():
 	player = get_parent() as CharacterBody2D
@@ -42,7 +43,7 @@ func _ready():
 
 	# Get the HungerManager and connect to its signal
 	# hmm might be a safer way to do this
-	var hunger_manager = player.get_node_or_null("HungerManager")
+	hunger_manager = player.get_node_or_null("HungerManager")
 	if hunger_manager:
 		hunger_manager.hunger_depleted.connect(_on_hunger_depleted)
 
@@ -137,6 +138,10 @@ func trigger_hazard_death(hazard_position: Vector2 = Vector2.ZERO):
 	is_dead = true
 	death_reason = "hazard"
 
+	# Stop heartbeat sound
+	if hunger_manager and hunger_manager.has_method("stop_heartbeat"):
+		hunger_manager.stop_heartbeat()
+
 	# Play hurt sound
 	if hurt_audio_player:
 		hurt_audio_player.play()
@@ -172,6 +177,10 @@ func trigger_enemy_death():
 
 	is_dead = true
 	death_reason = "enemy"
+
+	# Stop heartbeat sound
+	if hunger_manager and hunger_manager.has_method("stop_heartbeat"):
+		hunger_manager.stop_heartbeat()
 
 	# Play hurt sound
 	if hurt_audio_player:
@@ -217,6 +226,10 @@ func trigger_fall_death():
 	is_dead = true
 	death_reason = "fall"
 
+	# Stop heartbeat sound
+	if hunger_manager and hunger_manager.has_method("stop_heartbeat"):
+		hunger_manager.stop_heartbeat()
+
 	# Stop walking sound
 	if player.has_method("_stopWalkingSound"):
 		player._stopWalkingSound()
@@ -240,6 +253,10 @@ func trigger_death():
 	death_reason = "starvation"
 
 	TimerManager.stop_timer()
+
+	# Stop heartbeat sound
+	if hunger_manager and hunger_manager.has_method("stop_heartbeat"):
+		hunger_manager.stop_heartbeat()
 
 	# Play hurt sound
 	if hurt_audio_player:

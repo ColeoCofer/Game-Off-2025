@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctfwfdfd8fcrs"]
+[gd_scene load_steps=5 format=3 uid="uid://ctfwfdfd8fcrs"]
 
 [ext_resource type="Script" uid="uid://dh7836b1sxf38" path="res://UI/LevelSelectMenu.gd" id="1_levelselectmenu"]
-[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Audio/UI/sona-title-no-text.png" id="3_background"]
+[ext_resource type="FontFile" uid="uid://ccob884qxxecy" path="res://Assets/Fonts/8-BIT WONDER.TTF" id="3_tg31d"]
 
 [node name="LevelSelectMenu" type="CanvasLayer"]
 layer = 100
@@ -15,14 +17,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_levelselectmenu")
 
-[node name="Background" type="ColorRect" parent="Control"]
+[node name="Background" type="TextureRect" parent="Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.15, 1)
+texture = ExtResource("3_background")
+expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="Control"]
 layout_mode = 1
@@ -32,7 +35,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 30
+theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 30
 
@@ -40,10 +43,17 @@ theme_override_constants/margin_bottom = 30
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Title" type="Label" parent="Control/MarginContainer/VBoxContainer"]
+[node name="TitleMargin" type="MarginContainer" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 40
+theme_override_constants/margin_top = 10
+
+[node name="Title" type="Label" parent="Control/MarginContainer/VBoxContainer/TitleMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.65, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.15, 0.2, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_tg31d")
+theme_override_font_sizes/font_size = 34
 text = "Select Level"
 horizontal_alignment = 1
 
@@ -61,6 +71,8 @@ columns = 3
 custom_minimum_size = Vector2(150, 35)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
 text = "Back"

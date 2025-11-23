@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dnfqppqhg1yee"]
+[gd_scene load_steps=5 format=3 uid="uid://dnfqppqhg1yee"]
 
 [ext_resource type="Script" uid="uid://6hg1r05voio2" path="res://UI/DeathMenu.gd" id="1_death_menu"]
-[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_nfcsf"]
+[ext_resource type="FontFile" uid="uid://cp1qrv4j0eyiu" path="res://Assets/Fonts/C&C Red Alert [INET].ttf" id="3_qt2re"]
 
 [node name="DeathMenu" type="Control"]
 layout_mode = 3
@@ -36,15 +38,15 @@ theme_override_constants/separation = 5
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 48
+theme_override_fonts/font = ExtResource("2_nfcsf")
+theme_override_font_sizes/font_size = 38
 text = "YOU STARVED"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_fonts/font = ExtResource("2_font")
+theme_override_fonts/font = ExtResource("3_qt2re")
 theme_override_font_sizes/font_size = 20
 text = "The bat ran out of energy..."
 horizontal_alignment = 1

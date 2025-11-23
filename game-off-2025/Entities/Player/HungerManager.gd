@@ -17,9 +17,14 @@ var is_depleting: bool = true
 # Audio
 var hurt_audio_player: AudioStreamPlayer
 var firefly_sacrifice_audio_player: AudioStreamPlayer
+var heartbeat_audio_player: AudioStreamPlayer
 
 # Firefly protection
 var firefly_manager: Node
+
+# Heartbeat state
+var is_heartbeat_playing: bool = false
+var heartbeat_threshold: float = 20.0  # Play heartbeat below 20% hunger
 
 func _ready():
 	current_hunger = max_hunger
@@ -30,6 +35,9 @@ func _ready():
 
 	# Get reference to firefly sacrifice audio player
 	firefly_sacrifice_audio_player = get_parent().get_node("FireflySacrificeAudioPlayer")
+
+	# Get reference to heartbeat audio player
+	heartbeat_audio_player = get_parent().get_node("HeartbeatAudioPlayer")
 
 	# Get reference to firefly manager
 	firefly_manager = get_parent().get_node_or_null("FireflyManager")
@@ -44,6 +52,9 @@ func _deplete_hunger(delta: float):
 		current_hunger = max(current_hunger, min_hunger)
 		hunger_changed.emit(current_hunger, max_hunger)
 
+		# Update heartbeat sound based on hunger level
+		_update_heartbeat()
+
 		if current_hunger <= min_hunger:
 			# Check if player has a firefly to sacrifice instead of dying
 			if firefly_manager and firefly_manager.has_shield():
@@ -55,6 +66,9 @@ func consume_food(amount: float):
 	current_hunger = min(current_hunger + amount, max_hunger)
 	hunger_changed.emit(current_hunger, max_hunger)
 	food_consumed.emit(amount)
+
+	# Update heartbeat after consuming food
+	_update_heartbeat()
 
 func take_damage(amount: float):
 	# Reduce hunger when taking damage
@@ -98,3 +112,29 @@ func _sacrifice_firefly_for_hunger():
 	# Restore hunger to half
 	current_hunger = max_hunger * 0.5
 	hunger_changed.emit(current_hunger, max_hunger)
+
+	# Update heartbeat after sacrifice
+	_update_heartbeat()
+
+func _update_heartbeat():
+	"""Updates heartbeat sound based on current hunger level"""
+	if not heartbeat_audio_player:
+		return
+
+	# Check if hunger is below threshold
+	var should_play_heartbeat = current_hunger <= heartbeat_threshold
+
+	if should_play_heartbeat and not is_heartbeat_playing:
+		# Start playing heartbeat
+		heartbeat_audio_player.play()
+		is_heartbeat_playing = true
+	elif not should_play_heartbeat and is_heartbeat_playing:
+		# Stop playing heartbeat
+		heartbeat_audio_player.stop()
+		is_heartbeat_playing = false
+
+func stop_heartbeat():
+	"""Stops the heartbeat sound (called on death)"""
+	if heartbeat_audio_player and is_heartbeat_playing:
+		heartbeat_audio_player.stop()
+		is_heartbeat_playing = false

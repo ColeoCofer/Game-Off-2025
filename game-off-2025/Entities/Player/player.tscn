@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://d0gtwpl0brl74"]
+[gd_scene load_steps=39 format=3 uid="uid://d0gtwpl0brl74"]
 
 [ext_resource type="Script" uid="uid://ivrn1raqx5i0" path="res://Entities/Player/UltimatePlatformerController.gd" id="1_4ntmi"]
 [ext_resource type="Shader" uid="uid://d1rujxdwwtk3y" path="res://Shaders/remove_black.gdshader" id="1_btcbx"]
@@ -17,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://bglc1legcrol" path="res://Assets/Audio/hurt-sound.mp3" id="6_hurt"]
 [ext_resource type="Script" uid="uid://cwtu820ahiv42" path="res://Entities/Player/CheckpointManager.gd" id="7_checkpoint"]
 [ext_resource type="AudioStream" uid="uid://nj7jjqdxychg" path="res://Assets/Audio/UI/LightPop.wav" id="8_lightpop"]
+[ext_resource type="AudioStream" uid="uid://c1vfovdqxt27t" path="res://Assets/Audio/heart-beat.mp3" id="9_heartbeat"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("1_btcbx")
@@ -241,6 +242,10 @@ bus = &"Sounds"
 
 [node name="FireflySacrificeAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_lightpop")
+bus = &"Sounds"
+
+[node name="HeartbeatAudioPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_heartbeat")
 bus = &"Sounds"
 
 [node name="HungerManager" type="Node" parent="." groups=["hunger_manager"]]

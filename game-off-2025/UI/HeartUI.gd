@@ -4,7 +4,7 @@ extends Node2D
 @onready var heart_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 # Configuration
-var total_frames: int = 7  # Total frames in the hunger bar animation (0-6)
+var total_frames: int = 11  # Total frames in the hunger bar animation (0-10)
 
 func _ready():
 	# Stop the animation from playing automatically
@@ -38,7 +38,7 @@ func _on_hunger_changed(current: float, maximum: float):
 
 	# Map hunger percentage to frame number
 	# Frame 0 -> full health (100%)
-	# Frame 6 -> empty (0%)
+	# Frame 10 -> empty (0%)
 	# Use total_frames multiplier so bar stays full longer
 	var target_frame = int((1.0 - hunger_percentage) * total_frames)
 

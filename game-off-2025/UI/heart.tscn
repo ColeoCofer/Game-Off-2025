@@ -1,59 +1,87 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpmhxtjak45ff"]
+[gd_scene load_steps=15 format=3 uid="uid://dpmhxtjak45ff"]
 
 [ext_resource type="Script" uid="uid://djw5ux5qlitr7" path="res://UI/HeartUI.gd" id="1_heart_script"]
 [ext_resource type="Texture2D" uid="uid://c4qc18tdpjbou" path="res://Assets/Art/ui/hunger-bar.png" id="2_hunger_bar"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_kav31"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(0, 0, 75, 21)
+region = Rect2(0, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame1"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_1xnuq"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(75, 0, 75, 21)
+region = Rect2(76, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_7do5j"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(150, 0, 75, 21)
+region = Rect2(152, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame3"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwq05"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(225, 0, 75, 21)
+region = Rect2(228, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame4"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_et7ra"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(300, 0, 75, 21)
+region = Rect2(304, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame5"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_xale6"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(375, 0, 75, 21)
+region = Rect2(380, 0, 76, 21)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_frame6"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_3v3fw"]
 atlas = ExtResource("2_hunger_bar")
-region = Rect2(450, 0, 75, 21)
+region = Rect2(456, 0, 76, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnkpe"]
+atlas = ExtResource("2_hunger_bar")
+region = Rect2(532, 0, 76, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38181"]
+atlas = ExtResource("2_hunger_bar")
+region = Rect2(0, 21, 76, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eyl8u"]
+atlas = ExtResource("2_hunger_bar")
+region = Rect2(76, 21, 76, 21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsy1h"]
+atlas = ExtResource("2_hunger_bar")
+region = Rect2(152, 21, 76, 21)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hunger_bar"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame0")
+"texture": SubResource("AtlasTexture_kav31")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame1")
+"texture": SubResource("AtlasTexture_1xnuq")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame2")
+"texture": SubResource("AtlasTexture_7do5j")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame3")
+"texture": SubResource("AtlasTexture_iwq05")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame4")
+"texture": SubResource("AtlasTexture_et7ra")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame5")
+"texture": SubResource("AtlasTexture_xale6")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_frame6")
+"texture": SubResource("AtlasTexture_3v3fw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnkpe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38181")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eyl8u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsy1h")
 }],
 "loop": false,
 "name": &"hunger_bar",
@@ -69,4 +97,3 @@ script = ExtResource("1_heart_script")
 scale = Vector2(2.5, 2.5)
 sprite_frames = SubResource("SpriteFrames_hunger_bar")
 animation = &"hunger_bar"
-frame = 6

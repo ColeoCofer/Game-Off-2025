@@ -14,6 +14,7 @@ extends CharacterBody2D
 @export var player_activation_range: float = 150.0
 @export var player_detection_range: float = 100.0
 @export var player_tracking_range: float = 50.0
+@export var vertical_tracking_threshold: float = 40.0
 @export var jump_velocity: float = -300.0
 @export var jump_horizontal_boost: float = 200.0
 @export var stomp_bounce_force: float = 150.0
@@ -161,7 +162,7 @@ func _process_jumping():
 		animated_sprite.play("jump")
 
 func _track_nearby_player():
-	"""Always face the player when they're nearby (only during walking)"""
+	"""Always face the player when they're nearby AND on similar vertical level (only during walking)"""
 	# Safety check: only track during walking state
 	if current_state != State.WALKING:
 		return
@@ -172,6 +173,12 @@ func _track_nearby_player():
 
 	var distance = global_position.distance_to(player.global_position)
 	if distance > player_tracking_range:
+		return
+
+	# Check if player is on a similar vertical level (same platform-ish)
+	var vertical_distance = abs(player.global_position.y - global_position.y)
+	if vertical_distance > vertical_tracking_threshold:
+		# Player is on a different platform - don't track, just patrol
 		return
 
 	# Turn to face the player
@@ -310,14 +317,14 @@ func _on_stomp_detector_body_entered(body: Node2D):
 			# Mark as dead immediately
 			is_alive = false
 
-			# IMMEDIATELY disable damage detector
+			# Disable damage detector
 			if damage_detector:
-				damage_detector.monitoring = false
-				damage_detector.monitorable = false
+				damage_detector.set_deferred("monitoring", false)
+				damage_detector.set_deferred("monitorable", false)
 
 			if stomp_detector:
-				stomp_detector.monitoring = false
-				stomp_detector.monitorable = false
+				stomp_detector.set_deferred("monitoring", false)
+				stomp_detector.set_deferred("monitorable", false)
 
 			# Stop physics
 			set_physics_process(false)
@@ -374,14 +381,14 @@ func _on_damage_detector_body_entered(body: Node2D):
 		if is_stomp_scenario:
 			is_alive = false
 
-			# IMMEDIATELY disable both detectors
+			# Disable both detectors
 			if damage_detector:
-				damage_detector.monitoring = false
-				damage_detector.monitorable = false
+				damage_detector.set_deferred("monitoring", false)
+				damage_detector.set_deferred("monitorable", false)
 
 			if stomp_detector:
-				stomp_detector.monitoring = false
-				stomp_detector.monitorable = false
+				stomp_detector.set_deferred("monitoring", false)
+				stomp_detector.set_deferred("monitorable", false)
 
 			set_physics_process(false)
 

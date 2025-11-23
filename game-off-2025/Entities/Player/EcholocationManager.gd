@@ -7,6 +7,10 @@ extends CanvasLayer
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 @onready var hunger_manager: Node = player.get_node("HungerManager")
 
+# Low hunger vignette overlay (created programmatically)
+var vignette_overlay: ColorRect
+var vignette_material: ShaderMaterial
+
 # Vision settings
 @export var vision_radius: float = 75.
 @export var vision_fade_distance: float = 40.0  # How gradually the vision fades (higher = more gradual)
@@ -33,6 +37,11 @@ var cooldown_remaining: float = 0.0
 # Shader material
 var shader_material: ShaderMaterial
 
+# Low hunger vignette settings
+@export var vignette_hunger_threshold: float = 20.0  # Show vignette below this hunger value
+@export var vignette_max_intensity: float = 0.5  # Maximum vignette intensity
+var vignette_pulse_time: float = 0.0  # Tracks pulse animation
+
 func _ready():
 	# Ensure darkness overlay is visible (in case it was disabled during level editing)
 	darkness_overlay.visible = true
@@ -56,6 +65,9 @@ func _ready():
 	# Initialize echo arrays
 	update_echo_shader_params()
 
+	# Create low hunger vignette overlay
+	# _setup_vignette_overlay()  # DISABLED - user didn't like the effect
+
 func _process(delta: float):
 	# Update cooldown timer
 	if cooldown_remaining > 0:
@@ -74,6 +86,9 @@ func _process(delta: float):
 
 	# Update shader with current echo positions
 	update_echo_shader_params()
+
+	# Update low hunger vignette effect
+	# _update_vignette(delta)  # DISABLED - user didn't like the effect
 
 func can_use_echolocation() -> bool:
 	# Check cooldown
@@ -168,3 +183,57 @@ func get_screen_position(world_pos: Vector2) -> Vector2:
 
 # Signal for enemy detection (emitted when player uses echolocation)
 signal echolocation_triggered(player_position: Vector2)
+
+func _setup_vignette_overlay():
+	"""Creates the red vignette overlay for low hunger warning"""
+	# Create ColorRect that fills the entire screen
+	vignette_overlay = ColorRect.new()
+	vignette_overlay.name = "VignetteOverlay"
+
+	# Set to fill entire viewport
+	vignette_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vignette_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE  # Don't block input
+
+	# Create shader material
+	vignette_material = ShaderMaterial.new()
+	vignette_material.shader = load("res://Shaders/low_hunger_vignette.gdshader")
+
+	# Set initial parameters
+	vignette_material.set_shader_parameter("intensity", 0.0)
+	vignette_material.set_shader_parameter("pulse", 0.0)
+	vignette_material.set_shader_parameter("vignette_radius", 0.4)
+	vignette_material.set_shader_parameter("vignette_softness", 0.5)
+
+	# Apply shader to overlay
+	vignette_overlay.material = vignette_material
+
+	# Add as child (renders on top of darkness overlay)
+	add_child(vignette_overlay)
+
+func _update_vignette(delta: float):
+	"""Updates the vignette effect based on current hunger level"""
+	if not hunger_manager or not vignette_material:
+		return
+
+	var current_hunger = hunger_manager.current_hunger
+
+	# Calculate vignette intensity based on hunger level
+	var intensity = 0.0
+	if current_hunger <= vignette_hunger_threshold:
+		# Fade in vignette as hunger decreases
+		# At threshold (20): intensity = 0
+		# At 0 hunger: intensity = vignette_max_intensity
+		intensity = (1.0 - (current_hunger / vignette_hunger_threshold)) * vignette_max_intensity
+
+	# Update pulse animation (synced with heartbeat - about 1 beat per second)
+	vignette_pulse_time += delta * 2.5  # 2.5 Hz pulse rate for more dramatic effect
+	var pulse_value = (sin(vignette_pulse_time) + 1.0) / 2.0  # Oscillates 0 to 1
+
+	# Only pulse when intensity is active
+	if intensity > 0.0:
+		vignette_material.set_shader_parameter("pulse", pulse_value)
+	else:
+		vignette_material.set_shader_parameter("pulse", 0.0)
+
+	# Update intensity
+	vignette_material.set_shader_parameter("intensity", intensity)

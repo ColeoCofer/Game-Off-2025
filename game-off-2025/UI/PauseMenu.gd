@@ -112,9 +112,12 @@ func show_menu():
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
 	music_volume_slider.value = SaveManager.get_music_volume()
 	sounds_volume_slider.value = SaveManager.get_sounds_volume()
-	
+
 	# Pause the game
 	get_tree().paused = true
+
+	# Force cursor visible for menu navigation
+	InputModeManager.set_force_cursor_visible(true)
 
 	# Set initial button focus
 	_update_button_focus()
@@ -124,6 +127,9 @@ func show_menu():
 	tween.tween_property(self, "modulate:a", 1.0, fade_in_duration)
 
 func hide_menu():
+	# Restore normal cursor behavior (hide if using controller)
+	InputModeManager.set_force_cursor_visible(false)
+
 	# Fade out the menu
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, fade_out_duration)
@@ -139,6 +145,8 @@ func _on_continue_button_pressed():
 
 func _on_exit_button_pressed():
 	exit_pressed.emit()
+	# Restore normal cursor behavior
+	InputModeManager.set_force_cursor_visible(false)
 	# Hide the menu immediately to prevent input bleed-through
 	visible = false
 	is_paused = false

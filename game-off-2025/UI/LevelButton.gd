@@ -20,14 +20,13 @@ func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best
 	# Set level name
 	level_label.text = display_name
 
+	# Hide status label (lock/check icon)
+	status_label.visible = false
+
 	# Set lock status
 	if is_unlocked:
-		status_label.text = "✓"
-		status_label.modulate = Color.GREEN
 		disabled = false
 	else:
-		status_label.text = "🔒"
-		status_label.modulate = Color.GRAY
 		disabled = true
 
 	# Set best time if available

@@ -694,3 +694,4 @@ position = Vector2(2284, -95)
 [node name="PhotoShard" parent="." instance=ExtResource("23_ty5wv")]
 visible = false
 position = Vector2(253, 372)
+shard_type = "Cutscene Only"

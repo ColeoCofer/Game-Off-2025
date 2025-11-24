@@ -11,7 +11,7 @@ signal photo_shard_collected
 
 # Level configuration
 @export var level_name: String = ""  # Set this to the level name (e.g., "level-1", "level-2")
-@export var auto_walk_to_exit: bool = true  # If true, player walks to cave entrance after collection
+@export_enum("Level Completion", "Cutscene Only") var shard_type: String = "Level Completion"  # Type of photo shard behavior
 @export var force_show_for_testing: bool = false  # If true, always show even if already collected
 
 var time_passed: float = 0.0
@@ -72,15 +72,27 @@ func _on_body_entered(body: Node2D):
 		print("PhotoShard: Not the player, ignoring")
 
 func collect(player: Node2D):
-	"""Collect the photo shard and trigger level completion sequence"""
+	"""Collect the photo shard and trigger appropriate behavior based on shard_type"""
 	if is_collected:
 		return
 
 	is_collected = true
-	print("PhotoShard: Collected!")
+	print("PhotoShard: Collected! Type: ", shard_type)
 
 	# IMMEDIATELY disable collision so player can fall through
 	$CollisionShape2D.set_deferred("disabled", true)
+
+	# Emit signal
+	photo_shard_collected.emit()
+
+	# If this is a cutscene-only shard, just hide it and return
+	if shard_type == "Cutscene Only":
+		print("PhotoShard: Cutscene-only shard - just hiding")
+		visible = false
+		return
+
+	# Otherwise, do the full level completion sequence
+	print("PhotoShard: Level completion shard - starting sequence")
 
 	# Set player to idle animation
 	var anim_sprite: AnimatedSprite2D = null
@@ -113,9 +125,6 @@ func collect(player: Node2D):
 		player.disable_control()
 		print("PhotoShard: Disabled player control")
 
-	# Emit signal
-	photo_shard_collected.emit()
-
 	# Stop timer
 	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("stop_timer"):
 		TimerManager.current_timer_ui.stop_timer()
@@ -147,11 +156,10 @@ func collect(player: Node2D):
 		SaveManager.mark_photo_shard_collected(level_name)
 		print("PhotoShard: Marked as collected in save data")
 
-	# Auto-walk to cave entrance if enabled
-	if auto_walk_to_exit:
-		print("PhotoShard: Starting auto-walk to exit...")
-		await walk_player_to_exit(player)
-		print("PhotoShard: Finished walking to exit")
+	# Auto-walk to cave entrance
+	print("PhotoShard: Starting auto-walk to exit...")
+	await walk_player_to_exit(player)
+	print("PhotoShard: Finished walking to exit")
 
 func walk_player_to_exit(player: Node2D):
 	"""Automatically walk the player to the cave entrance"""

@@ -524,6 +524,11 @@ position = Vector2(244, 479)
 hint_text = "press Y to echolocate"
 show_once = false
 
+[node name="bugs" parent="TutorialText" instance=ExtResource("17_wgnk2")]
+position = Vector2(448, 505)
+hint_text = "eat bugs to keep Sona full"
+show_once = false
+
 [node name="HoldJumpHigher" parent="TutorialText" instance=ExtResource("17_wgnk2")]
 position = Vector2(627, 439)
 hint_text = "press A to jump (hold to go higher)"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://bydegu2wbriqb"]
+[gd_scene load_steps=26 format=4 uid="uid://bydegu2wbriqb"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_t1npl"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_40a2k"]
@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://uacftcxjkp8x" path="res://Shaders/foliage_wind.gdshader" id="4_5wodv"]
 [ext_resource type="Texture2D" uid="uid://b8jjpb8u8u8jm" path="res://Assets/Art/wind_noise.tres" id="5_e5572"]
 [ext_resource type="PackedScene" uid="uid://bqy5xk8j1234" path="res://Entities/Enemies/ant_enemy.tscn" id="6_geygl"]
+[ext_resource type="PackedScene" uid="uid://c200loqombjgm" path="res://Entities/Enemies/blobby.tscn" id="7_2e0lv"]
 [ext_resource type="PackedScene" uid="uid://b73psve87rk1g" path="res://Entities/Objects/moving-plank.tscn" id="7_40a2k"]
 [ext_resource type="PackedScene" uid="uid://cbtee321fvftq" path="res://Entities/Objects/steam_vent.tscn" id="7_geygl"]
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="7_sqdhq"]
@@ -474,6 +475,9 @@ position = Vector2(3501, -198)
 
 [node name="AntEnemy4" parent="Enemies" instance=ExtResource("6_geygl")]
 position = Vector2(2938, -150)
+
+[node name="Blobby" parent="Enemies" instance=ExtResource("7_2e0lv")]
+position = Vector2(1345, 151)
 
 [node name="Hurt Objects" type="Node" parent="."]
 

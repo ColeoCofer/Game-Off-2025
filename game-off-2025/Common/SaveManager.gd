@@ -21,6 +21,7 @@ var save_data = {
 		"total_playtime": 0.0,
 		"fireflies_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
 		"diamonds_collected": {},  # {"level-1": [0, 1, 2], "level-2": [0]}
+		"photo_shards_collected": [],  # ["level-1", "level-2"] - one shard per level
 		"cutscenes_played": [],  # Track which cutscenes have been viewed
 		"tutorials_shown": []  # Track which tutorials have been displayed
 	}
@@ -262,9 +263,27 @@ func reset_save_data():
 			"total_playtime": 0.0,
 			"fireflies_collected": {},
 			"diamonds_collected": {},
+			"photo_shards_collected": [],
 			"cutscenes_played": [],
 			"tutorials_shown": []
 		}
 	}
 	save_game()
 	print("Save data reset to defaults")
+
+# ============= PHOTO SHARD COLLECTION FUNCTIONS =============
+
+func mark_photo_shard_collected(level_name: String):
+	"""Mark a photo shard as collected for a specific level"""
+	if level_name not in save_data["game_data"]["photo_shards_collected"]:
+		save_data["game_data"]["photo_shards_collected"].append(level_name)
+		save_game()
+		print("SaveManager: Marked photo shard collected for ", level_name)
+
+func is_photo_shard_collected(level_name: String) -> bool:
+	"""Check if a photo shard has been collected for a specific level"""
+	return level_name in save_data["game_data"]["photo_shards_collected"]
+
+func get_total_photo_shards_collected() -> int:
+	"""Get the total number of photo shards collected"""
+	return save_data["game_data"]["photo_shards_collected"].size()

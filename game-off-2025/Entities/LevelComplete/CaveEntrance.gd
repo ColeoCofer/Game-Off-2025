@@ -52,6 +52,11 @@ func _stop_hunger_and_timer():
 			hunger_manager.set_depletion_active(false)
 			print("Cave entrance: Stopped hunger depletion")
 
+			# Stop the heartbeat sound if it's playing
+			if hunger_manager.has_method("stop_heartbeat"):
+				hunger_manager.stop_heartbeat()
+				print("Cave entrance: Stopped heartbeat sound")
+
 		# Mark the death manager as if player is already "dead" to prevent any death triggers
 		var death_manager = player_ref.get_node_or_null("DeathManager")
 		if death_manager:

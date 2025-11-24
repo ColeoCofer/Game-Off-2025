@@ -26,6 +26,9 @@ var firefly_manager: Node
 var is_heartbeat_playing: bool = false
 var heartbeat_threshold: float = 20.0  # Play heartbeat below 20% hunger
 
+# Death manager reference
+var death_manager: Node
+
 func _ready():
 	current_hunger = max_hunger
 	hunger_changed.emit(current_hunger, max_hunger)
@@ -41,6 +44,9 @@ func _ready():
 
 	# Get reference to firefly manager
 	firefly_manager = get_parent().get_node_or_null("FireflyManager")
+
+	# Get reference to death manager
+	death_manager = get_parent().get_node_or_null("DeathManager")
 
 func _process(delta):
 	if is_depleting:
@@ -119,6 +125,13 @@ func _sacrifice_firefly_for_hunger():
 func _update_heartbeat():
 	"""Updates heartbeat sound based on current hunger level"""
 	if not heartbeat_audio_player:
+		return
+
+	# Don't play heartbeat if player is dead
+	if death_manager and death_manager.is_dead:
+		if is_heartbeat_playing:
+			heartbeat_audio_player.stop()
+			is_heartbeat_playing = false
 		return
 
 	# Check if hunger is below threshold

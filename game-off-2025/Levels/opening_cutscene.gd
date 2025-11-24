@@ -66,6 +66,10 @@ func _ready():
 	# Wait for cutscene to finish
 	await CutsceneDirector.cutscene_finished
 
+	# Reset the level start time so timer starts from 0
+	SceneManager.reset_level_timer(false)
+	print("Opening cutscene: Reset level timer")
+
 	# Restart the timer now that cutscene is complete
 	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("start_timer"):
 		TimerManager.current_timer_ui.start_timer()

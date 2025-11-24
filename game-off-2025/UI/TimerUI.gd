@@ -11,6 +11,7 @@ var pause_start_time: float = 0.0
 var is_paused: bool = false
 var cutscene_start_time: float = 0.0
 var is_in_cutscene: bool = false
+var was_visible_before_cutscene: bool = false
 
 
 func _ready() -> void:
@@ -99,15 +100,24 @@ func _update_display() -> void:
 
 
 func _on_cutscene_started(cutscene_id: String) -> void:
-	"""Called when a cutscene starts - pause the timer"""
+	"""Called when a cutscene starts - pause the timer and hide it"""
 	if not is_in_cutscene:
 		is_in_cutscene = true
 		cutscene_start_time = Time.get_ticks_msec() / 1000.0
 
+		# Remember if timer was visible before cutscene
+		was_visible_before_cutscene = visible
+
+		# Hide timer during cutscene
+		visible = false
+
 
 func _on_cutscene_finished(cutscene_id: String) -> void:
-	"""Called when a cutscene ends - resume the timer and add cutscene duration to pause time"""
+	"""Called when a cutscene ends - resume the timer and show it if it was visible before"""
 	if is_in_cutscene:
 		is_in_cutscene = false
 		var cutscene_duration = (Time.get_ticks_msec() / 1000.0) - cutscene_start_time
 		total_pause_time += cutscene_duration
+
+		# Restore visibility only if it was visible before cutscene
+		visible = was_visible_before_cutscene

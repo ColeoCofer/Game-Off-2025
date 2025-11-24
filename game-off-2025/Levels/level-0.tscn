@@ -479,6 +479,9 @@ position = Vector2(2938, -150)
 [node name="Blobby" parent="Enemies" instance=ExtResource("7_2e0lv")]
 position = Vector2(1345, 151)
 
+[node name="Blobby2" parent="Enemies" instance=ExtResource("7_2e0lv")]
+position = Vector2(2121, -169)
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="SteamVent" parent="Hurt Objects" instance=ExtResource("7_geygl")]

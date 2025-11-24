@@ -220,24 +220,35 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not (body.is_in_group("Player") or body is PlatformerController2D):
 		return
 
-	# Verify player is falling or just landed (e.g. velocity.y >= 0 instead of > 0)
+	# If blob is already dead, ignore
+	if is_dead:
+		return
+
+	# Check if player is moving downward (falling/landing)
+	# Very forgiving: any downward movement or very slow upward movement counts
 	var player_falling = false
 	if body is CharacterBody2D:
-		player_falling = body.velocity.y >= -50  # Allow small upward velocity too (landing tolerance)
+		player_falling = body.velocity.y >= -10.0  # Even slight upward movement counts
 
-	if not player_falling:
-		return
-
-	# Check spatial position (player must be above)
+	# Calculate player's bottom position (accounting for collision shape)
 	var player_bottom_y = body.global_position.y
-	var blob_top_y = global_position.y - 8
-	var player_is_above = player_bottom_y <= blob_top_y + 8
+	if body.has_node("CollisionShape2D"):
+		var player_collision = body.get_node("CollisionShape2D")
+		if player_collision and player_collision.shape:
+			var shape = player_collision.shape
+			if shape is RectangleShape2D or shape is CapsuleShape2D:
+				var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
+				player_bottom_y = body.global_position.y + (shape_height / 2.0)
 
-	if not player_is_above:
-		return
+	# Blob's top position with forgiving tolerance
+	var blob_top_y = global_position.y - 10  # Blob sprite is offset at -6, detector at -10
+	var STOMP_TOLERANCE = 15.0  # Forgiving tolerance for stomp detection
+	var player_is_above = player_bottom_y <= blob_top_y + STOMP_TOLERANCE
 
-	# Valid stomp detected - always kill blob (1 hit kill)
-	_take_damage(body)
+	# Valid stomp: player is falling AND coming from above
+	if player_falling and player_is_above:
+		# Valid stomp detected - always kill blob (1 hit kill)
+		_take_damage(body)
 
 func _take_damage(player: Node2D):
 	# Mark as dead to stop all state processing

@@ -70,6 +70,10 @@ func start_timer() -> void:
 func stop_timer() -> void:
 	is_running = false
 
+func get_current_time() -> float:
+	"""Get the current timer value"""
+	return current_time
+
 
 func reset_timer() -> void:
 	current_time = 0.0

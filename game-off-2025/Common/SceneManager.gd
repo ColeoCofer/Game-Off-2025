@@ -130,8 +130,10 @@ func complete_level(level_name: String = "") -> void:
 		print("SceneManager: complete_level called but no level_name!")
 		return
 
-	# Calculate completion time
-	var completion_time = (Time.get_ticks_msec() / 1000.0) - current_level_start_time
+	# Get completion time from TimerManager (which stores the time when timer was stopped)
+	# This is more accurate than calculating from current time, since there may be
+	# animations/delays between stopping the timer and calling complete_level()
+	var completion_time = TimerManager.get_completion_time()
 
 	print("SceneManager: Level completed - ", level_name)
 	print("SceneManager: Completion time - ", completion_time)

@@ -5,6 +5,7 @@ extends Node
 
 var timer_ui_scene = preload("res://UI/TimerUI.tscn")
 var current_timer_ui: Control = null
+var stopped_time: float = 0.0  # Store the time when timer was stopped
 
 
 func _ready() -> void:
@@ -67,12 +68,18 @@ func _find_ui_layer() -> CanvasLayer:
 
 
 func _on_level_completed(level_name: String, completion_time: float) -> void:
-	# Stop the timer when level is completed
-	if current_timer_ui and current_timer_ui.has_method("stop_timer"):
-		current_timer_ui.stop_timer()
+	# Timer is already stopped by this point, just keep the stopped_time
+	pass
 
 func stop_timer() -> void:
-	# Stop the timer when level is completed
+	# Stop the timer and store the current time
 	if current_timer_ui and current_timer_ui.has_method("stop_timer"):
+		# Store the current time before stopping
+		if current_timer_ui.has_method("get_current_time"):
+			stopped_time = current_timer_ui.get_current_time()
 		current_timer_ui.stop_timer()
+
+func get_completion_time() -> float:
+	"""Get the time when the timer was stopped (for level completion)"""
+	return stopped_time
 		

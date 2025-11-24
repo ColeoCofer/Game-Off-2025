@@ -285,6 +285,7 @@ func _action_spawn_object(data: Dictionary) -> void:
 	"""Spawn an object in the scene"""
 	var scene_path = data.get("scene_path", "")
 	var position = data.get("position", Vector2.ZERO)
+	var call_method = data.get("call_method", "")
 
 	if scene_path.is_empty():
 		return
@@ -294,6 +295,10 @@ func _action_spawn_object(data: Dictionary) -> void:
 		var instance = scene.instantiate()
 		instance.global_position = position
 		get_tree().current_scene.add_child(instance)
+
+		# Call method on spawned object if specified
+		if not call_method.is_empty() and instance.has_method(call_method):
+			instance.call(call_method)
 
 	await get_tree().process_frame
 
@@ -387,6 +392,12 @@ static func action_wait(duration: float) -> CutsceneAction:
 
 static func action_player_walk(target_x: float, speed: float = 50.0) -> CutsceneAction:
 	return CutsceneAction.new(ActionType.PLAYER_WALK, {"target_x": target_x, "speed": speed})
+
+static func action_spawn_object(scene_path: String, position: Vector2, call_method: String = "") -> CutsceneAction:
+	var data = {"scene_path": scene_path, "position": position}
+	if not call_method.is_empty():
+		data["call_method"] = call_method
+	return CutsceneAction.new(ActionType.SPAWN_OBJECT, data)
 
 static func action_fullscreen_cutscene(frames: Array) -> CutsceneAction:
 	return CutsceneAction.new(ActionType.FULLSCREEN_CUTSCENE, {"frames": frames})

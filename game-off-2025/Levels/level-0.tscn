@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://bydegu2wbriqb"]
+[gd_scene load_steps=27 format=4 uid="uid://bydegu2wbriqb"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_t1npl"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_40a2k"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://ckvjjlnqr2h50" path="res://Entities/LevelComplete/cave_entrance.tscn" id="14_i0j7j"]
 [ext_resource type="PackedScene" uid="uid://eiecwvk87qnl" path="res://Entities/Bugs/diamond.tscn" id="16_vnosw"]
 [ext_resource type="PackedScene" uid="uid://beqpsgax6sxra" path="res://Entities/Objects/checkpoint.tscn" id="18_e5572"]
+[ext_resource type="PackedScene" uid="uid://v88ho0g4hweu" path="res://Entities/Objects/photo_shard.tscn" id="23_ty5wv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6ps50"]
 texture = ExtResource("2_40a2k")
@@ -672,6 +673,7 @@ offset_bottom = 384.0
 
 [node name="OpeningCutscene" type="Node" parent="."]
 script = ExtResource("13_ue107")
+force_play_cutscene = true
 
 [node name="Diamonds" type="Node" parent="."]
 
@@ -689,3 +691,7 @@ diamond_id = 3
 
 [node name="Checkpoint" parent="." instance=ExtResource("18_e5572")]
 position = Vector2(2284, -95)
+
+[node name="PhotoShard" parent="." instance=ExtResource("23_ty5wv")]
+visible = false
+position = Vector2(253, 372)

@@ -7,7 +7,6 @@ extends Node
 
 # References
 var player: Node2D = null
-var photo_shard_scene = preload("res://Entities/PhotoShard/photo_shard.tscn")
 var photo_shard_instance = null
 
 func _ready():
@@ -101,14 +100,14 @@ func register_opening_cutscene():
 	actions.append(CutsceneDirector.action_player_walk(start_x + walk_distance_1 + walk_distance_2, 40.0))
 
 	# Step 5: Photo shard appears at edge of screen
-	actions.append(CutsceneDirector.action_custom(spawn_photo_shard))
+	actions.append(CutsceneDirector.action_custom(show_photo_shard))
 	actions.append(CutsceneDirector.action_wait(0.5))
 
 	# Step 6: Dialogue "Huh...?"
 	actions.append(CutsceneDirector.action_dialogue(["Huh...?"]))
 
 	# Step 7: Sona walks over to the shard
-	var shard_x = start_x + walk_distance_1 + walk_distance_2 + 100.0
+	var shard_x = start_x + walk_distance_1 + walk_distance_2 + 25.0 # Must keep adding them
 	actions.append(CutsceneDirector.action_player_walk(shard_x, 50.0))
 
 	# Step 8: Pick up the shard
@@ -126,40 +125,42 @@ func register_opening_cutscene():
 	CutsceneDirector.register_cutscene("opening_sequence", actions)
 	print("Opening cutscene registered with %d actions" % actions.size())
 
-func spawn_photo_shard():
-	"""Spawn the photo shard at the edge of the screen"""
-	print("Spawning photo shard...")
 
-	if not photo_shard_scene:
-		push_error("Photo shard scene not found!")
-		return
+func show_photo_shard():
+	"""Make the photo shard visible and start bobbing animation"""
+	print("Showing photo shard...")
 
-	photo_shard_instance = photo_shard_scene.instantiate()
+	# Find the PhotoShard node in the scene
+	photo_shard_instance = get_tree().current_scene.get_node_or_null("PhotoShard")
 
-	# Position it ahead of the player
-	var spawn_x = player.global_position.x + 150.0
-	var spawn_y = player.global_position.y
-	photo_shard_instance.global_position = Vector2(spawn_x, spawn_y)
+	if photo_shard_instance:
+		# Make it visible
+		photo_shard_instance.visible = true
+		print("PhotoShard made visible")
 
-	# Add to scene
-	get_tree().current_scene.add_child(photo_shard_instance)
-
-	# Optional: Add a spawn animation (fade in, glow, etc.)
-	if photo_shard_instance.has_method("play_spawn_animation"):
-		photo_shard_instance.play_spawn_animation()
+		# Start the bobbing animation if available
+		if photo_shard_instance.has_method("play_spawn_animation"):
+			photo_shard_instance.play_spawn_animation()
+	else:
+		push_error("Could not find PhotoShard in scene!")
 
 func pickup_photo_shard():
 	"""Play pickup animation and remove the shard"""
 	print("Picking up photo shard...")
 
-	if photo_shard_instance:
-		# Optional: Play pickup animation
-		if photo_shard_instance.has_method("play_pickup_animation"):
-			photo_shard_instance.play_pickup_animation()
-			await get_tree().create_timer(0.5).timeout
+	# Find the photo shard in the scene
+	if not photo_shard_instance:
+		photo_shard_instance = get_tree().current_scene.get_node_or_null("PhotoShard")
 
-		# Remove the shard
-		photo_shard_instance.queue_free()
+	if photo_shard_instance:
+		# Trigger the collection which plays the pickup animation
+		if photo_shard_instance.has_method("collect"):
+			photo_shard_instance.collect()
+			await get_tree().create_timer(0.6).timeout  # Wait for fade_out_duration
+		else:
+			# Fallback: just remove it
+			photo_shard_instance.queue_free()
+
 		photo_shard_instance = null
 
 func create_photo_cutscene_frames() -> Array:

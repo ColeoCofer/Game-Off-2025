@@ -1,5 +1,16 @@
-[gd_scene format=3 uid="uid://v88ho0g4hweu"]
+[gd_scene load_steps=3 format=3 uid="uid://v88ho0g4hweu"]
 
-[node name="PhotoShard" type="Node2D"]
+[ext_resource type="Script" uid="uid://qervpaympbut" path="res://Entities/PhotoShard/photo_shard.gd" id="1_ip3u6"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qnq2t"]
+load_path = "res://.godot/imported/sona-sprite-sheet.png-c8ed2e1a339e2ea8168905746baa8ee7.ctex"
+
+[node name="PhotoShard" type="Area2D"]
+scale = Vector2(0.75, 0.75)
+script = ExtResource("1_ip3u6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_qnq2t")
+hframes = 20
+vframes = 20
+frame = 325

@@ -9,6 +9,7 @@ signal checkpoint_reached(checkpoint_position: Vector2)
 static var current_checkpoint_position: Vector2 = Vector2.ZERO
 static var has_checkpoint: bool = false
 static var checkpoint_level: String = ""  # Track which level the checkpoint is for
+static var checkpoint_timer_time: float = 0.0  # Store the timer time when checkpoint was activated
 
 var player: CharacterBody2D
 var level_start_position: Vector2 = Vector2.ZERO
@@ -65,6 +66,11 @@ func _on_checkpoint_activated(checkpoint_position: Vector2):
 	print("CheckpointManager: Checkpoint activated at ", checkpoint_position, " in level ", checkpoint_level)
 	checkpoint_reached.emit(checkpoint_position)
 
+func has_active_checkpoint() -> bool:
+	"""Returns true if the player has activated a checkpoint in the current level"""
+	var current_level = SceneManager.current_level if SceneManager else ""
+	return has_checkpoint and checkpoint_level == current_level
+
 func get_spawn_position() -> Vector2:
 	"""Get the position where the player should spawn (checkpoint or level start)"""
 	if has_checkpoint:
@@ -77,6 +83,7 @@ func reset_checkpoint():
 	has_checkpoint = false
 	current_checkpoint_position = Vector2.ZERO
 	checkpoint_level = ""
+	checkpoint_timer_time = 0.0
 	print("CheckpointManager: Checkpoint cleared")
 
 func _on_scene_changed(_scene_path: String):

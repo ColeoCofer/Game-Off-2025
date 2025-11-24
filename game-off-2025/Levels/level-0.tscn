@@ -488,22 +488,22 @@ position = Vector2(1405, 123)
 position = Vector2(1642, 86)
 
 [node name="MovingPlank4" parent="Objects" instance=ExtResource("7_40a2k")]
-position = Vector2(1323, 361)
+position = Vector2(1323, 349)
 movement_direction = 1
 
 [node name="MovingPlank5" parent="Objects" instance=ExtResource("7_40a2k")]
 position = Vector2(3643, -343)
-move_speed = 75.0
+move_speed = 80.0
 move_distance = 200.0
 
 [node name="MovingPlank6" parent="Objects" instance=ExtResource("7_40a2k")]
 position = Vector2(3929, -390)
-move_speed = 75.0
+move_speed = 80.0
 move_distance = 140.0
 
 [node name="MovingPlank7" parent="Objects" instance=ExtResource("7_40a2k")]
 position = Vector2(4137, -384)
-move_speed = 75.0
+move_speed = 80.0
 move_distance = 150.0
 
 [node name="FallingBlock" parent="Objects" instance=ExtResource("9_sqdhq")]
@@ -553,19 +553,22 @@ position = Vector2(89, 41)
 position = Vector2(834, 279)
 
 [node name="Butterfly2" parent="Butterflies" instance=ExtResource("10_ty5wv")]
-position = Vector2(1326, 250)
+position = Vector2(1324, 273)
 
 [node name="Butterfly3" parent="Butterflies" instance=ExtResource("10_ty5wv")]
 position = Vector2(1871, 100)
 
 [node name="Butterfly4" parent="Butterflies" instance=ExtResource("10_ty5wv")]
-position = Vector2(2126, -47)
+position = Vector2(2813, -171)
 
 [node name="Butterfly6" parent="Butterflies" instance=ExtResource("10_ty5wv")]
-position = Vector2(3123, -235)
+position = Vector2(3102, -280)
 
 [node name="Butterfly7" parent="Butterflies" instance=ExtResource("10_ty5wv")]
 position = Vector2(3719, -394)
+
+[node name="Butterfly8" parent="Butterflies" instance=ExtResource("10_ty5wv")]
+position = Vector2(4256, -446)
 
 [node name="Butterfly5" parent="Butterflies" instance=ExtResource("10_ty5wv")]
 position = Vector2(1951, -244)

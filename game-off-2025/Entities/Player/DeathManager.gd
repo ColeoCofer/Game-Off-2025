@@ -133,7 +133,10 @@ func trigger_hazard_death(hazard_position: Vector2 = Vector2.ZERO):
 
 		return  # Player survives!
 
-	TimerManager.stop_timer()
+	# Only stop timer if no checkpoint has been activated
+	# If checkpoint exists, timer continues through death
+	if not (checkpoint_manager and checkpoint_manager.has_active_checkpoint()):
+		TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "hazard"
@@ -173,7 +176,10 @@ func trigger_enemy_death():
 	if is_dead:
 		return
 
-	TimerManager.stop_timer()
+	# Only stop timer if no checkpoint has been activated
+	# If checkpoint exists, timer continues through death
+	if not (checkpoint_manager and checkpoint_manager.has_active_checkpoint()):
+		TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "enemy"
@@ -220,8 +226,11 @@ func trigger_fall_death():
 
 	if is_dead:
 		return
-		
-	TimerManager.stop_timer()
+
+	# Only stop timer if no checkpoint has been activated
+	# If checkpoint exists, timer continues through death
+	if not (checkpoint_manager and checkpoint_manager.has_active_checkpoint()):
+		TimerManager.stop_timer()
 
 	is_dead = true
 	death_reason = "fall"
@@ -252,7 +261,10 @@ func trigger_death():
 	is_dead = true
 	death_reason = "starvation"
 
-	TimerManager.stop_timer()
+	# Only stop timer if no checkpoint has been activated
+	# If checkpoint exists, timer continues through death
+	if not (checkpoint_manager and checkpoint_manager.has_active_checkpoint()):
+		TimerManager.stop_timer()
 
 	# Stop heartbeat sound
 	if hunger_manager and hunger_manager.has_method("stop_heartbeat"):

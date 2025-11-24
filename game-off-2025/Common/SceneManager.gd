@@ -226,7 +226,11 @@ func _fade_from_black() -> void:
 
 
 ## Reset the level timer (called on level start/restart)
-func reset_level_timer() -> void:
+## If preserve_time is true, keeps the current timer running (used for checkpoint respawns)
+func reset_level_timer(preserve_time: bool = false) -> void:
+	if preserve_time:
+		# Don't reset the timer - keep it running from before
+		return
 	current_level_start_time = Time.get_ticks_msec() / 1000.0
 
 
@@ -239,7 +243,23 @@ func _on_node_added(node: Node) -> void:
 		if level_info != null:
 			var scene_path = node.scene_file_path
 			if scene_path == level_info["path"]:
-				# Level was reloaded, reset the timer
-				reset_level_timer()
+				# Check if player had activated a checkpoint
+				# Access CheckpointManager's static variables to check checkpoint status
+				var has_checkpoint = false
+				var checkpoint_level = ""
+
+				# We need to check the static variables from CheckpointManager
+				# Since this is autoload, we access it via the class path
+				var checkpoint_manager_script = load("res://Entities/Player/CheckpointManager.gd")
+				if checkpoint_manager_script:
+					has_checkpoint = checkpoint_manager_script.has_checkpoint
+					checkpoint_level = checkpoint_manager_script.checkpoint_level
+
+				# Only preserve timer if checkpoint exists for this level
+				var preserve_timer = has_checkpoint and checkpoint_level == current_level
+
+				# Level was reloaded, reset the timer (or preserve if checkpoint exists)
+				reset_level_timer(preserve_timer)
+
 				# Clear temporary diamond collection (player died/restarted)
 				DiamondCollectionManager.start_level_run(current_level)

@@ -357,69 +357,69 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Check if this is actually a stomp scenario - forgiving fallback
-		var player_was_falling = false
-		if body is CharacterBody2D:
-			player_was_falling = body.velocity.y > 0
-
-		var player_bottom_y = body.global_position.y
+		# Get player's top position (for checking if blobby landed on player)
+		var player_top_y = body.global_position.y
 		if body.has_node("CollisionShape2D"):
 			var player_collision = body.get_node("CollisionShape2D")
 			if player_collision and player_collision.shape:
 				var shape = player_collision.shape
 				if shape is RectangleShape2D or shape is CapsuleShape2D:
 					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
+					player_top_y = body.global_position.y - (shape_height / 2.0)
 
-		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 12.0  # Forgiving fallback for blob enemy
-		var player_is_clearly_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
+		# Blobby's bottom position (collision shape is at y=3, capsule height=12, so bottom is at y=3+6=9)
+		var blobby_bottom_y = global_position.y + 9
 
-		var is_stomp_scenario = player_was_falling and player_is_clearly_above
+		# Check if blobby is falling onto the player (blobby's bottom near player's top)
+		var blobby_was_falling = velocity.y > 50.0  # Blobby must be falling with some speed
+		var KILL_TOLERANCE = 8.0  # How close blobby's bottom must be to player's top
+		var blobby_landed_on_player = blobby_was_falling and (blobby_bottom_y >= player_top_y - KILL_TOLERANCE) and (blobby_bottom_y <= player_top_y + KILL_TOLERANCE)
 
-		# If it's a stomp, kill blobby instead of the player
-		if is_stomp_scenario:
-			is_alive = false
-
-			# Disable both detectors
-			if damage_detector:
-				damage_detector.set_deferred("monitoring", false)
-				damage_detector.set_deferred("monitorable", false)
-
-			if stomp_detector:
-				stomp_detector.set_deferred("monitoring", false)
-				stomp_detector.set_deferred("monitorable", false)
-
-			set_physics_process(false)
-
-			var main_collision = get_node_or_null("CollisionShape2D")
-			if main_collision:
-				main_collision.set_deferred("disabled", true)
-
-			set_collision_layer_value(1, false)
-			set_collision_layer_value(2, false)
-			set_collision_mask_value(1, false)
-
-			# Disable detector collision shapes
-			if damage_detector:
-				var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			if stomp_detector:
-				var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
-				if collision_shape:
-					collision_shape.set_deferred("disabled", true)
-
-			_die_from_stomp(body)
+		# Player-friendly logic: Blobby only kills if landing on the player from above
+		# In all other cases (side collision, player jumping on blobby), blobby dies
+		if blobby_landed_on_player:
+			# Blobby landed on the player - kill the player
+			_kill_player(body)
 			return
 
 		# Safety check
 		if not is_alive:
 			return
 
-		# Otherwise, kill the player
-		_kill_player(body)
+		# Otherwise, treat it as a stomp - kill blobby (player-friendly!)
+		is_alive = false
+
+		# Disable both detectors
+		if damage_detector:
+			damage_detector.set_deferred("monitoring", false)
+			damage_detector.set_deferred("monitorable", false)
+
+		if stomp_detector:
+			stomp_detector.set_deferred("monitoring", false)
+			stomp_detector.set_deferred("monitorable", false)
+
+		set_physics_process(false)
+
+		var main_collision = get_node_or_null("CollisionShape2D")
+		if main_collision:
+			main_collision.set_deferred("disabled", true)
+
+		set_collision_layer_value(1, false)
+		set_collision_layer_value(2, false)
+		set_collision_mask_value(1, false)
+
+		# Disable detector collision shapes
+		if damage_detector:
+			var collision_shape = damage_detector.get_node_or_null("CollisionShape2D")
+			if collision_shape:
+				collision_shape.set_deferred("disabled", true)
+
+		if stomp_detector:
+			var collision_shape = stomp_detector.get_node_or_null("CollisionShape2D")
+			if collision_shape:
+				collision_shape.set_deferred("disabled", true)
+
+		_die_from_stomp(body)
 
 func _die_from_stomp(player: Node2D):
 	is_alive = false

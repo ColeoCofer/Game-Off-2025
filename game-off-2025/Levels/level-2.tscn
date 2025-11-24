@@ -695,7 +695,49 @@ emission_sphere_radius = 128.0
 [node name="CaveParticles4" parent="." instance=ExtResource("1_particles")]
 visible = false
 z_index = 10
-position = Vector2(2102, 210)
+position = Vector2(1659, 262)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles5" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(2017, 270)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles6" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(2512, 182)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles7" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(2974, 222)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles8" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(3476, 78)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles9" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(4394, -68)
+amount = 100
+emission_sphere_radius = 128.0
+
+[node name="CaveParticles10" parent="." instance=ExtResource("1_particles")]
+visible = false
+z_index = 10
+position = Vector2(4755, 112)
 amount = 100
 emission_sphere_radius = 128.0
 

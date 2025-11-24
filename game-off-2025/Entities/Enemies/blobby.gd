@@ -309,7 +309,7 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 		# Blobby's top position
 		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 10.0  # Very forgiving for blob enemy
+		var STOMP_TOLERANCE = 15.0  # Very forgiving for blob enemy
 		var player_is_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
 
 		# Valid stomp: player must be falling AND above

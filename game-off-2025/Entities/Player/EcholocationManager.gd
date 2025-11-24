@@ -91,6 +91,10 @@ func _process(delta: float):
 	# _update_vignette(delta)  # DISABLED - user didn't like the effect
 
 func can_use_echolocation() -> bool:
+	# Cannot use echolocation during cutscenes
+	if CutsceneDirector.is_cutscene_active:
+		return false
+
 	# Check cooldown
 	if cooldown_remaining > 0:
 		return false

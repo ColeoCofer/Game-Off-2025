@@ -18,10 +18,13 @@ func _ready():
 		print("Opening cutscene already played - skipping")
 		return
 
-	# Wait for scene to fully load
-	await get_tree().create_timer(0.5).timeout
+	# Stop the timer immediately (will restart after cutscene)
+	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("stop_timer"):
+		TimerManager.current_timer_ui.stop_timer()
+		print("Opening cutscene: Stopped timer")
 
-	# Find player - with capital P group name!! :/
+	# Find player immediately (no wait)
+	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("Player")
 	if not player:
 		push_error("Opening cutscene: Could not find player!")
@@ -29,17 +32,44 @@ func _ready():
 
 	print("Found player at position: ", player.global_position)
 
+	# Disable player control immediately and clear velocity
+	if player.has_method("disable_control"):
+		player.disable_control()
+		player.velocity = Vector2.ZERO
+		print("Opening cutscene: Disabled player control and cleared velocity")
+
 	# Register the opening cutscene
 	register_opening_cutscene()
 
-	# Start after a brief delay (allowing for fade-in)
+	# Wait before starting cutscene (player frozen, can see the level)
 	await get_tree().create_timer(1.0).timeout
 
-	# Play the opening sequence
+	# Clear velocity again and ensure player is facing right for the cutscene
+	player.velocity = Vector2.ZERO
+
+	# Find the AnimatedSprite2D to ensure proper facing direction
+	var anim_sprite: AnimatedSprite2D = null
+	if player.has_node("AnimatedSprite2D"):
+		anim_sprite = player.get_node("AnimatedSprite2D")
+	else:
+		for child in player.get_children():
+			if child is AnimatedSprite2D:
+				anim_sprite = child
+				break
+
+	if anim_sprite:
+		anim_sprite.flip_h = false  # Face right for the cutscene
+
+	# Play the opening sequence (will re-disable control, but that's fine)
 	CutsceneDirector.play_cutscene("opening_sequence")
 
 	# Wait for cutscene to finish
 	await CutsceneDirector.cutscene_finished
+
+	# Restart the timer now that cutscene is complete
+	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("start_timer"):
+		TimerManager.current_timer_ui.start_timer()
+		print("Opening cutscene: Restarted timer")
 
 	# Mark as played so it doesn't play again
 	SaveManager.mark_cutscene_played("opening_sequence")

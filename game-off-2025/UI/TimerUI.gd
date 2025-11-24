@@ -9,6 +9,8 @@ var current_time: float = 0.0
 var total_pause_time: float = 0.0
 var pause_start_time: float = 0.0
 var is_paused: bool = false
+var cutscene_start_time: float = 0.0
+var is_in_cutscene: bool = false
 
 
 func _ready() -> void:
@@ -25,6 +27,11 @@ func _ready() -> void:
 	# Set process mode to always run even when paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
+	# Connect to CutsceneDirector signals to pause timer during cutscenes
+	if CutsceneDirector:
+		CutsceneDirector.cutscene_started.connect(_on_cutscene_started)
+		CutsceneDirector.cutscene_finished.connect(_on_cutscene_finished)
+
 
 func _process(delta: float) -> void:
 	# Check for pause state changes
@@ -33,8 +40,8 @@ func _process(delta: float) -> void:
 	if not is_running or not visible:
 		return
 
-	# Don't update display while paused
-	if get_tree().paused:
+	# Don't update display while paused or in cutscene
+	if get_tree().paused or is_in_cutscene:
 		return
 
 	# Get time from SceneManager
@@ -89,3 +96,18 @@ func _update_display() -> void:
 	var seconds = int(current_time) % 60
 	var milliseconds = int((current_time - int(current_time)) * 100)
 	time_label.text = "%d:%02d.%02d" % [minutes, seconds, milliseconds]
+
+
+func _on_cutscene_started(cutscene_id: String) -> void:
+	"""Called when a cutscene starts - pause the timer"""
+	if not is_in_cutscene:
+		is_in_cutscene = true
+		cutscene_start_time = Time.get_ticks_msec() / 1000.0
+
+
+func _on_cutscene_finished(cutscene_id: String) -> void:
+	"""Called when a cutscene ends - resume the timer and add cutscene duration to pause time"""
+	if is_in_cutscene:
+		is_in_cutscene = false
+		var cutscene_duration = (Time.get_ticks_msec() / 1000.0) - cutscene_start_time
+		total_pause_time += cutscene_duration

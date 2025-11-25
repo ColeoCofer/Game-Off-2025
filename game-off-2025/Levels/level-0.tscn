@@ -673,6 +673,7 @@ offset_bottom = 384.0
 
 [node name="OpeningCutscene" type="Node" parent="."]
 script = ExtResource("13_ue107")
+force_play_cutscene = true
 
 [node name="Diamonds" type="Node" parent="."]
 

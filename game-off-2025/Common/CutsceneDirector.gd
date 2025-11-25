@@ -171,10 +171,22 @@ func _execute_next_action() -> void:
 func _action_dialogue(data: Dictionary) -> void:
 	"""Show dialogue"""
 	var lines = data.get("lines", [])
+	var audio_paths = data.get("audio_paths", [])
 	if lines.is_empty():
 		return
 
-	DialogueManager.start_simple_dialogue(lines)
+	# Check if we have audio paths - if so, create DialogueLines with audio
+	if not audio_paths.is_empty():
+		var dialogue_lines: Array[DialogueManager.DialogueLine] = []
+		for i in range(lines.size()):
+			var text = lines[i]
+			var audio_path = ""
+			if i < audio_paths.size():
+				audio_path = audio_paths[i]
+			dialogue_lines.append(DialogueManager.DialogueLine.new(text, "", 0.0, Callable(), audio_path))
+		DialogueManager.start_dialogue(dialogue_lines)
+	else:
+		DialogueManager.start_simple_dialogue(lines)
 	await DialogueManager.dialogue_finished
 
 func _action_wait(data: Dictionary) -> void:
@@ -384,8 +396,11 @@ func is_active() -> bool:
 	return is_cutscene_active
 
 # Helper functions to create actions
-static func action_dialogue(lines: Array) -> CutsceneAction:
-	return CutsceneAction.new(ActionType.DIALOGUE, {"lines": lines})
+static func action_dialogue(lines: Array, audio_paths: Array = []) -> CutsceneAction:
+	var data = {"lines": lines}
+	if not audio_paths.is_empty():
+		data["audio_paths"] = audio_paths
+	return CutsceneAction.new(ActionType.DIALOGUE, data)
 
 static func action_wait(duration: float) -> CutsceneAction:
 	return CutsceneAction.new(ActionType.WAIT, {"duration": duration})

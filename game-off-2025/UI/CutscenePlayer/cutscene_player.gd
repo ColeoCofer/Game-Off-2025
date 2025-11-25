@@ -12,12 +12,14 @@ signal frame_changed(frame_index: int)
 class CutsceneFrame:
 	var image_path: String = ""
 	var dialogue_lines: Array = []  # Array of strings for simple dialogue
+	var dialogue_audio_paths: Array = []  # Optional array of audio paths matching dialogue_lines
 	var duration: float = 0.0  # Auto-advance time in seconds (0 = manual)
 
-	func _init(p_image_path: String = "", p_dialogue: Array = [], p_duration: float = 0.0):
+	func _init(p_image_path: String = "", p_dialogue: Array = [], p_duration: float = 0.0, p_audio_paths: Array = []):
 		image_path = p_image_path
 		dialogue_lines = p_dialogue
 		duration = p_duration
+		dialogue_audio_paths = p_audio_paths
 
 # Node references
 @onready var background: ColorRect = $Background
@@ -155,8 +157,19 @@ func _display_frame_dialogue(frame: CutsceneFrame) -> void:
 		push_error("CutscenePlayer: DialogueManager not found")
 		return
 
-	# Start dialogue
-	DialogueManager.start_simple_dialogue(frame.dialogue_lines)
+	# Check if we have audio paths - if so, create DialogueLines with audio
+	if not frame.dialogue_audio_paths.is_empty():
+		var dialogue_lines: Array[DialogueManager.DialogueLine] = []
+		for i in range(frame.dialogue_lines.size()):
+			var text = frame.dialogue_lines[i]
+			var audio_path = ""
+			if i < frame.dialogue_audio_paths.size():
+				audio_path = frame.dialogue_audio_paths[i]
+			dialogue_lines.append(DialogueManager.DialogueLine.new(text, "", 0.0, Callable(), audio_path))
+		DialogueManager.start_dialogue(dialogue_lines)
+	else:
+		# Start simple dialogue without audio
+		DialogueManager.start_simple_dialogue(frame.dialogue_lines)
 
 	# Wait for dialogue to finish
 	await DialogueManager.dialogue_finished
@@ -224,6 +237,6 @@ func get_total_frames() -> int:
 	return cutscene_frames.size()
 
 # Helper function to create a cutscene frame
-static func create_frame(image_path: String, dialogue: Array = [], duration: float = 0.0) -> CutsceneFrame:
+static func create_frame(image_path: String, dialogue: Array = [], duration: float = 0.0, audio_paths: Array = []) -> CutsceneFrame:
 	"""Static helper to create a CutsceneFrame"""
-	return CutsceneFrame.new(image_path, dialogue, duration)
+	return CutsceneFrame.new(image_path, dialogue, duration, audio_paths)

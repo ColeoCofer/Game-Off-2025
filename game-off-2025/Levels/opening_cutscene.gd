@@ -90,7 +90,10 @@ func register_opening_cutscene():
 
 	# Step 2: Sona stops and dialogue appears
 	actions.append(CutsceneDirector.action_wait(0.3))
-	actions.append(CutsceneDirector.action_dialogue(["I should turn around..."]))
+	actions.append(CutsceneDirector.action_dialogue(
+		["I should turn around..."],
+		["res://Assets/Audio/dialogue/1 i should turn around-1.wav"]
+	))
 
 	# Step 3: Pause
 	actions.append(CutsceneDirector.action_wait(1.0))
@@ -104,7 +107,10 @@ func register_opening_cutscene():
 	actions.append(CutsceneDirector.action_wait(0.5))
 
 	# Step 6: Dialogue "Huh...?"
-	actions.append(CutsceneDirector.action_dialogue(["Huh...?"]))
+	actions.append(CutsceneDirector.action_dialogue(
+		["Huh...?"],
+		["res://Assets/Audio/dialogue/2 huh-1.wav"]
+	))
 
 	# Step 7: Sona walks over to the shard
 	var shard_x = start_x + walk_distance_1 + walk_distance_2 + 25.0 # Must keep adding them
@@ -170,32 +176,47 @@ func create_photo_cutscene_frames() -> Array:
 	# Create a temporary CutscenePlayer to access the create_frame method
 	var CutscenePlayerScript = load("res://UI/CutscenePlayer/cutscene_player.gd")
 
+	# Audio files 3 and 4 combined for "This photo...it looks familiar..."
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/looking-at-first-scrappng.png",
 		[
 			"This photo...it looks familiar..."
-		]
+		],
+		0.0,
+		["res://Assets/Audio/dialogue/3 this photo-1.wav"]
 	))
 
+	# Audio files 5 and 6 combined for "I think it's of me and my mom...right before..."
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-close-up-sad.png",
 		[
 			"I think it's of me and my mom...right before..."
-		]
+		],
+		0.0,
+		["res://Assets/Audio/dialogue/5 its of me and my mom-1.wav"]
 	))
 
+	# Audio files 8 and 9 combined for "It kills me to be so alone..."
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-crying.png",
 		[
 			"It kills me to be so alone...",
-		]
+		],
+		0.0,
+		["res://Assets/Audio/dialogue/8 it kills me-1.wav"]
 	))
-	
+
+	# Two dialogue lines with separate audio files
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-seeing-exit.png",
 		[
 			"There could be others out there...",
 			"But I lost my only family before I learned to fly..."
+		],
+		0.0,
+		[
+			"res://Assets/Audio/dialogue/10 there could be others out there-1.wav",
+			"res://Assets/Audio/dialogue/11 but i lost my only family-1.wav"
 		]
 	))
 
@@ -203,7 +224,9 @@ func create_photo_cutscene_frames() -> Array:
 		"res://Assets/Art/cut-scenes/black.png",
 		[
 			"Maybe there's another way..."
-		]
+		],
+		0.0,
+		["res://Assets/Audio/dialogue/13 maybe theres another way-1.wav"]
 	))
 
 	# Frame 4: Fade to black (we'll use a black image or the title image)

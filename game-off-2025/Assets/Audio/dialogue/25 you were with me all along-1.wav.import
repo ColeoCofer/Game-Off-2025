@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dxv6t0nvd3bp7"
+path="res://.godot/imported/25 you were with me all along-1.wav-95c649a63d691178ba4cbe5a5899b228.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/dialogue/25 you were with me all along-1.wav"
+dest_files=["res://.godot/imported/25 you were with me all along-1.wav-95c649a63d691178ba4cbe5a5899b228.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

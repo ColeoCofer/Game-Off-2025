@@ -222,7 +222,6 @@ zoom = Vector2(2.16, 2.16)
 
 [node name="EchoAudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_echo")
-volume_db = -16.293
 bus = &"Sounds"
 
 [node name="FlapAudioPlayer" type="AudioStreamPlayer" parent="."]

@@ -19,6 +19,7 @@ signal dialogue_box_hidden  # Emitted when box finishes hiding
 @onready var continue_indicator: Label = $ContinueIndicator
 @onready var typewriter_timer: Timer = $TypewriterTimer
 @onready var audio_player: AudioStreamPlayer = $AudioStreamPlayer
+@onready var dialogue_audio_player: AudioStreamPlayer = $DialogueAudioPlayer
 
 # State variables
 var current_text: String = ""
@@ -57,8 +58,8 @@ func _handle_advance_input():
 		# Advance to next dialogue
 		dialogue_advanced.emit()
 
-func show_dialogue(text: String, character_name: String = ""):
-	"""Display dialogue text with optional character name"""
+func show_dialogue(text: String, character_name: String = "", audio_path: String = ""):
+	"""Display dialogue text with optional character name and audio"""
 	current_text = text
 	displayed_text = ""
 	current_char_index = 0
@@ -72,6 +73,13 @@ func show_dialogue(text: String, character_name: String = ""):
 		character_name_label.visible = true
 	else:
 		character_name_label.visible = false
+
+	# Play dialogue audio if provided
+	if audio_path != "" and dialogue_audio_player:
+		var audio_stream = load(audio_path)
+		if audio_stream:
+			dialogue_audio_player.stream = audio_stream
+			dialogue_audio_player.play()
 
 	# Clear the text and start typewriter
 	dialogue_text.text = ""

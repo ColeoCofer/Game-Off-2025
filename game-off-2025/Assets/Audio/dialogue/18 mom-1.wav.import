@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b2m83fj8w766r"
+path="res://.godot/imported/18 mom-1.wav-e67494fdb3cffa9cdd267c2d560881d8.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/dialogue/18 mom-1.wav"
+dest_files=["res://.godot/imported/18 mom-1.wav-e67494fdb3cffa9cdd267c2d560881d8.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

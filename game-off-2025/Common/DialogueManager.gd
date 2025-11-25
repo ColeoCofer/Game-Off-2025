@@ -14,12 +14,14 @@ class DialogueLine:
 	var character: String = ""  # Optional character name
 	var pause_duration: float = 0.0  # Auto-advance delay (0 = manual)
 	var callback: Callable = Callable()  # Function to call after line displays
+	var audio_path: String = ""  # Optional path to dialogue audio file
 
-	func _init(p_text: String = "", p_character: String = "", p_pause: float = 0.0, p_callback: Callable = Callable()):
+	func _init(p_text: String = "", p_character: String = "", p_pause: float = 0.0, p_callback: Callable = Callable(), p_audio_path: String = ""):
 		text = p_text
 		character = p_character
 		pause_duration = p_pause
 		callback = p_callback
+		audio_path = p_audio_path
 
 # State variables
 var dialogue_box_scene: PackedScene = preload("res://UI/DialogueBox/dialogue_box.tscn")
@@ -116,7 +118,7 @@ func _advance_to_next_line() -> void:
 	line_changed.emit(current_line_index)
 
 	# Display the line
-	dialogue_box.show_dialogue(line.text, line.character)
+	dialogue_box.show_dialogue(line.text, line.character, line.audio_path)
 
 	# Wait for text to complete
 	await dialogue_box.text_fully_displayed
@@ -223,9 +225,14 @@ func cleanup() -> void:
 	current_line_index = -1
 
 # Helper function to create DialogueLine easily
-static func create_line(text: String, character: String = "", pause: float = 0.0, callback: Callable = Callable()) -> DialogueLine:
+static func create_line(text: String, character: String = "", pause: float = 0.0, callback: Callable = Callable(), audio_path: String = "") -> DialogueLine:
 	"""Static helper to create a DialogueLine"""
-	return DialogueLine.new(text, character, pause, callback)
+	return DialogueLine.new(text, character, pause, callback, audio_path)
+
+# Helper function to create DialogueLine with audio
+static func create_line_with_audio(text: String, audio_path: String, character: String = "", pause: float = 0.0) -> DialogueLine:
+	"""Static helper to create a DialogueLine with audio"""
+	return DialogueLine.new(text, character, pause, Callable(), audio_path)
 
 # Helper to create simple text-only dialogue
 static func create_simple_lines(texts: Array[String]) -> Array[DialogueLine]:

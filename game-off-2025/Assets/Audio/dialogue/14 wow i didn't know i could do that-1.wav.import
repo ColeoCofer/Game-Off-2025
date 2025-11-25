@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bowcjl0q7o5y3"
+path="res://.godot/imported/14 wow i didn't know i could do that-1.wav-7734475c2efa071dd5d14c7cb5699933.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/dialogue/14 wow i didn't know i could do that-1.wav"
+dest_files=["res://.godot/imported/14 wow i didn't know i could do that-1.wav-7734475c2efa071dd5d14c7cb5699933.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

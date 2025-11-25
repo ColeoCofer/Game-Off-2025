@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://uhsy7w5ut6k1"
+path="res://.godot/imported/16 what's this.alp-1.wav-139931a03b3736b1ca9ded8b8f594be3.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/dialogue/16 what's this.alp-1.wav"
+dest_files=["res://.godot/imported/16 what's this.alp-1.wav-139931a03b3736b1ca9ded8b8f594be3.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

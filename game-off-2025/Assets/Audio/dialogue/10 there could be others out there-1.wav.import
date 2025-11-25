@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cffb2u66t32if"
+path="res://.godot/imported/10 there could be others out there-1.wav-69f3b2fb34da483c1cef87dc39127c1a.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/dialogue/10 there could be others out there-1.wav"
+dest_files=["res://.godot/imported/10 there could be others out there-1.wav-69f3b2fb34da483c1cef87dc39127c1a.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

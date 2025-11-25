@@ -140,9 +140,16 @@ func collect(player: Node2D):
 	print("PhotoShard: Waiting before dialogue...")
 	await get_tree().create_timer(0.3).timeout
 
-	# Show dialogue
+	# Show dialogue with audio
 	print("PhotoShard: Starting dialogue...")
-	DialogueManager.start_simple_dialogue(["Huh, I found another photo scrap..."])
+	var dialogue_line = DialogueManager.DialogueLine.new(
+		"Huh, I found another photo scrap...",
+		"",
+		0.0,
+		Callable(),
+		"res://Assets/Audio/dialogue/27 i know what i need to do-1.wav"
+	)
+	DialogueManager.start_dialogue([dialogue_line])
 	print("PhotoShard: Waiting for dialogue to finish...")
 	await DialogueManager.dialogue_finished
 	print("PhotoShard: Dialogue finished!")

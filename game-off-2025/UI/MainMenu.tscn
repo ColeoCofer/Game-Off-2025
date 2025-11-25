@@ -1,6 +1,7 @@
-[gd_scene load_steps=23 format=3 uid="uid://bh6fggks3shfp"]
+[gd_scene load_steps=24 format=3 uid="uid://bh6fggks3shfp"]
 
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
+[ext_resource type="PackedScene" path="res://Entities/Particles/menu_particles.tscn" id="1_particles"]
 [ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Audio/UI/sona-title-no-text.png" id="2_6vw7e"]
 [ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://2ejioy4fw863" path="res://Assets/Art/ui/start-button-normal.png" id="2_normal"]
@@ -62,6 +63,11 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_6vw7e")
 expand_mode = 1
+
+[node name="MenuParticles" parent="Control" instance=ExtResource("1_particles")]
+z_index = 1
+position = Vector2(320, 180)
+randomness = 0.82
 
 [node name="Title" type="Label" parent="Control"]
 layout_mode = 1
@@ -227,7 +233,7 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 20
-text = "Close"
+text = "Back"
 
 [connection signal="pressed" from="Control/ButtonContainer/StartButtonContainer/StartButton" to="Control" method="_on_start_pressed"]
 [connection signal="pressed" from="Control/ButtonContainer/SettingsButtonContainer/SettingsButton" to="Control" method="_on_settings_pressed"]

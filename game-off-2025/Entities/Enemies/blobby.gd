@@ -106,6 +106,11 @@ func _physics_process(delta: float):
 
 func _process_walking():
 	"""Walking behavior: patrol and check for jumps"""
+	# If airborne while in walking state, don't change horizontal velocity
+	# This maintains momentum and prevents weird mid-air behavior
+	if not is_on_floor():
+		return
+
 	# Check if player is within activation range
 	var player = get_tree().get_first_node_in_group("Player")
 	if player:
@@ -129,12 +134,12 @@ func _process_walking():
 		return
 
 	# Check for edge of platform
-	if is_on_floor() and _should_jump_off_edge():
+	if _should_jump_off_edge():
 		_prepare_jump_off_ledge()
 		return
 
 	# Check if player is nearby and we should jump toward them
-	if is_on_floor() and _should_jump_at_player():
+	if _should_jump_at_player():
 		_prepare_jump_at_player()
 		return
 
@@ -163,8 +168,9 @@ func _process_jumping():
 
 func _track_nearby_player():
 	"""Always face the player when they're nearby AND on similar vertical level (only during walking)"""
-	# Safety check: only track during walking state
-	if current_state != State.WALKING:
+	# Safety check: only track during walking state AND when on the floor
+	# This prevents mid-air direction changes
+	if current_state != State.WALKING or not is_on_floor():
 		return
 
 	var player = get_tree().get_first_node_in_group("Player")

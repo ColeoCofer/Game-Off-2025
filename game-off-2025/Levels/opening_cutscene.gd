@@ -155,7 +155,7 @@ func pickup_photo_shard():
 	if photo_shard_instance:
 		# Trigger the collection which plays the pickup animation
 		if photo_shard_instance.has_method("collect"):
-			photo_shard_instance.collect()
+			photo_shard_instance.collect(player)
 			await get_tree().create_timer(0.6).timeout  # Wait for fade_out_duration
 		else:
 			# Fallback: just remove it

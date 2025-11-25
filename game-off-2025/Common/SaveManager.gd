@@ -29,11 +29,11 @@ var save_data = {
 
 func _ready():
 	load_game()
-	# Ensure tutorial and level 1 are always unlocked by default
+	# Ensure tutorial and level-0 (first level) are always unlocked by default
 	if not is_level_unlocked("tutorial"):
 		unlock_level("tutorial")
-	if not is_level_unlocked("level-1"):
-		unlock_level("level-1")
+	if not is_level_unlocked("level-0"):
+		unlock_level("level-0")
 
 	# Initialize audio bus volumes from saved settings
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Sounds"), get_sounds_volume())

@@ -363,28 +363,36 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Get player's top position (for checking if blobby landed on player)
-		var player_top_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_top_y = body.global_position.y - (shape_height / 2.0)
+		# Get velocities
+		var player_velocity_y = 0.0
+		if body is CharacterBody2D:
+			player_velocity_y = body.velocity.y
 
-		# Blobby's bottom position (collision shape is at y=3, capsule height=12, so bottom is at y=3+6=9)
-		var blobby_bottom_y = global_position.y + 9
+		var blobby_velocity_y = velocity.y
 
-		# Check if blobby is falling onto the player (blobby's bottom near player's top)
-		var blobby_was_falling = velocity.y > 50.0  # Blobby must be falling with some speed
-		var KILL_TOLERANCE = 8.0  # How close blobby's bottom must be to player's top
-		var blobby_landed_on_player = blobby_was_falling and (blobby_bottom_y >= player_top_y - KILL_TOLERANCE) and (blobby_bottom_y <= player_top_y + KILL_TOLERANCE)
+		# Get vertical positions (centers)
+		var player_center_y = body.global_position.y
+		var blobby_center_y = global_position.y
 
-		# Player-friendly logic: Blobby only kills if landing on the player from above
-		# In all other cases (side collision, player jumping on blobby), blobby dies
-		if blobby_landed_on_player:
-			# Blobby landed on the player - kill the player
+		# Determine who is "winning" the vertical battle
+		# Blobby kills player if:
+		# - Blobby is above the player (blobby center is higher/smaller y)
+		# - AND blobby is falling faster than player (or player is rising into blobby)
+		var blobby_is_above = blobby_center_y < player_center_y
+		var blobby_falling_onto_player = blobby_velocity_y > player_velocity_y + 50.0  # Blobby moving down relative to player
+
+		# Player kills blobby if:
+		# - Player is above blobby
+		# - OR player is falling onto blobby from above
+		var player_is_above = player_center_y < blobby_center_y
+		var player_falling_onto_blobby = player_velocity_y > blobby_velocity_y + 50.0
+
+		# Decision logic (player-friendly: ties go to player)
+		var blobby_wins = blobby_is_above and blobby_falling_onto_player
+		var player_wins = player_is_above or player_falling_onto_blobby or not blobby_wins
+
+		if blobby_wins and not player_wins:
+			# Blobby landed on the player from above - kill the player
 			_kill_player(body)
 			return
 
@@ -392,7 +400,7 @@ func _on_damage_detector_body_entered(body: Node2D):
 		if not is_alive:
 			return
 
-		# Otherwise, treat it as a stomp - kill blobby (player-friendly!)
+		# Otherwise, player wins - kill blobby
 		is_alive = false
 
 		# Disable both detectors

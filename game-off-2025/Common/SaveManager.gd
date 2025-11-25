@@ -45,7 +45,6 @@ func save_game():
 		var json_string = JSON.stringify(save_data, "\t")
 		file.store_string(json_string)
 		file.close()
-		print("Game saved successfully to: ", SAVE_FILE_PATH)
 	else:
 		push_error("Failed to save game data")
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://bh6fggks3shfp"]
+[gd_scene load_steps=25 format=3 uid="uid://bh6fggks3shfp"]
 
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
 [ext_resource type="PackedScene" path="res://Entities/Particles/menu_particles.tscn" id="1_particles"]
@@ -41,6 +41,18 @@ texture = ExtResource("11_quit_pressed")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_quit_hover"]
 texture = ExtResource("10_quit_hover")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_panel"]
+bg_color = Color(0.1, 0.1, 0.15, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.35, 0.5, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="MainMenu" type="CanvasLayer"]
 layer = 100
@@ -161,7 +173,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.1, 0.15, 1)
+color = Color(0, 0, 0, 0.5)
 
 [node name="CenterContainer" type="CenterContainer" parent="Control/SettingsPanel"]
 layout_mode = 1
@@ -174,6 +186,7 @@ grow_vertical = 2
 [node name="Panel" type="Panel" parent="Control/SettingsPanel/CenterContainer"]
 custom_minimum_size = Vector2(400, 350)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_settings_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/SettingsPanel/CenterContainer/Panel"]
 layout_mode = 1

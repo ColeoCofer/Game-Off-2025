@@ -26,6 +26,7 @@ extends CharacterBody2D
 @export var jump_preparation_time: float = 0.4
 @export var jump_cooldown_time: float = 0.5
 @export_enum("Left:-1", "Right:1") var starting_direction: int = 1
+@export var invincibility_duration: float = 0.8  # Brief invincibility after hitting player
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var floor_raycast: RayCast2D = $FloorRayCast
@@ -42,6 +43,8 @@ var death_material: ShaderMaterial
 var is_preparing_jump: bool = false
 var jump_cooldown_timer: float = 0.0
 var jump_direction: int = 1  # Direction locked in when jumping starts
+var is_invincible: bool = false  # Brief invincibility after hitting player
+var invincibility_timer: float = 0.0
 
 # Audio
 var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
@@ -71,6 +74,12 @@ func _physics_process(delta: float):
 	# Update jump cooldown timer
 	if jump_cooldown_timer > 0:
 		jump_cooldown_timer -= delta
+
+	# Update invincibility timer
+	if invincibility_timer > 0:
+		invincibility_timer -= delta
+		if invincibility_timer <= 0:
+			is_invincible = false
 
 	# Apply gravity
 	if not is_on_floor():
@@ -296,30 +305,35 @@ func _on_stomp_detector_body_entered(body: Node2D):
 	if not is_alive:
 		return
 
+	# If blobby is invincible, ignore stomps
+	if is_invincible:
+		return
+
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Forgiving velocity check: any downward movement counts as falling
-		var player_falling = false
+		# Get velocities to determine who's winning
+		var player_velocity_y = 0.0
 		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 0
+			player_velocity_y = body.velocity.y
 
-		# Get player's bottom position
-		var player_bottom_y = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var player_collision = body.get_node("CollisionShape2D")
-			if player_collision and player_collision.shape:
-				var shape = player_collision.shape
-				if shape is RectangleShape2D or shape is CapsuleShape2D:
-					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
-					player_bottom_y = body.global_position.y + (shape_height / 2.0)
+		var blobby_velocity_y = velocity.y
 
-		# Blobby's top position
-		var blobby_top_y = global_position.y - 6
-		var STOMP_TOLERANCE = 15.0  # Very forgiving for blob enemy
-		var player_is_above = player_bottom_y <= blobby_top_y + STOMP_TOLERANCE
+		# Get vertical positions
+		var player_center_y = body.global_position.y
+		var blobby_center_y = global_position.y
 
-		# Valid stomp: player must be falling AND above
-		if player_falling and player_is_above:
+		# Player only wins (stomps blobby) if player is clearly above AND falling onto blobby
+		# This prevents blobby from dying when IT lands on the player
+		var player_is_above = player_center_y < blobby_center_y
+		var player_falling_onto_blobby = player_velocity_y > blobby_velocity_y + 50.0
+
+		# Blobby wins if blobby is above and falling faster
+		var blobby_is_above = blobby_center_y < player_center_y
+		var blobby_falling_onto_player = blobby_velocity_y > player_velocity_y + 50.0
+		var blobby_wins = blobby_is_above and blobby_falling_onto_player
+
+		# Valid stomp: player must be above blobby AND falling onto it, AND blobby isn't winning
+		if player_is_above and player_falling_onto_blobby and not blobby_wins:
 			# Mark as dead immediately
 			is_alive = false
 
@@ -361,6 +375,10 @@ func _on_damage_detector_body_entered(body: Node2D):
 	if not is_alive:
 		return
 
+	# If blobby is invincible (just hit the player), ignore collisions
+	if is_invincible:
+		return
+
 	# Check if it's the player
 	if body.is_in_group("Player"):
 		# Get velocities
@@ -392,7 +410,12 @@ func _on_damage_detector_body_entered(body: Node2D):
 		var player_wins = player_is_above or player_falling_onto_blobby or not blobby_wins
 
 		if blobby_wins and not player_wins:
-			# Blobby landed on the player from above - kill the player
+			# Grant blobby invincibility BEFORE hitting player to prevent race conditions
+			# where stomp detector fires in the same frame
+			_start_invincibility()
+			# Bounce blobby upward to physically separate from player
+			velocity.y = -200.0
+			# Blobby landed on the player from above - damage the player
 			_kill_player(body)
 			return
 
@@ -535,3 +558,34 @@ func _kill_player(player: Node2D):
 	if death_manager and death_manager.has_method("trigger_hazard_death"):
 		# Pass blobby's position so player gets knocked back in the right direction
 		death_manager.trigger_hazard_death(global_position)
+
+func _start_invincibility():
+	"""Grant blobby brief invincibility after hitting the player"""
+	is_invincible = true
+	invincibility_timer = invincibility_duration
+
+	# Visual feedback: flash blobby to show invincibility
+	if animated_sprite:
+		_flash_invincibility()
+
+func _flash_invincibility():
+	"""Flash the sprite during invincibility"""
+	if not animated_sprite or not is_alive:
+		return
+
+	var flash_interval = 0.1
+	var flashes = int(invincibility_duration / (flash_interval * 2))
+
+	for i in range(flashes):
+		if not is_alive or not is_invincible:
+			break
+		animated_sprite.modulate.a = 0.4
+		await get_tree().create_timer(flash_interval).timeout
+		if not is_alive or not is_invincible:
+			break
+		animated_sprite.modulate.a = 1.0
+		await get_tree().create_timer(flash_interval).timeout
+
+	# Ensure sprite is fully visible at the end
+	if animated_sprite and is_alive:
+		animated_sprite.modulate.a = 1.0

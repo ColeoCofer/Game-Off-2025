@@ -20,9 +20,13 @@ signal dialogue_box_hidden  # Emitted when box finishes hiding
 @onready var typewriter_timer: Timer = $TypewriterTimer
 @onready var audio_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var dialogue_audio_player: AudioStreamPlayer = $DialogueAudioPlayer
+@onready var background: ColorRect = $Background
+@onready var border: ColorRect = $Border
+@onready var content_margin: MarginContainer = $ContentMargin
 
 # State variables
 var current_text: String = ""
+var is_empty_text_mode: bool = false  # True when showing only continue indicator
 var displayed_text: String = ""
 var current_char_index: int = 0
 var is_typing: bool = false
@@ -59,13 +63,38 @@ func _handle_advance_input():
 		dialogue_advanced.emit()
 
 func show_dialogue(text: String, character_name: String = "", audio_path: String = ""):
-	"""Display dialogue text with optional character name and audio"""
+	"""Display dialogue text with optional character name and audio.
+	If text is empty (""), only shows the continue indicator without the dialogue box."""
 	current_text = text
 	displayed_text = ""
 	current_char_index = 0
 	character_count = 0
 	can_advance = false
 	continue_indicator.visible = false
+
+	# Check for empty text mode - show only continue indicator
+	if text == "":
+		is_empty_text_mode = true
+		is_typing = false
+		can_advance = true
+
+		# Hide dialogue box elements
+		background.visible = false
+		border.visible = false
+		content_margin.visible = false
+
+		# Show only the continue indicator
+		continue_indicator.visible = true
+		text_fully_displayed.emit()
+		return
+
+	# Normal dialogue mode
+	is_empty_text_mode = false
+
+	# Show dialogue box elements (in case they were hidden)
+	background.visible = true
+	border.visible = true
+	content_margin.visible = true
 
 	# Set character name
 	if character_name != "":
@@ -94,6 +123,20 @@ func show_box():
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(self, "modulate:a", 1.0, fade_duration)
 	tween.finished.connect(_on_show_complete)
+
+func show_box_empty_text_mode():
+	"""Show the box instantly without fade, with elements hidden (for empty text mode).
+	Only shows the continue indicator."""
+	visible = true
+	modulate.a = 1.0
+	is_empty_text_mode = true
+	background.visible = false
+	border.visible = false
+	content_margin.visible = false
+	continue_indicator.visible = true
+	can_advance = true
+	is_typing = false
+	dialogue_box_shown.emit()
 
 func hide_box():
 	"""Fade out the dialogue box"""
@@ -186,5 +229,11 @@ func clear():
 	current_char_index = 0
 	is_typing = false
 	can_advance = false
+	is_empty_text_mode = false
 	continue_indicator.visible = false
 	character_name_label.visible = false
+
+	# Restore dialogue box elements visibility
+	background.visible = true
+	border.visible = true
+	content_margin.visible = true

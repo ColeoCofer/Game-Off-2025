@@ -74,9 +74,16 @@ func start_dialogue(lines: Array) -> void:
 	if dialogue_box:
 		dialogue_box.clear()
 
-	# Show the box and start dialogue
-	dialogue_box.show_box()
-	await dialogue_box.dialogue_box_shown
+	# Check if the first line is empty text (just show continue indicator)
+	var first_line: DialogueLine = dialogue_queue[0]
+	var is_first_line_empty = first_line.text == ""
+
+	# Show the box (using empty text mode if first line is empty)
+	if is_first_line_empty:
+		dialogue_box.show_box_empty_text_mode()
+	else:
+		dialogue_box.show_box()
+		await dialogue_box.dialogue_box_shown
 
 	dialogue_started.emit()
 

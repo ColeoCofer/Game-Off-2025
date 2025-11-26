@@ -112,6 +112,7 @@ func can_use_echolocation() -> bool:
 	if hunger_manager:
 		var hunger_cost = hunger_manager.max_hunger * (hunger_cost_percentage / 100.0)
 		return hunger_manager.current_hunger > hunger_cost
+
 	return false
 
 func trigger_echolocation():

@@ -760,6 +760,19 @@ func walk_into_cave_and_end():
 	"""Walk Sona into the cave entrance and fade to ending"""
 	print("Walking into cave...")
 
+	# IMPORTANT: Disable the CaveEntrance so it doesn't trigger level completion!
+	var cave_entrance = get_tree().current_scene.find_child("CaveEntrance", true, false)
+	if cave_entrance:
+		# Set is_animating = true so it ignores player entry (check in _on_trigger_entered)
+		cave_entrance.is_animating = true
+		print("CaveEntrance is_animating set to true - will ignore player")
+
+		# Also disconnect the signal to be extra safe
+		var trigger_area = cave_entrance.get_node_or_null("TriggerArea")
+		if trigger_area and trigger_area.body_entered.is_connected(cave_entrance._on_trigger_entered):
+			trigger_area.body_entered.disconnect(cave_entrance._on_trigger_entered)
+			print("CaveEntrance TriggerArea signal disconnected")
+
 	var anim_sprite: AnimatedSprite2D = player.get_node_or_null("AnimatedSprite2D")
 
 	# Face right and walk
@@ -827,12 +840,19 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 		[""]
 	))
 
+	# Hide the fade layer so we can see the cutscene images
+	if fade_layer and is_instance_valid(fade_layer):
+		fade_layer.visible = false
+		print("FadeLayer hidden for cutscene")
+
 	# Get or create cutscene player
 	var cutscene_player = get_tree().get_first_node_in_group("cutscene_player")
+	var we_created_cutscene_player = false
 	if not cutscene_player:
 		var scene = load("res://UI/CutscenePlayer/cutscene_player.tscn")
 		cutscene_player = scene.instantiate()
 		get_tree().root.add_child(cutscene_player)
+		we_created_cutscene_player = true
 
 	# Play the ending cutscene
 	cutscene_player.play_cutscene(cutscene_frames)
@@ -840,12 +860,28 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 
 	print("Ending cutscene complete!")
 
+	# Wait a frame to let the cutscene_player finish its signal emission
+	await get_tree().process_frame
+
+	# Clean up cutscene player if we created it (use queue_free since we waited a frame)
+	if we_created_cutscene_player and is_instance_valid(cutscene_player):
+		cutscene_player.queue_free()
+		print("CutscenePlayer queued for removal")
+
 	# Clean up fade layer
-	if fade_layer:
+	if fade_layer and is_instance_valid(fade_layer):
 		fade_layer.queue_free()
+		print("FadeLayer queued for removal")
+
+	# Wait another frame for queue_free to process
+	await get_tree().process_frame
 
 	# Reset all global state before leaving the level
 	cleanup_before_scene_change()
+
+	# Wait for queue_free to process
+	await get_tree().process_frame
+	await get_tree().process_frame
 
 	# TODO: Show final title screen (to be added by user)
 	# TODO: Roll credits (to be added by user)
@@ -860,26 +896,32 @@ func cleanup_before_scene_change():
 	"""Reset all global state that was modified during this cutscene"""
 	print("Cleaning up before scene change...")
 
+	# CRITICAL: Reset CutsceneDirector state (it's an autoload that persists!)
+	CutsceneDirector.is_cutscene_active = false
+	CutsceneDirector.active_cutscene_id = ""
+	CutsceneDirector.current_actions.clear()
+	CutsceneDirector.current_action_index = -1
+	print("CutsceneDirector state reset")
+
+	# Reset DialogueManager state (also an autoload)
+	if DialogueManager.is_dialogue_active:
+		DialogueManager.skip_dialogue()
+	print("DialogueManager state reset")
+
 	# Remove any FadeLayer we added to root (persists across scene changes!)
-	# Use free() instead of queue_free() for immediate removal
 	var root = get_tree().root
 
-	var fade_layer = root.get_node_or_null("FadeLayer")
-	if fade_layer:
-		fade_layer.get_parent().remove_child(fade_layer)
-		fade_layer.free()
-		print("Removed FadeLayer from root")
+	var fade_layer_node = root.get_node_or_null("FadeLayer")
+	if fade_layer_node and is_instance_valid(fade_layer_node):
+		fade_layer_node.queue_free()
+		print("Queued FadeLayer for removal from root")
 
 	# Clean up any cutscene players we added to root
-	var nodes_to_remove = []
 	for child in root.get_children():
 		if child.name == "FadeLayer" or child.name == "CutscenePlayer" or child.is_in_group("cutscene_player"):
-			nodes_to_remove.append(child)
-
-	for node in nodes_to_remove:
-		node.get_parent().remove_child(node)
-		node.free()
-		print("Removed lingering node from root: ", node.name)
+			if is_instance_valid(child):
+				child.queue_free()
+				print("Queued lingering node for removal: ", child.name)
 
 	# Reset EcholocationManager state
 	if echolocation_manager:

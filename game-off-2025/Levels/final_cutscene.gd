@@ -516,6 +516,7 @@ func create_final_cutscene_frames() -> Array:
 	))
 
 	# Frame 2: sona-full-photo-above.png - despair and hope
+	# Use "|" to play multiple audio files sequentially for a single dialogue line
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
 		[
@@ -527,11 +528,9 @@ func create_final_cutscene_frames() -> Array:
 		0.0,
 		[
 			"res://Assets/Audio/dialogue/20 i let you down-1.wav",
-			"res://Assets/Audio/dialogue/21 i knew i couldn't do it without you-1.wav",
-			#"res://Assets/Audio/dialogue/22 without you here-1.wav",
+			"res://Assets/Audio/dialogue/21 i knew i couldn't do it without you-1.wav|res://Assets/Audio/dialogue/22 without you here-1.wav",
 			"",  # No audio for "..."
-			#"res://Assets/Audio/dialogue/23 wait a minute-1.wav",
-			"res://Assets/Audio/dialogue/24 theres writing on the other side-1.wav"
+			"res://Assets/Audio/dialogue/23 wait a minute-1.wav|res://Assets/Audio/dialogue/24 theres writing on the other side-1.wav"
 		]
 	))
 

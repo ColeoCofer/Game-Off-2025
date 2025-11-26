@@ -104,11 +104,18 @@ func show_dialogue(text: String, character_name: String = "", audio_path: String
 		character_name_label.visible = false
 
 	# Play dialogue audio if provided
+	# Supports multiple audio paths separated by "|" - plays them sequentially
 	if audio_path != "" and dialogue_audio_player:
-		var audio_stream = load(audio_path)
-		if audio_stream:
-			dialogue_audio_player.stream = audio_stream
-			dialogue_audio_player.play()
+		if "|" in audio_path:
+			# Multiple audio files - play them in sequence
+			var audio_paths = audio_path.split("|")
+			_play_audio_sequence(audio_paths)
+		else:
+			# Single audio file
+			var audio_stream = load(audio_path)
+			if audio_stream:
+				dialogue_audio_player.stream = audio_stream
+				dialogue_audio_player.play()
 
 	# Clear the text and start typewriter
 	dialogue_text.text = ""
@@ -152,6 +159,42 @@ func _on_show_complete():
 func _on_hide_complete():
 	visible = false
 	dialogue_box_hidden.emit()
+
+var _audio_queue: Array = []
+
+func _play_audio_sequence(audio_paths: Array) -> void:
+	"""Play multiple audio files in sequence"""
+	_audio_queue = []
+	for path in audio_paths:
+		var trimmed = path.strip_edges()
+		if trimmed != "":
+			_audio_queue.append(trimmed)
+
+	if _audio_queue.is_empty():
+		return
+
+	# Connect to finished signal if not already connected
+	if not dialogue_audio_player.finished.is_connected(_on_sequence_audio_finished):
+		dialogue_audio_player.finished.connect(_on_sequence_audio_finished)
+
+	# Play the first audio
+	_play_next_in_sequence()
+
+func _play_next_in_sequence() -> void:
+	"""Play the next audio file in the queue"""
+	if _audio_queue.is_empty():
+		return
+
+	var next_path = _audio_queue.pop_front()
+	var audio_stream = load(next_path)
+	if audio_stream:
+		dialogue_audio_player.stream = audio_stream
+		dialogue_audio_player.play()
+
+func _on_sequence_audio_finished() -> void:
+	"""Called when an audio in the sequence finishes"""
+	if not _audio_queue.is_empty():
+		_play_next_in_sequence()
 
 func _on_typewriter_timer_timeout():
 	if not is_typing:

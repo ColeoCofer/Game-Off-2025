@@ -44,6 +44,12 @@ func _ready():
 	if echolocation_manager:
 		print("Final cutscene: Found EcholocationManager")
 
+	# Hide the PhotoShard at the start - it will pop in later during the cutscene
+	var shard = find_photo_shard()
+	if shard:
+		shard.visible = false
+		print("Final cutscene: Hid PhotoShard at start")
+
 	# Disable player control immediately and clear velocity
 	if player.has_method("disable_control"):
 		player.disable_control()
@@ -235,7 +241,7 @@ func pan_camera_to_shard():
 		if shard:
 			# Pan left while keeping the vertical offset from setup
 			# Current offset should be (0, -40) from setup_camera_for_scene
-			var target_offset = Vector2(-80, -40)  # Pan left, keep vertical offset
+			var target_offset = Vector2(-95, -40)  # Pan left to show both walls, keep vertical offset
 
 			var tween = create_tween()
 			tween.set_ease(Tween.EASE_IN_OUT)

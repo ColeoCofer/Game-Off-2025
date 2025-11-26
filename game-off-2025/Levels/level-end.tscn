@@ -478,7 +478,7 @@ position = Vector2(368, 416)
 position = Vector2(456, 416)
 
 [node name="Player" parent="." instance=ExtResource("9_mh1nu")]
-position = Vector2(174, 522)
+position = Vector2(174, 519)
 maxStepHeight = 16.0
 
 [node name="Foreground" type="Node2D" parent="."]

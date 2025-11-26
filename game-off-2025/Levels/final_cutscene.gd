@@ -20,17 +20,22 @@ var has_triggered_flight = false
 var radial_glow_instance: ColorRect = null
 
 func _ready():
-	print("=== Final Cutscene Setup ===")
+	# IMMEDIATELY clear any checkpoint from previous levels to prevent wrong spawn position
+	# This must happen BEFORE CheckpointManager._ready() can apply a stale checkpoint
+	# Access the static variables directly through the script class
+	var cm_script = preload("res://Entities/Player/CheckpointManager.gd")
+	cm_script.has_checkpoint = false
+	cm_script.current_checkpoint_position = Vector2.ZERO
+	cm_script.checkpoint_level = ""
+	cm_script.checkpoint_timer_time = 0.0
 
 	# Check if this cutscene has already been played (unless force_play_cutscene is enabled)
 	if not force_play_cutscene and SaveManager.has_cutscene_played("final_sequence"):
-		print("Final cutscene already played - skipping")
 		return
 
 	# Stop the timer immediately (will restart after cutscene if needed)
 	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("stop_timer"):
 		TimerManager.current_timer_ui.stop_timer()
-		print("Final cutscene: Stopped timer")
 
 	# Find player immediately (no wait)
 	await get_tree().process_frame
@@ -39,35 +44,26 @@ func _ready():
 		push_error("Final cutscene: Could not find player!")
 		return
 
-	print("Found player at position: ", player.global_position)
-
 	# Get camera reference
 	camera = player.get_node_or_null("Camera2D")
-	if camera:
-		print("Final cutscene: Found camera")
 
 	# Find EcholocationManager
 	echolocation_manager = get_tree().get_first_node_in_group("echolocation_manager")
-	if echolocation_manager:
-		print("Final cutscene: Found EcholocationManager")
 
 	# Hide the PhotoShard at the start - it will pop in later during the cutscene
 	var shard = find_photo_shard()
 	if shard:
 		shard.visible = false
-		print("Final cutscene: Hid PhotoShard at start")
 
 	# Disable player control immediately and clear velocity
 	if player.has_method("disable_control"):
 		player.disable_control()
 		player.velocity = Vector2.ZERO
-		print("Final cutscene: Disabled player control and cleared velocity")
 
 	# Stop hunger depletion during cutscene
 	var hunger_manager = player.get_node_or_null("HungerManager")
 	if hunger_manager and hunger_manager.has_method("set_depletion_active"):
 		hunger_manager.set_depletion_active(false)
-		print("Final cutscene: Stopped hunger depletion")
 
 	# Register the final cutscene
 	register_final_cutscene()
@@ -168,13 +164,10 @@ func register_final_cutscene():
 
 	# Register the complete sequence
 	CutsceneDirector.register_cutscene("final_sequence", actions)
-	print("Final cutscene registered with %d actions" % actions.size())
 
 
 func setup_camera_for_scene():
 	"""Set up camera to show more of the scene - move up to see the cliff top"""
-	print("Setting up camera for scene...")
-
 	if not camera:
 		camera = player.get_node_or_null("Camera2D")
 
@@ -187,16 +180,12 @@ func setup_camera_for_scene():
 		tween.set_trans(Tween.TRANS_CUBIC)
 		tween.tween_property(camera, "offset", target_offset, 0.5)
 		await tween.finished
-
-		print("Camera moved up to show cliff")
 	else:
 		push_warning("Could not find camera for setup")
 
 
 func trigger_echolocation_reveal():
 	"""Trigger echolocation and prevent darkness from fading back in"""
-	print("Triggering echolocation reveal...")
-
 	if not echolocation_manager:
 		echolocation_manager = get_tree().get_first_node_in_group("echolocation_manager")
 
@@ -218,8 +207,6 @@ func trigger_echolocation_reveal():
 		var echo_audio = player.get_node_or_null("EchoAudioPlayer")
 		if echo_audio:
 			echo_audio.play()
-
-		print("Echolocation triggered with permanent reveal")
 	else:
 		push_warning("Could not find EcholocationManager for echolocation reveal")
 
@@ -240,8 +227,6 @@ func find_photo_shard() -> Node:
 
 func pan_camera_to_shard():
 	"""Pan camera left to show the photo shard and player, then lock it in place"""
-	print("Panning camera to photo shard and locking...")
-
 	if not camera:
 		camera = player.get_node_or_null("Camera2D")
 
@@ -265,8 +250,6 @@ func pan_camera_to_shard():
 			camera.get_parent().remove_child(camera)
 			get_tree().current_scene.add_child(camera)
 			camera.global_position = camera_global_pos
-
-			print("Camera panned and locked in place")
 		else:
 			push_warning("Could not find PhotoShard for camera pan")
 	else:
@@ -275,8 +258,6 @@ func pan_camera_to_shard():
 
 func show_god_rays_on_shard():
 	"""Create god rays shining down on the photo shard"""
-	print("Creating god rays on photo shard...")
-
 	var shard = find_photo_shard()
 	if not shard:
 		push_warning("Could not find PhotoShard for god rays")
@@ -326,13 +307,9 @@ func show_god_rays_on_shard():
 	tween.tween_property(god_rays_instance, "modulate:a", 1.0, 1.0)
 	await tween.finished
 
-	print("God rays created and faded in")
-
 
 func show_photo_shard_with_pop():
 	"""Make the photo shard visible with a pop animation and sound"""
-	print("Showing photo shard with pop...")
-
 	# Find the PhotoShard node in the scene
 	photo_shard_instance = find_photo_shard()
 
@@ -390,16 +367,12 @@ func show_photo_shard_with_pop():
 		tween2.set_ease(Tween.EASE_OUT)
 		tween2.tween_property(photo_shard_instance, "scale", original_scale, 0.15)
 		await tween2.finished
-
-		print("PhotoShard pop animation complete")
 	else:
 		push_error("Could not find PhotoShard in scene!")
 
 
 func walk_to_shard_hold_and_dialogue():
 	"""Make Sona walk over to the photo shard, pull it out, say dialogue, then fade shard"""
-	print("Walking to photo shard...")
-
 	if not photo_shard_instance:
 		photo_shard_instance = find_photo_shard()
 
@@ -434,8 +407,6 @@ func walk_to_shard_hold_and_dialogue():
 		anim_sprite.play("idle")
 		anim_sprite.flip_h = false  # Face right toward shard
 
-	print("Reached photo shard, now picking up...")
-
 	# Brief pause before pickup
 	await get_tree().create_timer(0.3).timeout
 
@@ -464,8 +435,6 @@ func walk_to_shard_hold_and_dialogue():
 
 	await tween.finished
 
-	print("Sona is now holding the photo shard")
-
 	# --- Show dialogue while holding shard ---
 	var dialogue_lines: Array[DialogueManager.DialogueLine] = []
 	dialogue_lines.append(DialogueManager.DialogueLine.new(
@@ -479,8 +448,6 @@ func walk_to_shard_hold_and_dialogue():
 	await DialogueManager.dialogue_finished
 
 	# --- Fade out the shard and its light ---
-	print("Fading out photo shard...")
-
 	if photo_shard_instance:
 		var fade_tween = photo_shard_instance.create_tween()
 		fade_tween.set_parallel(true)
@@ -499,8 +466,6 @@ func walk_to_shard_hold_and_dialogue():
 	if god_rays_instance:
 		god_rays_instance.queue_free()
 		god_rays_instance = null
-
-	print("Photo shard sequence complete")
 
 
 func create_final_cutscene_frames() -> Array:
@@ -562,8 +527,6 @@ func create_final_cutscene_frames() -> Array:
 
 func setup_post_cutscene_gameplay():
 	"""Set up the scene for post-cutscene exploration and flight trigger"""
-	print("=== Setting up post-cutscene gameplay ===")
-
 	# 1. Restore camera to follow the player
 	if camera and camera.get_parent() != player:
 		var cam_global_pos = camera.global_position
@@ -571,7 +534,6 @@ func setup_post_cutscene_gameplay():
 		player.add_child(camera)
 		camera.position = Vector2.ZERO
 		camera.offset = Vector2.ZERO
-		print("Camera restored to player")
 
 	# 2. Reset echolocation to normal fade behavior
 	if echolocation_manager:
@@ -579,7 +541,6 @@ func setup_post_cutscene_gameplay():
 		echolocation_manager.echo_pulses.clear()  # Clear permanent reveal
 		# Set callback to control echolocation (only allow in correct spot)
 		echolocation_manager.echolocation_check_callback = _check_echolocation_allowed
-		print("Echolocation reset to normal, check callback set")
 
 	# 3. Keep hunger full and disable depletion (Sona can't die in this level)
 	var hunger_manager = player.get_node_or_null("HungerManager")
@@ -588,14 +549,10 @@ func setup_post_cutscene_gameplay():
 		# Set hunger to max
 		if hunger_manager.has_method("restore_hunger"):
 			hunger_manager.restore_hunger(100.0)
-		print("Hunger kept full, depletion disabled")
 
 	# 4. Re-enable player control
 	if player.has_method("enable_control"):
 		player.enable_control()
-		print("Player control re-enabled")
-
-	print("Post-cutscene setup complete - player can now explore!")
 
 
 func _check_echolocation_allowed(player_pos: Vector2) -> bool:
@@ -605,12 +562,10 @@ func _check_echolocation_allowed(player_pos: Vector2) -> bool:
 		return false  # Already triggered, block further echolocation
 
 	var distance = player_pos.distance_to(correct_echo_position)
-	print("Echolocation attempt at ", player_pos, " - distance to trigger: ", distance)
 
 	if distance <= echo_trigger_radius:
 		# Correct spot! Allow echolocation and trigger the flight sequence
 		has_triggered_flight = true
-		print("Correct spot! Triggering flight sequence!")
 		# Use call_deferred to trigger flight after echolocation completes
 		call_deferred("trigger_flight_sequence")
 		return true  # Allow echolocation
@@ -622,8 +577,6 @@ func _check_echolocation_allowed(player_pos: Vector2) -> bool:
 
 func trigger_flight_sequence():
 	"""The magical moment - Sona learns to fly!"""
-	print("=== FLIGHT SEQUENCE BEGIN ===")
-
 	# Make echolocation last longer during the flight sequence
 	if echolocation_manager:
 		echolocation_manager.echo_fade_duration = 15.0  # Long enough for entire flight + walk
@@ -942,6 +895,12 @@ func cleanup_before_scene_change():
 		var hunger_manager = player.get_node_or_null("HungerManager")
 		if hunger_manager and hunger_manager.has_method("set_depletion_active"):
 			hunger_manager.set_depletion_active(true)
+
+	# Reset checkpoint so player spawns at start when re-entering this level
+	if player:
+		var checkpoint_manager = player.get_node_or_null("CheckpointManager")
+		if checkpoint_manager and checkpoint_manager.has_method("reset_checkpoint"):
+			checkpoint_manager.reset_checkpoint()
 
 	# Clean up radial glow if it still exists
 	if radial_glow_instance:

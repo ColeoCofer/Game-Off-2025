@@ -844,10 +844,71 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 	if fade_layer:
 		fade_layer.queue_free()
 
+	# Reset all global state before leaving the level
+	cleanup_before_scene_change()
+
 	# TODO: Show final title screen (to be added by user)
 	# TODO: Roll credits (to be added by user)
 
 	# For now, return to main menu after a brief pause
 	await get_tree().create_timer(1.0).timeout
 	print("Returning to main menu...")
-	SceneManager.load_scene("main_menu")
+	SceneManager.goto_main_menu()
+
+
+func cleanup_before_scene_change():
+	"""Reset all global state that was modified during this cutscene"""
+	print("Cleaning up before scene change...")
+
+	# Remove any FadeLayer we added to root (persists across scene changes!)
+	# Use free() instead of queue_free() for immediate removal
+	var root = get_tree().root
+
+	var fade_layer = root.get_node_or_null("FadeLayer")
+	if fade_layer:
+		fade_layer.get_parent().remove_child(fade_layer)
+		fade_layer.free()
+		print("Removed FadeLayer from root")
+
+	# Clean up any cutscene players we added to root
+	var nodes_to_remove = []
+	for child in root.get_children():
+		if child.name == "FadeLayer" or child.name == "CutscenePlayer" or child.is_in_group("cutscene_player"):
+			nodes_to_remove.append(child)
+
+	for node in nodes_to_remove:
+		node.get_parent().remove_child(node)
+		node.free()
+		print("Removed lingering node from root: ", node.name)
+
+	# Reset EcholocationManager state
+	if echolocation_manager:
+		# Clear the callback we set
+		echolocation_manager.echolocation_check_callback = Callable()
+		# Reset fade duration to default
+		echolocation_manager.echo_fade_duration = 3.5
+		# Clear any active pulses
+		echolocation_manager.echo_pulses.clear()
+		print("EcholocationManager reset")
+
+	# Re-enable player control if it was disabled
+	if player and player.has_method("enable_control"):
+		player.enable_control()
+
+	# Re-enable hunger depletion (in case other levels need it)
+	if player:
+		var hunger_manager = player.get_node_or_null("HungerManager")
+		if hunger_manager and hunger_manager.has_method("set_depletion_active"):
+			hunger_manager.set_depletion_active(true)
+
+	# Clean up radial glow if it still exists
+	if radial_glow_instance:
+		radial_glow_instance.queue_free()
+		radial_glow_instance = null
+
+	# Clean up god rays if they still exist
+	if god_rays_instance:
+		god_rays_instance.queue_free()
+		god_rays_instance = null
+
+	print("Cleanup complete")

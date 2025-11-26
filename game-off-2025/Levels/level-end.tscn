@@ -515,6 +515,12 @@ position = Vector2(421, 417)
 amount = 100
 emission_sphere_radius = 128.0
 
+[node name="CaveParticles2" parent="." instance=ExtResource("15_rb3p0")]
+z_index = 10
+position = Vector2(312, 491)
+amount = 100
+emission_sphere_radius = 128.0
+
 [node name="LightBeam" parent="." instance=ExtResource("16_f071f")]
 visible = false
 offset_left = 1514.0

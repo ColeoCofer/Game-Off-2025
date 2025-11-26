@@ -624,6 +624,10 @@ func trigger_flight_sequence():
 	"""The magical moment - Sona learns to fly!"""
 	print("=== FLIGHT SEQUENCE BEGIN ===")
 
+	# Make echolocation last longer during the flight sequence
+	if echolocation_manager:
+		echolocation_manager.echo_fade_duration = 15.0  # Long enough for entire flight + walk
+
 	# Disable player control
 	if player.has_method("disable_control"):
 		player.disable_control()
@@ -639,18 +643,21 @@ func trigger_flight_sequence():
 	# Brief pause before flight
 	await get_tree().create_timer(0.5).timeout
 
-	# Target position (cliff top near cave entrance)
-	var target_pos = Vector2(390, 405)  # Slightly left of cave entrance
+	# Two-phase flight: straight up, then to the right
+	var start_pos = player.global_position
+	var top_pos = Vector2(start_pos.x, 423)  # Fly straight up to cliff height
+	var landing_pos = Vector2(332, 423)  # Then fly right to cliff edge
 
-	# Flight parameters
-	var flight_duration = 2.5
-	var flap_interval = 0.25
+	# Flight parameters - slower for cinematic effect
+	var vertical_duration = 2.5  # Time to fly up
+	var horizontal_duration = 1.5  # Time to fly right
+	var flap_interval = 0.3
 
 	# Start flap animation
 	if anim_sprite:
 		anim_sprite.play("flap")
 
-	# Make the glow brighter during flight
+	# Fade in the glow
 	if radial_glow_instance and radial_glow_instance.material:
 		var glow_tween = create_tween()
 		glow_tween.tween_method(
@@ -658,23 +665,39 @@ func trigger_flight_sequence():
 			0.0, 1.0, 0.5
 		)
 
-	# Tween Sona up to the cliff top
+	# Phase 1: Fly straight up
 	var flight_tween = create_tween()
 	flight_tween.set_ease(Tween.EASE_IN_OUT)
 	flight_tween.set_trans(Tween.TRANS_CUBIC)
-	flight_tween.tween_property(player, "global_position", target_pos, flight_duration)
+	flight_tween.tween_property(player, "global_position", top_pos, vertical_duration)
 
-	# Play flap sounds during flight using a timer
+	# Play flap sounds during vertical flight
 	var flap_timer = 0.0
-	var flight_complete = false
-	flight_tween.finished.connect(func(): flight_complete = true)
-
-	while not flight_complete:
+	while flight_tween.is_running():
 		flap_timer += get_process_delta_time()
 		if flap_timer >= flap_interval:
 			if flap_audio:
 				flap_audio.play()
-			# Also replay flap animation to keep it looping
+			if anim_sprite and not anim_sprite.is_playing():
+				anim_sprite.play("flap")
+			flap_timer = 0.0
+		await get_tree().process_frame
+
+	print("Sona reached cliff height, now flying right...")
+
+	# Phase 2: Fly right to landing position
+	var horizontal_tween = create_tween()
+	horizontal_tween.set_ease(Tween.EASE_IN_OUT)
+	horizontal_tween.set_trans(Tween.TRANS_CUBIC)
+	horizontal_tween.tween_property(player, "global_position", landing_pos, horizontal_duration)
+
+	# Continue flap sounds during horizontal flight
+	flap_timer = 0.0
+	while horizontal_tween.is_running():
+		flap_timer += get_process_delta_time()
+		if flap_timer >= flap_interval:
+			if flap_audio:
+				flap_audio.play()
 			if anim_sprite and not anim_sprite.is_playing():
 				anim_sprite.play("flap")
 			flap_timer = 0.0
@@ -709,23 +732,23 @@ func create_radial_glow() -> ColorRect:
 	"""Create the radial glow effect for the flight sequence"""
 	var glow = ColorRect.new()
 	glow.name = "RadialGlow"
-	glow.size = Vector2(128, 128)
-	glow.position = Vector2(-64, -64)  # Center on player
+	glow.size = Vector2(256, 256)  # Large so it surrounds Sona with room to spare
+	glow.position = Vector2(-128, -128)  # Center on player
 
 	var shader_mat = ShaderMaterial.new()
 	shader_mat.shader = load("res://Shaders/radial_glow.gdshader")
 
-	# Configure for a bright, magical glow
-	shader_mat.set_shader_parameter("pixelation", Vector2(64.0, 64.0))
-	shader_mat.set_shader_parameter("spread", 0.35)
-	shader_mat.set_shader_parameter("size", 0.4)
-	shader_mat.set_shader_parameter("speed", 2.0)
-	shader_mat.set_shader_parameter("ray1_density", 10.0)
-	shader_mat.set_shader_parameter("ray2_density", 8.0)
-	shader_mat.set_shader_parameter("ray2_intensity", 0.6)
-	shader_mat.set_shader_parameter("core_intensity", 1.5)
-	shader_mat.set_shader_parameter("hdr", true)
-	shader_mat.set_shader_parameter("glow_color", Color(1.0, 0.95, 0.7, 1.0))  # Warm golden
+	# Configure for a halo effect - dark center, light around edges
+	shader_mat.set_shader_parameter("pixelation", Vector2(128.0, 128.0))  # Match new size
+	shader_mat.set_shader_parameter("spread", 0.35)  # Longer rays
+	shader_mat.set_shader_parameter("size", 0.1)  # Smaller visible area pushes light outward
+	shader_mat.set_shader_parameter("speed", 0.8)
+	shader_mat.set_shader_parameter("ray1_density", 6.0)
+	shader_mat.set_shader_parameter("ray2_density", 5.0)
+	shader_mat.set_shader_parameter("ray2_intensity", 0.3)
+	shader_mat.set_shader_parameter("core_intensity", -0.5)  # NEGATIVE = halo effect (dark center)
+	shader_mat.set_shader_parameter("hdr", false)
+	shader_mat.set_shader_parameter("glow_color", Color(1.0, 0.95, 0.8, 0.5))  # Slightly more visible
 	shader_mat.set_shader_parameter("opacity", 0.0)  # Start invisible
 
 	glow.material = shader_mat
@@ -744,10 +767,10 @@ func walk_into_cave_and_end():
 		anim_sprite.flip_h = false
 		anim_sprite.play("walk")
 
-	# Walk right into the cave entrance
-	var target_x = 440.0
+	# Walk right into the cave entrance (from cliff edge at 332 to cave at ~420)
+	var target_x = 420.0
 	var walk_tween = create_tween()
-	walk_tween.tween_property(player, "global_position:x", target_x, 1.0)
+	walk_tween.tween_property(player, "global_position:x", target_x, 1.5)  # Slightly longer walk
 	await walk_tween.finished
 
 	# Stop animation

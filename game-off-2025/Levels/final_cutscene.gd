@@ -276,30 +276,35 @@ func show_god_rays_on_shard():
 	god_rays_instance = ColorRect.new()
 	god_rays_instance.name = "GodRays"
 
-	# Position and size the god rays above the shard
-	god_rays_instance.size = Vector2(80, 120)
-	god_rays_instance.position = shard.global_position + Vector2(-40, -120)  # Above and centered on shard
+	# Size and position for a light beam shining down onto the shard
+	var ray_width = 45.0  # Narrower beam
+	var ray_height = 130.0  # Taller to extend higher
+	god_rays_instance.size = Vector2(ray_width, ray_height)
+	god_rays_instance.position = Vector2(
+		shard.global_position.x - ray_width / 2,
+		shard.global_position.y - ray_height  # Higher up
+	)
 
-	# Create shader material
+	# Start invisible for fade-in
+	god_rays_instance.modulate.a = 0.0
+
+	# Create shader material using the simpler god_rays shader
 	var shader_material = ShaderMaterial.new()
-	shader_material.shader = load("res://Shaders/pixelated_god_rays.gdshader")
+	shader_material.shader = load("res://Shaders/god_rays.gdshader")
 
-	# Configure shader parameters for a nice light beam effect
-	shader_material.set_shader_parameter("angle", 0.0)  # Straight down
-	shader_material.set_shader_parameter("position_offset", 0.5)
-	shader_material.set_shader_parameter("spread", 0.3)
-	shader_material.set_shader_parameter("cutoff", 0.2)
-	shader_material.set_shader_parameter("falloff", 0.4)
-	shader_material.set_shader_parameter("edge_fade", 0.2)
-	shader_material.set_shader_parameter("speed", 0.5)
-	shader_material.set_shader_parameter("ray1_density", 4.0)
-	shader_material.set_shader_parameter("ray2_density", 15.0)
-	shader_material.set_shader_parameter("ray2_intensity", 0.2)
-	shader_material.set_shader_parameter("ray_color", Color(1.0, 0.95, 0.8, 0.7))
-	shader_material.set_shader_parameter("pixelation", 16.0)
-	shader_material.set_shader_parameter("quantize_colors", true)
-	shader_material.set_shader_parameter("color_levels", 4)
-	shader_material.set_shader_parameter("opacity", 0.0)  # Start invisible
+	# Configure for a glowy, cinematic light beam effect
+	shader_material.set_shader_parameter("angle", 0.0)
+	shader_material.set_shader_parameter("position", 0.0)  # Centered
+	shader_material.set_shader_parameter("spread", 0.25)  # Less spread for narrower beam
+	shader_material.set_shader_parameter("cutoff", 0.1)
+	shader_material.set_shader_parameter("falloff", 0.3)  # Fade toward bottom
+	shader_material.set_shader_parameter("edge_fade", 0.35)  # Softer edges to hide rectangle
+	shader_material.set_shader_parameter("speed", 1.5)  # Faster for more movement/glistening
+	shader_material.set_shader_parameter("ray1_density", 10.0)
+	shader_material.set_shader_parameter("ray2_density", 25.0)
+	shader_material.set_shader_parameter("ray2_intensity", 0.5)  # More secondary ray movement
+	shader_material.set_shader_parameter("color", Color(1.0, 0.95, 0.8, 0.9))  # Brighter, more intense
+	shader_material.set_shader_parameter("hdr", true)  # HDR for extra glow
 
 	god_rays_instance.material = shader_material
 
@@ -308,7 +313,7 @@ func show_god_rays_on_shard():
 
 	# Fade in the god rays
 	var tween = create_tween()
-	tween.tween_method(func(val): shader_material.set_shader_parameter("opacity", val), 0.0, 0.8, 1.0)
+	tween.tween_property(god_rays_instance, "modulate:a", 1.0, 1.0)
 	await tween.finished
 
 	print("God rays created and faded in")

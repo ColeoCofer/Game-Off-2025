@@ -34,6 +34,11 @@ var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: fl
 # Cooldown timer
 var cooldown_remaining: float = 0.0
 
+# Optional callback to check if echolocation should be allowed
+# Set this from external scripts to control echolocation (e.g., final cutscene)
+# Callback receives player position and should return true to allow, false to block
+var echolocation_check_callback: Callable = Callable()
+
 # Shader material
 var shader_material: ShaderMaterial
 
@@ -79,6 +84,10 @@ func _process(delta: float):
 
 	# Handle echolocation input
 	if Input.is_action_just_pressed("echolocate") and can_use_echolocation():
+		# Check external callback if set (allows external control of echolocation)
+		if echolocation_check_callback.is_valid():
+			if not echolocation_check_callback.call(player.global_position):
+				return  # Callback blocked echolocation
 		trigger_echolocation()
 
 	# Update echolocation pulses (fade over time)

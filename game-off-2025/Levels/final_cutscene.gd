@@ -13,6 +13,12 @@ var echolocation_manager = null
 var god_rays_instance: ColorRect = null
 var shard_light: PointLight2D = null
 
+# Post-cutscene flight sequence
+var correct_echo_position = Vector2(280, 520)  # Near cliff base on right side
+var echo_trigger_radius = 60.0  # Generous radius for the trigger
+var has_triggered_flight = false
+var radial_glow_instance: ColorRect = null
+
 func _ready():
 	print("=== Final Cutscene Setup ===")
 
@@ -93,6 +99,9 @@ func _ready():
 
 	# Mark as played so it doesn't play again
 	SaveManager.mark_cutscene_played("final_sequence")
+
+	# Set up post-cutscene gameplay (player can now explore and trigger flight)
+	await setup_post_cutscene_gameplay()
 
 func register_final_cutscene():
 	"""Create and register the complete final cutscene"""
@@ -545,3 +554,277 @@ func create_final_cutscene_frames() -> Array:
 	))
 
 	return frames
+
+
+# =============================================================================
+# POST-CUTSCENE GAMEPLAY - Flight Sequence
+# =============================================================================
+
+func setup_post_cutscene_gameplay():
+	"""Set up the scene for post-cutscene exploration and flight trigger"""
+	print("=== Setting up post-cutscene gameplay ===")
+
+	# 1. Restore camera to follow the player
+	if camera and camera.get_parent() != player:
+		var cam_global_pos = camera.global_position
+		camera.get_parent().remove_child(camera)
+		player.add_child(camera)
+		camera.position = Vector2.ZERO
+		camera.offset = Vector2.ZERO
+		print("Camera restored to player")
+
+	# 2. Reset echolocation to normal fade behavior
+	if echolocation_manager:
+		echolocation_manager.echo_fade_duration = 3.5  # Reset to normal
+		echolocation_manager.echo_pulses.clear()  # Clear permanent reveal
+		# Set callback to control echolocation (only allow in correct spot)
+		echolocation_manager.echolocation_check_callback = _check_echolocation_allowed
+		print("Echolocation reset to normal, check callback set")
+
+	# 3. Keep hunger full and disable depletion (Sona can't die in this level)
+	var hunger_manager = player.get_node_or_null("HungerManager")
+	if hunger_manager:
+		hunger_manager.set_depletion_active(false)
+		# Set hunger to max
+		if hunger_manager.has_method("restore_hunger"):
+			hunger_manager.restore_hunger(100.0)
+		print("Hunger kept full, depletion disabled")
+
+	# 4. Re-enable player control
+	if player.has_method("enable_control"):
+		player.enable_control()
+		print("Player control re-enabled")
+
+	print("Post-cutscene setup complete - player can now explore!")
+
+
+func _check_echolocation_allowed(player_pos: Vector2) -> bool:
+	"""Callback to check if echolocation should be allowed at this position.
+	Returns true to allow echolocation, false to block it."""
+	if has_triggered_flight:
+		return false  # Already triggered, block further echolocation
+
+	var distance = player_pos.distance_to(correct_echo_position)
+	print("Echolocation attempt at ", player_pos, " - distance to trigger: ", distance)
+
+	if distance <= echo_trigger_radius:
+		# Correct spot! Allow echolocation and trigger the flight sequence
+		has_triggered_flight = true
+		print("Correct spot! Triggering flight sequence!")
+		# Use call_deferred to trigger flight after echolocation completes
+		call_deferred("trigger_flight_sequence")
+		return true  # Allow echolocation
+	else:
+		# Wrong spot - show dialogue and block echolocation
+		DialogueManager.start_simple_dialogue(["No, not here."])
+		return false  # Block echolocation
+
+
+func trigger_flight_sequence():
+	"""The magical moment - Sona learns to fly!"""
+	print("=== FLIGHT SEQUENCE BEGIN ===")
+
+	# Disable player control
+	if player.has_method("disable_control"):
+		player.disable_control()
+		player.velocity = Vector2.ZERO
+
+	# Get references
+	var anim_sprite: AnimatedSprite2D = player.get_node_or_null("AnimatedSprite2D")
+	var flap_audio = player.get_node_or_null("FlapAudioPlayer")
+
+	# Create radial glow effect around Sona
+	radial_glow_instance = create_radial_glow()
+
+	# Brief pause before flight
+	await get_tree().create_timer(0.5).timeout
+
+	# Target position (cliff top near cave entrance)
+	var target_pos = Vector2(390, 405)  # Slightly left of cave entrance
+
+	# Flight parameters
+	var flight_duration = 2.5
+	var flap_interval = 0.25
+
+	# Start flap animation
+	if anim_sprite:
+		anim_sprite.play("flap")
+
+	# Make the glow brighter during flight
+	if radial_glow_instance and radial_glow_instance.material:
+		var glow_tween = create_tween()
+		glow_tween.tween_method(
+			func(val): radial_glow_instance.material.set_shader_parameter("opacity", val),
+			0.0, 1.0, 0.5
+		)
+
+	# Tween Sona up to the cliff top
+	var flight_tween = create_tween()
+	flight_tween.set_ease(Tween.EASE_IN_OUT)
+	flight_tween.set_trans(Tween.TRANS_CUBIC)
+	flight_tween.tween_property(player, "global_position", target_pos, flight_duration)
+
+	# Play flap sounds during flight using a timer
+	var flap_timer = 0.0
+	var flight_complete = false
+	flight_tween.finished.connect(func(): flight_complete = true)
+
+	while not flight_complete:
+		flap_timer += get_process_delta_time()
+		if flap_timer >= flap_interval:
+			if flap_audio:
+				flap_audio.play()
+			# Also replay flap animation to keep it looping
+			if anim_sprite and not anim_sprite.is_playing():
+				anim_sprite.play("flap")
+			flap_timer = 0.0
+		await get_tree().process_frame
+
+	print("Sona has landed on the cliff!")
+
+	# Landing - switch to idle
+	if anim_sprite:
+		anim_sprite.play("idle")
+
+	# Fade out the glow
+	if radial_glow_instance:
+		var fade_tween = create_tween()
+		if radial_glow_instance.material:
+			fade_tween.tween_method(
+				func(val): radial_glow_instance.material.set_shader_parameter("opacity", val),
+				1.0, 0.0, 0.5
+			)
+		await fade_tween.finished
+		radial_glow_instance.queue_free()
+		radial_glow_instance = null
+
+	# Brief pause after landing
+	await get_tree().create_timer(0.5).timeout
+
+	# Walk into cave and continue to ending
+	await walk_into_cave_and_end()
+
+
+func create_radial_glow() -> ColorRect:
+	"""Create the radial glow effect for the flight sequence"""
+	var glow = ColorRect.new()
+	glow.name = "RadialGlow"
+	glow.size = Vector2(128, 128)
+	glow.position = Vector2(-64, -64)  # Center on player
+
+	var shader_mat = ShaderMaterial.new()
+	shader_mat.shader = load("res://Shaders/radial_glow.gdshader")
+
+	# Configure for a bright, magical glow
+	shader_mat.set_shader_parameter("pixelation", Vector2(64.0, 64.0))
+	shader_mat.set_shader_parameter("spread", 0.35)
+	shader_mat.set_shader_parameter("size", 0.4)
+	shader_mat.set_shader_parameter("speed", 2.0)
+	shader_mat.set_shader_parameter("ray1_density", 10.0)
+	shader_mat.set_shader_parameter("ray2_density", 8.0)
+	shader_mat.set_shader_parameter("ray2_intensity", 0.6)
+	shader_mat.set_shader_parameter("core_intensity", 1.5)
+	shader_mat.set_shader_parameter("hdr", true)
+	shader_mat.set_shader_parameter("glow_color", Color(1.0, 0.95, 0.7, 1.0))  # Warm golden
+	shader_mat.set_shader_parameter("opacity", 0.0)  # Start invisible
+
+	glow.material = shader_mat
+	player.add_child(glow)  # Add as child so it moves with player
+	return glow
+
+
+func walk_into_cave_and_end():
+	"""Walk Sona into the cave entrance and fade to ending"""
+	print("Walking into cave...")
+
+	var anim_sprite: AnimatedSprite2D = player.get_node_or_null("AnimatedSprite2D")
+
+	# Face right and walk
+	if anim_sprite:
+		anim_sprite.flip_h = false
+		anim_sprite.play("walk")
+
+	# Walk right into the cave entrance
+	var target_x = 440.0
+	var walk_tween = create_tween()
+	walk_tween.tween_property(player, "global_position:x", target_x, 1.0)
+	await walk_tween.finished
+
+	# Stop animation
+	if anim_sprite:
+		anim_sprite.play("idle")
+
+	print("Sona entered the cave - fading to black...")
+
+	# Fade to black
+	var fade_layer = CanvasLayer.new()
+	fade_layer.layer = 100
+	fade_layer.name = "FadeLayer"
+
+	var fade_rect = ColorRect.new()
+	fade_rect.color = Color.BLACK
+	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_rect.size = Vector2(1280, 720)  # Cover full screen
+	fade_rect.modulate.a = 0.0
+	fade_layer.add_child(fade_rect)
+	get_tree().root.add_child(fade_layer)
+
+	var fade_tween = create_tween()
+	fade_tween.tween_property(fade_rect, "modulate:a", 1.0, 1.5)
+	await fade_tween.finished
+
+	# Brief pause in black
+	await get_tree().create_timer(0.5).timeout
+
+	# Show the ending sequence
+	await show_ending_sequence(fade_layer)
+
+
+func show_ending_sequence(fade_layer: CanvasLayer):
+	"""Show the final cutscene images (gameboy ending)"""
+	print("=== ENDING SEQUENCE ===")
+
+	# Create cutscene frames for the ending
+	var cutscene_frames = []
+	var CutscenePlayerScript = load("res://UI/CutscenePlayer/cutscene_player.gd")
+
+	# Frame 1: sona-gameboy-1.png
+	cutscene_frames.append(CutscenePlayerScript.create_frame(
+		"res://Assets/Art/cut-scenes/sona-gameboy-1.png",
+		[""],  # Empty for player to advance
+		0.0,
+		[""]
+	))
+
+	# Frame 2: sona-gameboy-2.png
+	cutscene_frames.append(CutscenePlayerScript.create_frame(
+		"res://Assets/Art/cut-scenes/sona-gameboy-2.png",
+		[""],  # Empty for player to advance
+		0.0,
+		[""]
+	))
+
+	# Get or create cutscene player
+	var cutscene_player = get_tree().get_first_node_in_group("cutscene_player")
+	if not cutscene_player:
+		var scene = load("res://UI/CutscenePlayer/cutscene_player.tscn")
+		cutscene_player = scene.instantiate()
+		get_tree().root.add_child(cutscene_player)
+
+	# Play the ending cutscene
+	cutscene_player.play_cutscene(cutscene_frames)
+	await cutscene_player.cutscene_finished
+
+	print("Ending cutscene complete!")
+
+	# Clean up fade layer
+	if fade_layer:
+		fade_layer.queue_free()
+
+	# TODO: Show final title screen (to be added by user)
+	# TODO: Roll credits (to be added by user)
+
+	# For now, return to main menu after a brief pause
+	await get_tree().create_timer(1.0).timeout
+	print("Returning to main menu...")
+	SceneManager.load_scene("main_menu")

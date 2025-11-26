@@ -113,25 +113,25 @@ func register_final_cutscene():
 	# Step 3: Sona stops and dialogue appears
 	actions.append(CutsceneDirector.action_wait(0.5))
 	actions.append(CutsceneDirector.action_dialogue(
-		["I can't make it up there after all..."]
-		# TODO: Add audio path when available
+		["I can't make it up there after all..."],
+		["res://Assets/Audio/dialogue/15 i can't make it up there after all-1.wav"]
 	))
 
 	# Step 4: Pan camera left to show the photo shard location
 	actions.append(CutsceneDirector.action_custom(pan_camera_to_shard))
 
-	# Step 5: Show photo shard with pop animation after camera finishes panning
-	actions.append(CutsceneDirector.action_custom(show_photo_shard_with_pop))
-	actions.append(CutsceneDirector.action_wait(0.3))
-
-	# Step 6: God rays shine down on the photo shard
+	# Step 5: God rays shine down on the ground first
 	actions.append(CutsceneDirector.action_custom(show_god_rays_on_shard))
-	actions.append(CutsceneDirector.action_wait(0.8))
+	actions.append(CutsceneDirector.action_wait(0.6))
+
+	# Step 6: Photo shard pops out of the ground
+	actions.append(CutsceneDirector.action_custom(show_photo_shard_with_pop))
+	actions.append(CutsceneDirector.action_wait(0.5))
 
 	# Step 7: Dialogue "What's this?"
 	actions.append(CutsceneDirector.action_dialogue(
-		["What's this?"]
-		# TODO: Add audio path when available
+		["What's this?"],
+		["res://Assets/Audio/dialogue/16 what's this.alp-1.wav"]
 	))
 
 	# Step 8: Sona walks over to the shard, pulls it out, says dialogue, then shard fades
@@ -147,14 +147,14 @@ func register_final_cutscene():
 	# Step 11: Return to level and show final dialogue
 	actions.append(CutsceneDirector.action_wait(0.5))
 	actions.append(CutsceneDirector.action_dialogue(
-		["You were with me all along..."]
-		# TODO: Add audio path when available
+		["You were with me all along..."],
+		["res://Assets/Audio/dialogue/25 you were with me all along-1.wav"]
 	))
 
 	actions.append(CutsceneDirector.action_wait(0.3))
 	actions.append(CutsceneDirector.action_dialogue(
-		["Thank you mom. I know what I need to do."]
-		# TODO: Add audio path when available
+		["Thank you mom.", "I know what I need to do."],
+		["res://Assets/Audio/dialogue/26 thank you mom-1.wav", "res://Assets/Audio/dialogue/27 i know what i need to do-1.wav"]
 	))
 
 	# Register the complete sequence
@@ -458,7 +458,15 @@ func walk_to_shard_hold_and_dialogue():
 	print("Sona is now holding the photo shard")
 
 	# --- Show dialogue while holding shard ---
-	DialogueManager.start_simple_dialogue(["Oh--that's the last one..."])
+	var dialogue_lines: Array[DialogueManager.DialogueLine] = []
+	dialogue_lines.append(DialogueManager.DialogueLine.new(
+		"Oh--that's the last one...",
+		"",
+		0.0,
+		Callable(),
+		"res://Assets/Audio/dialogue/17 oh its the last one-1.wav"
+	))
+	DialogueManager.start_dialogue(dialogue_lines)
 	await DialogueManager.dialogue_finished
 
 	# --- Fade out the shard and its light ---
@@ -500,29 +508,41 @@ func create_final_cutscene_frames() -> Array:
 			"Mom...",
 			"I made it all this way and still cannot reach the top..."
 		],
-		0.0
-		# TODO: Add audio paths when available
+		0.0,
+		[
+			"res://Assets/Audio/dialogue/18 mom-1.wav",
+			"res://Assets/Audio/dialogue/19 i made it all this way-1.wav"
+		]
 	))
 
-	# Frame 3: sona-full-photo-above.png - despair and hope
+	# Frame 2: sona-full-photo-above.png - despair and hope
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
 		[
 			"I let you down...",
 			"I knew I couldn't do it without you here...",
 			"...",
-			"Wait a minute...there's writing on the other side..."
+			"Wait a minute...there's writing on the other side...",
 		],
-		0.0
+		0.0,
+		[
+			"res://Assets/Audio/dialogue/20 i let you down-1.wav",
+			"res://Assets/Audio/dialogue/21 i knew i couldn't do it without you-1.wav",
+			#"res://Assets/Audio/dialogue/22 without you here-1.wav",
+			"",  # No audio for "..."
+			#"res://Assets/Audio/dialogue/23 wait a minute-1.wav",
+			"res://Assets/Audio/dialogue/24 theres writing on the other side-1.wav"
+		]
 	))
 
-	# Frame 4: letter.png - no dialogue, just show the letter
+	# Frame 3: letter.png - no dialogue, just show the letter
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/letter.png",
 		[
 			""  # No dialogue - player reads the letter
 		],
-		0.0  # Manual advance (player clicks to continue)
+		0.0,
+		[""]  # No audio
 	))
 
 	return frames

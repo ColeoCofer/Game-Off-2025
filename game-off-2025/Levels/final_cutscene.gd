@@ -91,6 +91,9 @@ func register_final_cutscene():
 	"""Create and register the complete final cutscene"""
 	var actions = []
 
+	# Step 0: Set up camera to show more of the scene (move up to see cliff top)
+	actions.append(CutsceneDirector.action_custom(setup_camera_for_scene))
+
 	# Step 1: Trigger echolocation to reveal the scene
 	actions.append(CutsceneDirector.action_custom(trigger_echolocation_reveal))
 	actions.append(CutsceneDirector.action_wait(1.5))  # Wait for echolocation to expand
@@ -109,29 +112,23 @@ func register_final_cutscene():
 
 	# Step 4: Pan camera left to show the photo shard location
 	actions.append(CutsceneDirector.action_custom(pan_camera_to_shard))
-	actions.append(CutsceneDirector.action_wait(1.0))
 
-	# Step 5: God rays shine down on the photo shard, then make it visible
+	# Step 5: Show photo shard with pop animation after camera finishes panning
+	actions.append(CutsceneDirector.action_custom(show_photo_shard_with_pop))
+	actions.append(CutsceneDirector.action_wait(0.3))
+
+	# Step 6: God rays shine down on the photo shard
 	actions.append(CutsceneDirector.action_custom(show_god_rays_on_shard))
-	actions.append(CutsceneDirector.action_wait(1.0))
-	actions.append(CutsceneDirector.action_custom(show_photo_shard))
-	actions.append(CutsceneDirector.action_wait(0.5))
+	actions.append(CutsceneDirector.action_wait(0.8))
 
-	# Step 6: Dialogue "What's this?"
+	# Step 7: Dialogue "What's this?"
 	actions.append(CutsceneDirector.action_dialogue(
 		["What's this?"]
 		# TODO: Add audio path when available
 	))
 
-	# Step 7: Pick up the shard (animation: shard appears over her head briefly)
-	actions.append(CutsceneDirector.action_custom(pickup_photo_shard))
-	actions.append(CutsceneDirector.action_wait(0.8))
-
-	# Step 8: Dialogue after picking up
-	actions.append(CutsceneDirector.action_dialogue(
-		["Oh--that's the last one..."]
-		# TODO: Add audio path when available
-	))
+	# Step 8: Sona walks over to the shard, pulls it out, says dialogue, then shard fades
+	actions.append(CutsceneDirector.action_custom(walk_to_shard_hold_and_dialogue))
 
 	# Step 9: Wait before fullscreen cutscene
 	actions.append(CutsceneDirector.action_wait(0.5))
@@ -156,6 +153,28 @@ func register_final_cutscene():
 	# Register the complete sequence
 	CutsceneDirector.register_cutscene("final_sequence", actions)
 	print("Final cutscene registered with %d actions" % actions.size())
+
+
+func setup_camera_for_scene():
+	"""Set up camera to show more of the scene - move up to see the cliff top"""
+	print("Setting up camera for scene...")
+
+	if not camera:
+		camera = player.get_node_or_null("Camera2D")
+
+	if camera:
+		# Move camera up to show more of the cliff
+		var target_offset = Vector2(0, -40)  # Move up to see cliff top
+
+		var tween = create_tween()
+		tween.set_ease(Tween.EASE_IN_OUT)
+		tween.set_trans(Tween.TRANS_CUBIC)
+		tween.tween_property(camera, "offset", target_offset, 0.5)
+		await tween.finished
+
+		print("Camera moved up to show cliff")
+	else:
+		push_warning("Could not find camera for setup")
 
 
 func trigger_echolocation_reveal():
@@ -204,8 +223,8 @@ func find_photo_shard() -> Node:
 
 
 func pan_camera_to_shard():
-	"""Pan camera left to show the photo shard and player in the same frame"""
-	print("Panning camera to photo shard...")
+	"""Pan camera left to show the photo shard and player, then lock it in place"""
+	print("Panning camera to photo shard and locking...")
 
 	if not camera:
 		camera = player.get_node_or_null("Camera2D")
@@ -214,17 +233,24 @@ func pan_camera_to_shard():
 		# Get photo shard position
 		var shard = find_photo_shard()
 		if shard:
-			# Calculate a camera position that shows both player and shard
-			# The shard is at ~(200, 515), player is at ~(350, 520)
-			# We want to pan left to center between them
-			var target_offset = Vector2(-80, 0)  # Pan camera left from player
+			# Pan left while keeping the vertical offset from setup
+			# Current offset should be (0, -40) from setup_camera_for_scene
+			var target_offset = Vector2(-80, -40)  # Pan left, keep vertical offset
 
 			var tween = create_tween()
 			tween.set_ease(Tween.EASE_IN_OUT)
 			tween.set_trans(Tween.TRANS_CUBIC)
 			tween.tween_property(camera, "offset", target_offset, 1.0)
 			await tween.finished
-			print("Camera panned to show shard")
+
+			# Lock the camera by reparenting it to the scene root
+			# This stops it from following the player
+			var camera_global_pos = camera.global_position
+			camera.get_parent().remove_child(camera)
+			get_tree().current_scene.add_child(camera)
+			camera.global_position = camera_global_pos
+
+			print("Camera panned and locked in place")
 		else:
 			push_warning("Could not find PhotoShard for camera pan")
 	else:
@@ -282,73 +308,139 @@ func show_god_rays_on_shard():
 	print("God rays created and faded in")
 
 
-func show_photo_shard():
-	"""Make the photo shard visible and start bobbing animation"""
-	print("Showing photo shard...")
+func show_photo_shard_with_pop():
+	"""Make the photo shard visible with a pop animation and sound"""
+	print("Showing photo shard with pop...")
 
 	# Find the PhotoShard node in the scene
 	photo_shard_instance = find_photo_shard()
 
 	if photo_shard_instance:
-		# Make it visible
-		photo_shard_instance.visible = true
-		print("PhotoShard made visible")
+		# Disable the bobbing animation - it looks odd while in the ground
+		photo_shard_instance.set_process(false)
 
-		# Start the bobbing animation if available
-		if photo_shard_instance.has_method("play_spawn_animation"):
-			photo_shard_instance.play_spawn_animation()
+		# Store original scale
+		var original_scale = photo_shard_instance.scale
+
+		# Start small/invisible
+		photo_shard_instance.scale = Vector2.ZERO
+		photo_shard_instance.visible = true
+
+		# Play pop sound
+		var pop_sound = AudioStreamPlayer.new()
+		pop_sound.stream = load("res://Assets/Audio/UI/LightPop.wav")
+		pop_sound.volume_db = -5.0
+		get_tree().current_scene.add_child(pop_sound)
+		pop_sound.play()
+		pop_sound.finished.connect(func(): pop_sound.queue_free())
+
+		# Pop animation: scale up larger than normal, then back to normal
+		var tween = create_tween()
+		tween.set_ease(Tween.EASE_OUT)
+		tween.set_trans(Tween.TRANS_BACK)
+		# Scale up to 1.3x
+		tween.tween_property(photo_shard_instance, "scale", original_scale * 1.3, 0.2)
+		# Then back to normal
+		tween.tween_property(photo_shard_instance, "scale", original_scale, 0.15)
+		await tween.finished
+
+		print("PhotoShard pop animation complete")
 	else:
 		push_error("Could not find PhotoShard in scene!")
 
 
-func pickup_photo_shard():
-	"""Play pickup animation - shard moves above player's head briefly then fades"""
-	print("Picking up photo shard...")
+func walk_to_shard_hold_and_dialogue():
+	"""Make Sona walk over to the photo shard, pull it out, say dialogue, then fade shard"""
+	print("Walking to photo shard...")
 
-	# Find the photo shard in the scene
 	if not photo_shard_instance:
 		photo_shard_instance = find_photo_shard()
 
-	if photo_shard_instance and player:
-		# Fade out god rays as player picks up shard
-		if god_rays_instance and god_rays_instance.material:
-			var rays_tween = create_tween()
-			rays_tween.tween_method(
-				func(val): god_rays_instance.material.set_shader_parameter("opacity", val),
-				0.8, 0.0, 0.5
-			)
+	if not photo_shard_instance or not player:
+		push_warning("Could not find PhotoShard or player for walking")
+		return
 
-		# Animate shard moving to above player's head
-		var target_pos = player.global_position + Vector2(0, -25)  # Above player's head
+	# Get the shard's X position (walk to just left of it)
+	var target_x = photo_shard_instance.global_position.x - 10
 
-		var tween = photo_shard_instance.create_tween()
-		tween.set_parallel(true)
+	# Find the player's AnimatedSprite2D
+	var anim_sprite: AnimatedSprite2D = null
+	if player.has_node("AnimatedSprite2D"):
+		anim_sprite = player.get_node("AnimatedSprite2D")
 
-		# Move to above player's head
-		tween.tween_property(photo_shard_instance, "global_position", target_pos, 0.4)
+	# Calculate direction
+	var direction = sign(target_x - player.global_position.x)
 
-		await tween.finished
+	# Face the correct direction and start walk animation
+	if anim_sprite:
+		anim_sprite.flip_h = (direction < 0)
+		anim_sprite.play("walk")
 
-		# Wait a moment with shard above head
-		await get_tree().create_timer(0.3).timeout
+	# Walk to the shard
+	var walk_speed = 50.0
+	while abs(player.global_position.x - target_x) > 3.0:
+		player.global_position.x += direction * walk_speed * get_process_delta_time()
+		await get_tree().process_frame
 
-		# Fade out
+	# Stop and face the shard
+	if anim_sprite:
+		anim_sprite.play("idle")
+		anim_sprite.flip_h = false  # Face right toward shard
+
+	print("Reached photo shard, now picking up...")
+
+	# Brief pause before pickup
+	await get_tree().create_timer(0.3).timeout
+
+	# --- Pickup animation ---
+
+	# Fade out god rays as player picks up shard
+	if god_rays_instance and god_rays_instance.material:
+		var rays_tween = create_tween()
+		rays_tween.tween_method(
+			func(val): god_rays_instance.material.set_shader_parameter("opacity", val),
+			0.8, 0.0, 0.5
+		)
+
+	# Stop the shard's bobbing animation so it doesn't fight with our tween
+	photo_shard_instance.set_process(false)
+
+	# Animate shard moving to above player's head
+	var target_pos = player.global_position + Vector2(0, -25)  # Above player's head
+
+	var tween = photo_shard_instance.create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_BACK)
+
+	# Move to above player's head
+	tween.tween_property(photo_shard_instance, "global_position", target_pos, 0.4)
+
+	await tween.finished
+
+	print("Sona is now holding the photo shard")
+
+	# --- Show dialogue while holding shard ---
+	DialogueManager.start_simple_dialogue(["Oh--that's the last one..."])
+	await DialogueManager.dialogue_finished
+
+	# --- Fade out the shard ---
+	print("Fading out photo shard...")
+
+	if photo_shard_instance:
 		var fade_tween = photo_shard_instance.create_tween()
 		fade_tween.tween_property(photo_shard_instance, "modulate:a", 0.0, 0.3)
 		await fade_tween.finished
 
-		# Hide the shard
 		photo_shard_instance.visible = false
-		photo_shard_instance.modulate.a = 1.0  # Reset modulate for potential reuse
-
-		# Clean up god rays
-		if god_rays_instance:
-			god_rays_instance.queue_free()
-			god_rays_instance = null
-
+		photo_shard_instance.modulate.a = 1.0
 		photo_shard_instance = null
-	else:
-		push_warning("Could not find PhotoShard or player for pickup animation!")
+
+	# Clean up god rays
+	if god_rays_instance:
+		god_rays_instance.queue_free()
+		god_rays_instance = null
+
+	print("Photo shard sequence complete")
 
 
 func create_final_cutscene_frames() -> Array:

@@ -340,10 +340,11 @@ func _action_fullscreen_cutscene(data: Dictionary) -> void:
 		await cutscene_player.cutscene_finished
 
 func _action_custom_function(data: Dictionary) -> void:
-	"""Call a custom function"""
+	"""Call a custom function (supports async functions)"""
 	var callable: Callable = data.get("function", Callable())
 	if callable.is_valid():
-		callable.call()
+		# Await the result in case it's an async function
+		await callable.call()
 	await get_tree().process_frame
 
 func _end_cutscene() -> void:

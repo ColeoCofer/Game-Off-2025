@@ -454,49 +454,20 @@ func create_final_cutscene_frames() -> Array:
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-full-picture.png",
 		[
-			"Mom..."
-		],
-		0.0
-		# TODO: Add audio paths when available
-	))
-
-	# Frame 2: Still sona-full-picture.png - more dialogue
-	frames.append(CutscenePlayerScript.create_frame(
-		"res://Assets/Art/cut-scenes/sona-full-picture.png",
-		[
+			"Mom...",
 			"I made it all this way and still cannot reach the top..."
 		],
 		0.0
+		# TODO: Add audio paths when available
 	))
 
 	# Frame 3: sona-full-photo-above.png - despair and hope
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
 		[
-			"I let you down..."
-		],
-		0.0
-	))
-
-	frames.append(CutscenePlayerScript.create_frame(
-		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
-		[
-			"I knew I couldn't do it without you here..."
-		],
-		0.0
-	))
-
-	frames.append(CutscenePlayerScript.create_frame(
-		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
-		[
-			"..."
-		],
-		0.0
-	))
-
-	frames.append(CutscenePlayerScript.create_frame(
-		"res://Assets/Art/cut-scenes/sona-full-photo-above.png",
-		[
+			"I let you down...",
+			"I knew I couldn't do it without you here...",
+			"...",
 			"Wait a minute...there's writing on the other side..."
 		],
 		0.0

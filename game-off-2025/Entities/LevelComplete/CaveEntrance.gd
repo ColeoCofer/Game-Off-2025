@@ -9,6 +9,14 @@ signal level_completed
 @export var min_player_scale: float = 0.25  # Final scale (simulates depth)
 @export var depth_offset: float = 20.0  # How far "back" into the cave to walk (Y offset)
 
+## Testing
+@export var force_final_cutscene: bool = false  ## Force transition to level-end for testing (ignores save data check)
+
+## Final level constants
+const FINAL_LEVEL = "level-3"
+const FINAL_CUTSCENE_ID = "game_complete"
+const LEVEL_END_PATH = "res://Levels/level-end.tscn"
+
 ## Child nodes (automatically found)
 var trigger_area: Area2D  # Area2D that detects player entry
 var entrance_sprite: Sprite2D  # Your cave entrance art
@@ -147,11 +155,53 @@ func _fade_to_black_and_transition():
 
 func _complete_transition():
 	"""Complete the level transition"""
-	# Show the completion menu
-	_show_completion_menu()
+	# Check if this is the final level and first time completing the game
+	if _is_first_game_completion():
+		_trigger_final_cutscene()
+	else:
+		# Show the completion menu
+		_show_completion_menu()
 
 	# Emit signal
 	level_completed.emit()
+
+
+func _is_first_game_completion() -> bool:
+	"""Check if this is the first time completing the final level"""
+	# Allow forcing for testing purposes
+	if force_final_cutscene:
+		print("CaveEntrance: force_final_cutscene is enabled, skipping normal checks")
+		return true
+
+	var current_level = SceneManager.current_level
+
+	# If SceneManager doesn't know the level, try to extract from scene path
+	if current_level == "":
+		var scene_path = get_tree().current_scene.scene_file_path
+		if scene_path.contains("level-"):
+			current_level = scene_path.get_file().get_basename()
+
+	# Check if we're on the final level and haven't seen the ending yet
+	return current_level == FINAL_LEVEL and not SaveManager.has_cutscene_played(FINAL_CUTSCENE_ID)
+
+
+func _trigger_final_cutscene():
+	"""Transition to the final cutscene/ending sequence"""
+	print("CaveEntrance: First time completing the game! Triggering final cutscene...")
+
+	# Remove the fade overlay before transitioning
+	if fade_canvas_layer:
+		fade_canvas_layer.queue_free()
+		fade_canvas_layer = null
+
+	# Complete the level (save time, unlock next, etc.)
+	SceneManager.complete_level()
+
+	# Mark the final cutscene as played so it won't trigger again
+	SaveManager.mark_cutscene_played(FINAL_CUTSCENE_ID)
+
+	# Transition to the ending scene
+	get_tree().change_scene_to_file(LEVEL_END_PATH)
 
 func _show_completion_menu():
 	"""Show the completion menu (reusing death menu)"""

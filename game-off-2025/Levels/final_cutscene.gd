@@ -11,6 +11,7 @@ var photo_shard_instance = null
 var camera: Camera2D = null
 var echolocation_manager = null
 var god_rays_instance: ColorRect = null
+var shard_light: PointLight2D = null
 
 func _ready():
 	print("=== Final Cutscene Setup ===")
@@ -337,6 +338,25 @@ func show_photo_shard_with_pop():
 		photo_shard_instance.scale = Vector2.ZERO
 		photo_shard_instance.visible = true
 
+		# Add a glowing point light to the shard
+		shard_light = PointLight2D.new()
+		shard_light.name = "ShardGlow"
+		shard_light.color = Color(1.0, 0.95, 0.8)  # Warm golden color
+		shard_light.energy = 0.0  # Start at 0, will fade in
+		shard_light.texture_scale = 0.15  # Size of the glow
+		# Create a simple radial gradient texture for the light
+		var gradient_texture = GradientTexture2D.new()
+		gradient_texture.width = 128
+		gradient_texture.height = 128
+		gradient_texture.fill = GradientTexture2D.FILL_RADIAL
+		gradient_texture.fill_from = Vector2(0.5, 0.5)
+		gradient_texture.fill_to = Vector2(0.5, 0.0)
+		var gradient = Gradient.new()
+		gradient.colors = [Color.WHITE, Color.TRANSPARENT]
+		gradient_texture.gradient = gradient
+		shard_light.texture = gradient_texture
+		photo_shard_instance.add_child(shard_light)
+
 		# Play pop sound
 		var pop_sound = AudioStreamPlayer.new()
 		pop_sound.stream = load("res://Assets/Audio/UI/LightPop.wav")
@@ -349,11 +369,18 @@ func show_photo_shard_with_pop():
 		var tween = create_tween()
 		tween.set_ease(Tween.EASE_OUT)
 		tween.set_trans(Tween.TRANS_BACK)
+		tween.set_parallel(true)
 		# Scale up to 1.3x
 		tween.tween_property(photo_shard_instance, "scale", original_scale * 1.3, 0.2)
-		# Then back to normal
-		tween.tween_property(photo_shard_instance, "scale", original_scale, 0.15)
+		# Fade in the light
+		tween.tween_property(shard_light, "energy", 1.2, 0.3)
 		await tween.finished
+
+		# Then scale back to normal
+		var tween2 = create_tween()
+		tween2.set_ease(Tween.EASE_OUT)
+		tween2.tween_property(photo_shard_instance, "scale", original_scale, 0.15)
+		await tween2.finished
 
 		print("PhotoShard pop animation complete")
 	else:
@@ -434,17 +461,22 @@ func walk_to_shard_hold_and_dialogue():
 	DialogueManager.start_simple_dialogue(["Oh--that's the last one..."])
 	await DialogueManager.dialogue_finished
 
-	# --- Fade out the shard ---
+	# --- Fade out the shard and its light ---
 	print("Fading out photo shard...")
 
 	if photo_shard_instance:
 		var fade_tween = photo_shard_instance.create_tween()
+		fade_tween.set_parallel(true)
 		fade_tween.tween_property(photo_shard_instance, "modulate:a", 0.0, 0.3)
+		# Also fade out the light energy
+		if shard_light:
+			fade_tween.tween_property(shard_light, "energy", 0.0, 0.3)
 		await fade_tween.finished
 
 		photo_shard_instance.visible = false
 		photo_shard_instance.modulate.a = 1.0
 		photo_shard_instance = null
+		shard_light = null
 
 	# Clean up god rays
 	if god_rays_instance:

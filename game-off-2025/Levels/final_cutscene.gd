@@ -87,6 +87,9 @@ func _ready():
 	if anim_sprite:
 		anim_sprite.flip_h = false  # Face right for the cutscene
 
+	# Play the special ending song (will resume main music when it finishes)
+	BackgroundMusic.play_special_song("res://Assets/Audio/sad-sona.mp3")
+
 	# Play the final sequence (will re-disable control, but that's fine)
 	CutsceneDirector.play_cutscene("final_sequence")
 
@@ -398,8 +401,16 @@ func walk_to_shard_hold_and_dialogue():
 
 	# Walk to the shard
 	var walk_speed = 50.0
+	var walking_audio = player.get_node_or_null("WalkingAudioPlayer")
+	var footstep_timer = 0.0
+	var footstep_interval = 0.3
 	while abs(player.global_position.x - target_x) > 3.0:
 		player.global_position.x += direction * walk_speed * get_process_delta_time()
+		# Play footstep sounds
+		footstep_timer += get_process_delta_time()
+		if footstep_timer >= footstep_interval and walking_audio:
+			walking_audio.play()
+			footstep_timer = 0.0
 		await get_tree().process_frame
 
 	# Stop and face the shard
@@ -502,9 +513,9 @@ func create_final_cutscene_frames() -> Array:
 		0.0,
 		[
 			"res://Assets/Audio/dialogue/20 i let you down-1.wav",
-			"res://Assets/Audio/dialogue/21 i knew i couldn't do it without you-1.wav|res://Assets/Audio/dialogue/22 without you here-1.wav",
+			"res://Assets/Audio/dialogue/21+22.wav",
 			"",  # No audio for "..."
-			"res://Assets/Audio/dialogue/23 wait a minute-1.wav|res://Assets/Audio/dialogue/24 theres writing on the other side-1.wav"
+			"res://Assets/Audio/dialogue/23+24.wav"
 		]
 	))
 
@@ -577,6 +588,14 @@ func _check_echolocation_allowed(player_pos: Vector2) -> bool:
 
 func trigger_flight_sequence():
 	"""The magical moment - Sona learns to fly!"""
+	# Play the big echolocation sound for dramatic effect
+	var big_echo_sound = AudioStreamPlayer.new()
+	big_echo_sound.stream = load("res://Assets/Audio/big-echolocation.wav")
+	big_echo_sound.bus = "Sounds"
+	get_tree().current_scene.add_child(big_echo_sound)
+	big_echo_sound.play()
+	big_echo_sound.finished.connect(func(): big_echo_sound.queue_free())
+
 	# Make echolocation last longer during the flight sequence
 	if echolocation_manager:
 		echolocation_manager.echo_fade_duration = 15.0  # Long enough for entire flight + walk
@@ -606,8 +625,9 @@ func trigger_flight_sequence():
 	var horizontal_duration = 1.5  # Time to fly right
 	var flap_interval = 0.3
 
-	# Start flap animation
+	# Start flap animation and face right (she'll be flying/walking right)
 	if anim_sprite:
+		anim_sprite.flip_h = false
 		anim_sprite.play("flap")
 
 	# Fade in the glow
@@ -658,8 +678,9 @@ func trigger_flight_sequence():
 
 	print("Sona has landed on the cliff!")
 
-	# Landing - switch to idle
+	# Landing - switch to idle, ensure facing right
 	if anim_sprite:
+		anim_sprite.flip_h = false
 		anim_sprite.play("idle")
 
 	# Fade out the glow
@@ -735,9 +756,18 @@ func walk_into_cave_and_end():
 
 	# Walk right into the cave entrance (from cliff edge at 332 to cave at ~420)
 	var target_x = 420.0
-	var walk_tween = create_tween()
-	walk_tween.tween_property(player, "global_position:x", target_x, 1.5)  # Slightly longer walk
-	await walk_tween.finished
+	var walk_speed = 60.0  # Slightly faster walk
+	var walking_audio = player.get_node_or_null("WalkingAudioPlayer")
+	var footstep_timer = 0.0
+	var footstep_interval = 0.3
+	while player.global_position.x < target_x:
+		player.global_position.x += walk_speed * get_process_delta_time()
+		# Play footstep sounds
+		footstep_timer += get_process_delta_time()
+		if footstep_timer >= footstep_interval and walking_audio:
+			walking_audio.play()
+			footstep_timer = 0.0
+		await get_tree().process_frame
 
 	# Stop animation
 	if anim_sprite:

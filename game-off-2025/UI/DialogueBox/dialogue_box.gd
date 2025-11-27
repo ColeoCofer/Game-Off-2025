@@ -160,17 +160,21 @@ func _on_hide_complete():
 	visible = false
 	dialogue_box_hidden.emit()
 
-var _audio_queue: Array = []
+var _audio_stream_queue: Array = []  # Preloaded AudioStream objects
 
 func _play_audio_sequence(audio_paths: Array) -> void:
-	"""Play multiple audio files in sequence"""
-	_audio_queue = []
+	"""Play multiple audio files in sequence (preloads all for seamless playback)"""
+	_audio_stream_queue = []
+
+	# Preload all audio streams upfront to avoid loading delay between plays
 	for path in audio_paths:
 		var trimmed = path.strip_edges()
 		if trimmed != "":
-			_audio_queue.append(trimmed)
+			var audio_stream = load(trimmed)
+			if audio_stream:
+				_audio_stream_queue.append(audio_stream)
 
-	if _audio_queue.is_empty():
+	if _audio_stream_queue.is_empty():
 		return
 
 	# Connect to finished signal if not already connected
@@ -181,19 +185,17 @@ func _play_audio_sequence(audio_paths: Array) -> void:
 	_play_next_in_sequence()
 
 func _play_next_in_sequence() -> void:
-	"""Play the next audio file in the queue"""
-	if _audio_queue.is_empty():
+	"""Play the next audio stream in the queue"""
+	if _audio_stream_queue.is_empty():
 		return
 
-	var next_path = _audio_queue.pop_front()
-	var audio_stream = load(next_path)
-	if audio_stream:
-		dialogue_audio_player.stream = audio_stream
-		dialogue_audio_player.play()
+	var next_stream = _audio_stream_queue.pop_front()
+	dialogue_audio_player.stream = next_stream
+	dialogue_audio_player.play()
 
 func _on_sequence_audio_finished() -> void:
 	"""Called when an audio in the sequence finishes"""
-	if not _audio_queue.is_empty():
+	if not _audio_stream_queue.is_empty():
 		_play_next_in_sequence()
 
 func _on_typewriter_timer_timeout():

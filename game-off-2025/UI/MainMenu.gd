@@ -29,6 +29,9 @@ func _ready() -> void:
 	# Load settings
 	_load_settings()
 
+	# Ensure main music is playing (resumes after special songs like final cutscene)
+	BackgroundMusic.resume_main_music()
+
 	# Don't grab focus initially - wait for keyboard input
 	# start_button.grab_focus()
 

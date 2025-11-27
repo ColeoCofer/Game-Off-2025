@@ -1,10 +1,13 @@
 extends AudioStreamPlayer
 
 var water_drops_player: AudioStreamPlayer
+var main_music_stream: AudioStream
+var is_playing_special_song: bool = false
 
 func _ready():
 	# Load the main background music
-	stream = load("res://Assets/Audio/sona-main.mp3")
+	main_music_stream = load("res://Assets/Audio/sona-main.mp3")
+	stream = main_music_stream
 	bus = "Music"  # Use the Music bus
 
 	# Load saved settings (check if SaveManager exists first)
@@ -32,7 +35,29 @@ func _ready():
 		water_drops_player.stream_paused = true
 
 func _on_music_finished():
-	# Replay the music when it finishes to create a loop
+	if is_playing_special_song:
+		# Special song finished - stay silent until resume_main_music() is called
+		is_playing_special_song = false
+	else:
+		# Replay the main music when it finishes to create a loop
+		play()
+
+
+func play_special_song(song_path: String):
+	"""Play a special song once, then resume main music on loop when it finishes."""
+	var special_stream = load(song_path)
+	if special_stream:
+		is_playing_special_song = true
+		stream = special_stream
+		play()
+	else:
+		push_error("Could not load special song: " + song_path)
+
+
+func resume_main_music():
+	"""Immediately resume the main background music (in case you need to cut the special song short)."""
+	is_playing_special_song = false
+	stream = main_music_stream
 	play()
 
 func set_volume(db_value: float):

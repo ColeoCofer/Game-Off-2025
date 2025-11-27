@@ -29,6 +29,31 @@ uniform float wave_offset = 40.0;
 // Darkness intensity (0.0 = fully visible, 1.0 = completely dark)
 uniform float darkness_intensity = 0.95;
 
+// Dithering settings
+uniform float dither_scale = 1.0; // Scale of dither pattern (higher = larger pixels)
+
+// 4x4 Bayer dithering threshold matrix
+const mat4 BAYER_MATRIX = mat4(
+	vec4(1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0),
+	vec4(13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0),
+	vec4(4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0),
+	vec4(16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0)
+);
+
+// Get Bayer threshold for current pixel
+float get_bayer_threshold(vec2 pixel_pos) {
+	vec2 scaled_pos = pixel_pos / dither_scale;
+	int x = int(mod(scaled_pos.x, 4.0));
+	int y = int(mod(scaled_pos.y, 4.0));
+	return BAYER_MATRIX[x][y];
+}
+
+// Apply dithering to alpha value - returns 0.0 or 1.0
+float dither_alpha(float alpha, vec2 pixel_pos) {
+	float threshold = get_bayer_threshold(pixel_pos);
+	return alpha > threshold ? 1.0 : 0.0;
+}
+
 void fragment() {
 	// Get current pixel position in screen space
 	vec2 pixel_pos = FRAGCOORD.xy;
@@ -37,9 +62,19 @@ void fragment() {
 	float dist_from_player = distance(pixel_pos, player_position);
 
 	// Player vision circle (always visible around bat)
-	// Smoothstep creates gradual fade from (vision_radius - vision_fade_distance) to vision_radius
-	float fade_start = vision_radius - vision_fade_distance;
-	float vision_alpha = smoothstep(fade_start, vision_radius, dist_from_player);
+	// Use a wider dither zone for more visibility
+	float dither_zone_width = vision_fade_distance * 0.8; // Dithering covers outer portion
+	float dither_start = vision_radius - dither_zone_width;
+
+	// Dithering gradient: 0 at dither_start, 1 at vision_radius
+	float dither_gradient = smoothstep(dither_start, vision_radius, dist_from_player);
+
+	// Apply Bayer dithering - creates sharp pixel pattern
+	float vision_alpha_dithered = dither_alpha(dither_gradient, pixel_pos);
+
+	// Apply fade to dithered pixels - inner ones are more transparent
+	float fade_factor = dither_gradient * dither_gradient; // Squared for smoother fade
+	float vision_alpha = vision_alpha_dithered * fade_factor;
 
 	// Check echolocation reveals with expanding wave
 	float echo_alpha = 1.0;

@@ -1,9 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://b1mxklc00f6rv"]
+[gd_scene load_steps=7 format=3 uid="uid://b1mxklc00f6rv"]
 
 [ext_resource type="Script" uid="uid://cap2n4jv5diav" path="res://Levels/credit_roll.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Audio/UI/sona-title-no-text.png" id="2_background"]
 [ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://bxq5p4pkbgne5" path="res://Assets/Art/sona-sprite-sheet.png" id="5_heart"]
 [ext_resource type="FontFile" uid="uid://ccob884qxxecy" path="res://Assets/Fonts/8-BIT WONDER.TTF" id="11_pihe5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_heart"]
+atlas = ExtResource("5_heart")
+region = Rect2(16, 240, 16, 16)
 
 [node name="CreditRoll" type="Control"]
 layout_mode = 3
@@ -98,7 +103,7 @@ theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
-text = "Cutscenes, Story, Art"
+text = "Cutscene Art, Story, Art"
 horizontal_alignment = 1
 
 [node name="Spacer4" type="Control" parent="CreditsContainer"]
@@ -146,7 +151,7 @@ theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 16
-text = "Character Animation, Bug Fixes"
+text = "Sona Animation, Bug Fixes"
 horizontal_alignment = 1
 
 [node name="Spacer6" type="Control" parent="CreditsContainer"]
@@ -162,9 +167,15 @@ theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 14
 text = "Every member of our team contributed ideas,
 feedback, and creative energy that shaped
-this game into what it is today."
+every aspect of this game"
 horizontal_alignment = 1
 autowrap_mode = 2
+
+[node name="HeartIcon" type="TextureRect" parent="CreditsContainer"]
+custom_minimum_size = Vector2(18, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = SubResource("AtlasTexture_heart")
 
 [node name="Spacer6b" type="Control" parent="CreditsContainer"]
 custom_minimum_size = Vector2(0, 40)

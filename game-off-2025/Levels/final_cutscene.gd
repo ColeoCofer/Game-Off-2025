@@ -18,6 +18,7 @@ var correct_echo_position = Vector2(280, 520)  # Near cliff base on right side
 var echo_trigger_radius = 60.0  # Generous radius for the trigger
 var has_triggered_flight = false
 var radial_glow_instance: ColorRect = null
+var water_drops_audio: AudioStreamPlayer = null
 
 func _ready():
 	# IMMEDIATELY clear any checkpoint from previous levels to prevent wrong spawn position
@@ -35,6 +36,16 @@ func _ready():
 
 	# Fade out the background music as the final cutscene begins
 	BackgroundMusic.fade_out(1.5)
+
+	# Start water drops ambient sound during the silence
+	water_drops_audio = AudioStreamPlayer.new()
+	water_drops_audio.stream = load("res://Assets/Audio/water_drops.wav")
+	water_drops_audio.bus = "Sounds"
+	water_drops_audio.volume_db = -5.0
+	add_child(water_drops_audio)
+	# Loop the water drops by connecting finished signal
+	water_drops_audio.finished.connect(func(): water_drops_audio.play())
+	water_drops_audio.play()
 
 	# Stop the timer immediately (will restart after cutscene if needed)
 	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("stop_timer"):
@@ -483,8 +494,8 @@ func walk_to_shard_hold_and_dialogue():
 
 
 func start_sad_song():
-	"""Start the sad ending song when the photo cutscene begins"""
-	BackgroundMusic.play_special_song("res://Assets/Audio/sad-sona.mp3")
+	"""Start the sad ending song when the photo cutscene begins (loops until main menu)"""
+	BackgroundMusic.play_special_song("res://Assets/Audio/sad-sona.mp3", true)
 
 
 func create_final_cutscene_frames() -> Array:
@@ -831,15 +842,27 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 	var cutscene_frames = []
 	var CutscenePlayerScript = load("res://UI/CutscenePlayer/cutscene_player.gd")
 
-	# Frame 1: sona-gameboy-1.png
+	cutscene_frames.append(CutscenePlayerScript.create_frame(
+		"res://Assets/Art/cut-scenes/end-sona-surprised-face.png",
+		[""],  # Empty for player to advance
+		0.0,
+		[""]
+	))
+
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-1.png",
 		[""],  # Empty for player to advance
 		0.0,
 		[""]
 	))
-
-	# Frame 2: sona-gameboy-2.png
+	
+	cutscene_frames.append(CutscenePlayerScript.create_frame(
+		"res://Assets/Art/cut-scenes/end-sona-happy.png",
+		[""],  # Empty for player to advance
+		0.0,
+		[""]
+	))
+	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-2.png",
 		[""],  # Empty for player to advance
@@ -852,14 +875,17 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 		fade_layer.visible = false
 		print("FadeLayer hidden for cutscene")
 
-	# Get or create cutscene player
-	var cutscene_player = get_tree().get_first_node_in_group("cutscene_player")
-	var we_created_cutscene_player = false
-	if not cutscene_player:
-		var scene = load("res://UI/CutscenePlayer/cutscene_player.tscn")
-		cutscene_player = scene.instantiate()
-		get_tree().root.add_child(cutscene_player)
-		we_created_cutscene_player = true
+	# Clean up any existing cutscene player from the earlier photo sequence
+	var existing_player = get_tree().get_first_node_in_group("cutscene_player")
+	if existing_player:
+		existing_player.queue_free()
+		await get_tree().process_frame
+
+	# Create a fresh cutscene player for the ending sequence
+	var scene = load("res://UI/CutscenePlayer/cutscene_player.tscn")
+	var cutscene_player = scene.instantiate()
+	get_tree().root.add_child(cutscene_player)
+	var we_created_cutscene_player = true
 
 	# Play the ending cutscene
 	cutscene_player.play_cutscene(cutscene_frames)
@@ -961,5 +987,11 @@ func cleanup_before_scene_change():
 	if god_rays_instance:
 		god_rays_instance.queue_free()
 		god_rays_instance = null
+
+	# Stop and clean up water drops audio
+	if water_drops_audio:
+		water_drops_audio.stop()
+		water_drops_audio.queue_free()
+		water_drops_audio = null
 
 	print("Cleanup complete")

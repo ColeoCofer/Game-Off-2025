@@ -3,6 +3,7 @@ extends AudioStreamPlayer
 var water_drops_player: AudioStreamPlayer
 var main_music_stream: AudioStream
 var is_playing_special_song: bool = false
+var loop_special_song: bool = false
 
 func _ready():
 	# Load the main background music
@@ -36,8 +37,12 @@ func _ready():
 
 func _on_music_finished():
 	if is_playing_special_song:
-		# Special song finished - stay silent until resume_main_music() is called
-		is_playing_special_song = false
+		if loop_special_song:
+			# Loop the special song
+			play()
+		else:
+			# Special song finished - stay silent until resume_main_music() is called
+			is_playing_special_song = false
 	else:
 		# Replay the main music when it finishes to create a loop
 		play()
@@ -65,11 +70,12 @@ func fade_out(duration: float = 1.0):
 		water_tween.tween_callback(water_drops_player.stop)  # Stop water drops too
 
 
-func play_special_song(song_path: String):
-	"""Play a special song once, then stay silent when it finishes."""
+func play_special_song(song_path: String, loop: bool = false):
+	"""Play a special song. If loop is true, it will repeat until stopped."""
 	var special_stream = load(song_path)
 	if special_stream:
 		is_playing_special_song = true
+		loop_special_song = loop
 		stream = special_stream
 		# Restore volume if we were faded out
 		if is_faded_out:
@@ -83,6 +89,7 @@ func play_special_song(song_path: String):
 func resume_main_music():
 	"""Immediately resume the main background music."""
 	is_playing_special_song = false
+	loop_special_song = false
 	is_faded_out = false
 	stream = main_music_stream
 	# Restore volume in case we were faded out

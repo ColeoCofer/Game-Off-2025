@@ -634,8 +634,9 @@ func trigger_flight_sequence():
 	var flap_interval = 0.3
 
 	# Start flap animation and face right (she'll be flying/walking right)
+	# Note: Controller uses scale.x for facing (positive = right, negative = left)
 	if anim_sprite:
-		anim_sprite.flip_h = false
+		anim_sprite.scale.x = abs(anim_sprite.scale.x)  # Face right
 		anim_sprite.play("flap")
 
 	# Fade in the glow
@@ -656,6 +657,9 @@ func trigger_flight_sequence():
 	var flap_timer = 0.0
 	while flight_tween.is_running():
 		flap_timer += get_process_delta_time()
+		# Ensure facing right throughout flight (positive scale.x = right)
+		if anim_sprite:
+			anim_sprite.scale.x = abs(anim_sprite.scale.x)
 		if flap_timer >= flap_interval:
 			if flap_audio:
 				flap_audio.play()
@@ -676,6 +680,9 @@ func trigger_flight_sequence():
 	flap_timer = 0.0
 	while horizontal_tween.is_running():
 		flap_timer += get_process_delta_time()
+		# Ensure facing right throughout flight (positive scale.x = right)
+		if anim_sprite:
+			anim_sprite.scale.x = abs(anim_sprite.scale.x)
 		if flap_timer >= flap_interval:
 			if flap_audio:
 				flap_audio.play()
@@ -686,9 +693,9 @@ func trigger_flight_sequence():
 
 	print("Sona has landed on the cliff!")
 
-	# Landing - switch to idle, ensure facing right
+	# Landing - switch to idle, ensure facing right (positive scale.x = right)
 	if anim_sprite:
-		anim_sprite.flip_h = false
+		anim_sprite.scale.x = abs(anim_sprite.scale.x)
 		anim_sprite.play("idle")
 
 	# Fade out the glow
@@ -756,10 +763,16 @@ func walk_into_cave_and_end():
 			print("CaveEntrance TriggerArea signal disconnected")
 
 	var anim_sprite: AnimatedSprite2D = player.get_node_or_null("AnimatedSprite2D")
+	if not anim_sprite:
+		# Fallback: search for AnimatedSprite2D in children
+		for child in player.get_children():
+			if child is AnimatedSprite2D:
+				anim_sprite = child
+				break
 
-	# Face right and walk
+	# Face right and walk (positive scale.x = right)
 	if anim_sprite:
-		anim_sprite.flip_h = false
+		anim_sprite.scale.x = abs(anim_sprite.scale.x)
 		anim_sprite.play("walk")
 
 	# Walk right into the cave entrance (from cliff edge at 332 to cave at ~420)
@@ -770,6 +783,9 @@ func walk_into_cave_and_end():
 	var footstep_interval = 0.3
 	while player.global_position.x < target_x:
 		player.global_position.x += walk_speed * get_process_delta_time()
+		# Ensure facing right throughout the walk (positive scale.x = right)
+		if anim_sprite:
+			anim_sprite.scale.x = abs(anim_sprite.scale.x)
 		# Play footstep sounds
 		footstep_timer += get_process_delta_time()
 		if footstep_timer >= footstep_interval and walking_audio:

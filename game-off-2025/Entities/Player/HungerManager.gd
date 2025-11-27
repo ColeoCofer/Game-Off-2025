@@ -7,7 +7,7 @@ signal food_consumed(amount: float)
 
 # Configuration
 @export var max_hunger: float = 100.0
-@export var depletion_rate: float = 5.0  # Hunger lost per second
+@export var depletion_rate: float = 4.5  # Hunger lost per second
 @export var min_hunger: float = 0.0
 
 # State

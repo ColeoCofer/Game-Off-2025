@@ -43,22 +43,60 @@ func _on_music_finished():
 		play()
 
 
+var original_volume_db: float = 0.0
+var is_faded_out: bool = false
+
+func fade_out(duration: float = 1.0):
+	"""Fade out the background music over the specified duration, then stop completely."""
+	if is_faded_out:
+		return
+
+	original_volume_db = volume_db
+	is_faded_out = true
+
+	var tween = create_tween()
+	tween.tween_property(self, "volume_db", -40.0, duration)
+	tween.tween_callback(stop)  # Stop playback after fade completes
+
+	# Also fade out water drops
+	if water_drops_player:
+		var water_tween = create_tween()
+		water_tween.tween_property(water_drops_player, "volume_db", -80.0, duration)
+		water_tween.tween_callback(water_drops_player.stop)  # Stop water drops too
+
+
 func play_special_song(song_path: String):
-	"""Play a special song once, then resume main music on loop when it finishes."""
+	"""Play a special song once, then stay silent when it finishes."""
 	var special_stream = load(song_path)
 	if special_stream:
 		is_playing_special_song = true
 		stream = special_stream
+		# Restore volume if we were faded out
+		if is_faded_out:
+			volume_db = original_volume_db
+			is_faded_out = false
 		play()
 	else:
 		push_error("Could not load special song: " + song_path)
 
 
 func resume_main_music():
-	"""Immediately resume the main background music (in case you need to cut the special song short)."""
+	"""Immediately resume the main background music."""
 	is_playing_special_song = false
+	is_faded_out = false
 	stream = main_music_stream
+	# Restore volume in case we were faded out
+	if has_node("/root/SaveManager"):
+		volume_db = SaveManager.get_music_volume()
+	else:
+		volume_db = original_volume_db
 	play()
+
+	# Also restore water drops
+	if water_drops_player:
+		water_drops_player.volume_db = -40
+		if not water_drops_player.playing:
+			water_drops_player.play()
 
 func set_volume(db_value: float):
 	volume_db = db_value

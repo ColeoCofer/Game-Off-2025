@@ -33,6 +33,9 @@ func _ready():
 	if not force_play_cutscene and SaveManager.has_cutscene_played("final_sequence"):
 		return
 
+	# Fade out the background music as the final cutscene begins
+	BackgroundMusic.fade_out(1.5)
+
 	# Stop the timer immediately (will restart after cutscene if needed)
 	if TimerManager.current_timer_ui and TimerManager.current_timer_ui.has_method("stop_timer"):
 		TimerManager.current_timer_ui.stop_timer()
@@ -86,9 +89,6 @@ func _ready():
 
 	if anim_sprite:
 		anim_sprite.flip_h = false  # Face right for the cutscene
-
-	# Play the special ending song (will resume main music when it finishes)
-	BackgroundMusic.play_special_song("res://Assets/Audio/sad-sona.mp3")
 
 	# Play the final sequence (will re-disable control, but that's fine)
 	CutsceneDirector.play_cutscene("final_sequence")
@@ -148,11 +148,14 @@ func register_final_cutscene():
 	# Step 9: Wait before fullscreen cutscene
 	actions.append(CutsceneDirector.action_wait(0.5))
 
-	# Step 10: Fullscreen cutscene with images
+	# Step 10: Start the sad song as the photo cutscene begins
+	actions.append(CutsceneDirector.action_custom(start_sad_song))
+
+	# Step 11: Fullscreen cutscene with images
 	var cutscene_frames = create_final_cutscene_frames()
 	actions.append(CutsceneDirector.action_fullscreen_cutscene(cutscene_frames))
 
-	# Step 11: Return to level and show final dialogue
+	# Step 12: Return to level and show final dialogue
 	actions.append(CutsceneDirector.action_wait(0.5))
 	actions.append(CutsceneDirector.action_dialogue(
 		["You were with me all along..."],
@@ -477,6 +480,11 @@ func walk_to_shard_hold_and_dialogue():
 	if god_rays_instance:
 		god_rays_instance.queue_free()
 		god_rays_instance = null
+
+
+func start_sad_song():
+	"""Start the sad ending song when the photo cutscene begins"""
+	BackgroundMusic.play_special_song("res://Assets/Audio/sad-sona.mp3")
 
 
 func create_final_cutscene_frames() -> Array:

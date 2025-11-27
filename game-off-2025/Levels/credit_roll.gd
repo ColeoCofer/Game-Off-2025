@@ -20,6 +20,26 @@ var scroll_end_y: float = 0.0
 var can_skip: bool = false
 
 func _ready():
+	# Clean up any FadeLayer left over from the final cutscene
+	var fade_layer = get_tree().root.get_node_or_null("FadeLayer")
+	if fade_layer:
+		fade_layer.queue_free()
+
+	# Hide and clean up any timer UI from the previous level
+	if TimerManager.current_timer_ui and is_instance_valid(TimerManager.current_timer_ui):
+		TimerManager.current_timer_ui.visible = false
+		TimerManager.current_timer_ui.queue_free()
+		TimerManager.current_timer_ui = null
+
+	# Also search and destroy any TimerUI nodes that might be lingering
+	for node in get_tree().get_nodes_in_group("timer_ui"):
+		node.queue_free()
+
+	# Check root for any lingering CanvasLayers with timers
+	for child in get_tree().root.get_children():
+		if child.name == "TimerUI" or (child is CanvasLayer and child.get_node_or_null("TimerUI")):
+			child.queue_free()
+
 	# Start credits off-screen (below the viewport)
 	scroll_start_y = get_viewport_rect().size.y
 	credits_container.position.y = scroll_start_y

@@ -896,15 +896,15 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 	# Wait a frame to let the cutscene_player finish its signal emission
 	await get_tree().process_frame
 
+	# Show the fade layer again (black screen) BEFORE cleaning up to prevent flash
+	if fade_layer and is_instance_valid(fade_layer):
+		fade_layer.visible = true
+		print("FadeLayer shown to prevent flash")
+
 	# Clean up cutscene player if we created it (use queue_free since we waited a frame)
 	if we_created_cutscene_player and is_instance_valid(cutscene_player):
 		cutscene_player.queue_free()
 		print("CutscenePlayer queued for removal")
-
-	# Clean up fade layer
-	if fade_layer and is_instance_valid(fade_layer):
-		fade_layer.queue_free()
-		print("FadeLayer queued for removal")
 
 	# Wait another frame for queue_free to process
 	await get_tree().process_frame
@@ -912,11 +912,10 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 	# Reset all global state before leaving the level
 	cleanup_before_scene_change()
 
-	# Wait for queue_free to process
-	await get_tree().process_frame
+	# Wait for cleanup to process
 	await get_tree().process_frame
 
-	# Show the credit roll
+	# Show the credit roll (fade_layer will be cleaned up by scene change)
 	print("Loading credit roll...")
 	get_tree().change_scene_to_file("res://Levels/credit-roll.tscn")
 
@@ -937,17 +936,25 @@ func cleanup_before_scene_change():
 		DialogueManager.skip_dialogue()
 	print("DialogueManager state reset")
 
-	# Remove any FadeLayer we added to root (persists across scene changes!)
+	# Stop and hide the timer - we don't want it showing during credits
+	if TimerManager.current_timer_ui and is_instance_valid(TimerManager.current_timer_ui):
+		TimerManager.current_timer_ui.stop_timer()
+		TimerManager.current_timer_ui.visible = false
+	# Also clean up any timer UI nodes in the tree
+	for node in get_tree().get_nodes_in_group("timer_ui"):
+		if is_instance_valid(node):
+			node.visible = false
+			node.queue_free()
+	TimerManager.current_timer_ui = null
+	print("Timer stopped and hidden")
+
+	# NOTE: We intentionally keep FadeLayer visible to prevent flash during scene change
+	# The credit_roll scene will clean it up
 	var root = get_tree().root
 
-	var fade_layer_node = root.get_node_or_null("FadeLayer")
-	if fade_layer_node and is_instance_valid(fade_layer_node):
-		fade_layer_node.queue_free()
-		print("Queued FadeLayer for removal from root")
-
-	# Clean up any cutscene players we added to root
+	# Clean up any cutscene players we added to root (but NOT FadeLayer)
 	for child in root.get_children():
-		if child.name == "FadeLayer" or child.name == "CutscenePlayer" or child.is_in_group("cutscene_player"):
+		if child.name == "CutscenePlayer" or child.is_in_group("cutscene_player"):
 			if is_instance_valid(child):
 				child.queue_free()
 				print("Queued lingering node for removal: ", child.name)

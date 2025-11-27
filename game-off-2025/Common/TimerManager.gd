@@ -17,6 +17,12 @@ func _ready() -> void:
 func _on_node_added(node: Node) -> void:
 	# Check if this is a level scene root being added
 	if node == get_tree().current_scene and node.scene_file_path.begins_with("res://Levels/"):
+		# Skip credit roll, cutscenes, and ending scenes - no timer needed
+		var skip_scenes = ["credit", "cutscene", "ending"]
+		for skip_word in skip_scenes:
+			if skip_word in node.scene_file_path.to_lower():
+				print("TimerManager: Skipping timer for scene: ", node.scene_file_path)
+				return
 		# Wait one frame for the level to finish loading
 		await get_tree().process_frame
 		_add_timer_to_current_level()

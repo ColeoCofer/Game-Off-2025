@@ -15,6 +15,9 @@ var was_visible_before_cutscene: bool = false
 
 
 func _ready() -> void:
+	# Add to group for easy cleanup
+	add_to_group("timer_ui")
+
 	# Check if timer should be visible based on settings
 	visible = SaveManager.get_show_timer()
 

@@ -7,6 +7,9 @@ extends CanvasLayer
 @onready var echo_audio: AudioStreamPlayer = player.get_node("EchoAudioPlayer")
 @onready var hunger_manager: Node = player.get_node("HungerManager")
 
+# Echo animation sprite (created programmatically to render above darkness)
+var echo_animation_sprite: AnimatedSprite2D
+
 # Low hunger vignette overlay (created programmatically)
 var vignette_overlay: ColorRect
 var vignette_material: ShaderMaterial
@@ -27,6 +30,9 @@ var vignette_material: ShaderMaterial
 @export var wave_thickness: float = 60.0  # How thick the visible wave ring is
 @export var wave_brightness: float = 0.4  # How visible/bright the wave ring appears (0-1)
 @export var wave_offset: float = 40.0  # How far ahead of the reveal the wave appears
+
+# Echo ring animation (sprite-based visual effect)
+@export var enable_echo_animation: bool = false  # Toggle for echo ring sprite animation
 
 # Echolocation pulses (relative offset from player, intensity, and expansion radius)
 var echo_pulses: Array = []  # Array of {relative_offset: Vector2, intensity: float, radius: float, age: float}
@@ -50,6 +56,10 @@ var vignette_pulse_time: float = 0.0  # Tracks pulse animation
 func _ready():
 	# Ensure darkness overlay is visible (in case it was disabled during level editing)
 	darkness_overlay.visible = true
+
+	# Create echo animation sprite (renders above darkness overlay in this CanvasLayer)
+	if enable_echo_animation:
+		_setup_echo_animation()
 
 	# Create shader material
 	shader_material = ShaderMaterial.new()
@@ -81,6 +91,10 @@ func _process(delta: float):
 	# Update player position in shader
 	var player_screen_pos = get_screen_position(player.global_position)
 	shader_material.set_shader_parameter("player_position", player_screen_pos)
+
+	# Update echo animation position to follow player (in screen space)
+	if echo_animation_sprite and echo_animation_sprite.visible:
+		echo_animation_sprite.position = player_screen_pos
 
 	# Handle echolocation input
 	if Input.is_action_just_pressed("echolocate") and can_use_echolocation():
@@ -127,6 +141,13 @@ func trigger_echolocation():
 	# Play echo sound
 	if echo_audio:
 		echo_audio.play()
+
+	# Play echo ring animation centered on player (in screen space)
+	if echo_animation_sprite:
+		echo_animation_sprite.position = get_screen_position(player.global_position)
+		echo_animation_sprite.visible = true
+		echo_animation_sprite.frame = 0
+		echo_animation_sprite.play("echo")
 
 	# Create new echolocation pulse at player position
 	# Store as relative offset (0,0) so it follows the player
@@ -197,6 +218,45 @@ func get_screen_position(world_pos: Vector2) -> Vector2:
 
 # Signal for enemy detection (emitted when player uses echolocation)
 signal echolocation_triggered(player_position: Vector2)
+
+func _on_echo_animation_finished():
+	# Hide the echo animation sprite when it finishes playing
+	if echo_animation_sprite:
+		echo_animation_sprite.visible = false
+
+func _setup_echo_animation():
+	"""Creates the echo ring animation sprite that plays when echolocation is triggered"""
+	# Load the echo spritesheet texture
+	var echo_texture = load("res://Assets/Art/Echo.png")
+	if not echo_texture:
+		push_warning("EcholocationManager: Could not load Echo.png")
+		return
+
+	# Create SpriteFrames with 6 frames (128x128 each from 768x128 spritesheet)
+	var sprite_frames = SpriteFrames.new()
+	sprite_frames.add_animation("echo")
+	sprite_frames.set_animation_loop("echo", false)
+	sprite_frames.set_animation_speed("echo", 24.0)
+
+	# Create atlas textures for each frame
+	for i in range(6):
+		var atlas_texture = AtlasTexture.new()
+		atlas_texture.atlas = echo_texture
+		atlas_texture.region = Rect2(i * 128, 0, 128, 128)
+		sprite_frames.add_frame("echo", atlas_texture)
+
+	# Create the AnimatedSprite2D
+	echo_animation_sprite = AnimatedSprite2D.new()
+	echo_animation_sprite.sprite_frames = sprite_frames
+	echo_animation_sprite.animation = "echo"
+	echo_animation_sprite.visible = false
+	echo_animation_sprite.z_index = 100  # Render above darkness overlay
+
+	# Connect animation finished signal
+	echo_animation_sprite.animation_finished.connect(_on_echo_animation_finished)
+
+	# Add as child of this CanvasLayer (renders in screen space above darkness)
+	add_child(echo_animation_sprite)
 
 func _setup_vignette_overlay():
 	"""Creates the red vignette overlay for low hunger warning"""

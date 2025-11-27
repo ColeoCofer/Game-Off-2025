@@ -890,13 +890,9 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# TODO: Show final title screen (to be added by user)
-	# TODO: Roll credits (to be added by user)
-
-	# For now, return to main menu after a brief pause
-	await get_tree().create_timer(1.0).timeout
-	print("Returning to main menu...")
-	SceneManager.goto_main_menu()
+	# Show the credit roll
+	print("Loading credit roll...")
+	get_tree().change_scene_to_file("res://Levels/credit-roll.tscn")
 
 
 func cleanup_before_scene_change():

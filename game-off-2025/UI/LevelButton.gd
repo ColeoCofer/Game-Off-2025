@@ -49,6 +49,11 @@ func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best
 func _ready() -> void:
 	pressed.connect(_on_pressed)
 
+	# Connect UI sound signals
+	focus_entered.connect(UISounds.play_hover)
+	mouse_entered.connect(UISounds.play_hover_mouse)
+	pressed.connect(UISounds.play_click)
+
 
 func _update_diamond_display() -> void:
 	# Hide diamond label for tutorial level (no diamonds to collect)

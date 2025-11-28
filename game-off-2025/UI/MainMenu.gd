@@ -16,7 +16,8 @@ var using_keyboard_nav: bool = false
 
 
 func _ready() -> void:
-	# Signals are already connected in the scene file
+	# Connect UI sound signals
+	_connect_ui_sounds()
 
 	# Set up focus navigation for settings panel
 	music_volume_slider.focus_neighbor_bottom = music_volume_slider.get_path_to(sounds_volume_slider)
@@ -101,3 +102,30 @@ func _input(event: InputEvent) -> void:
 
 		_on_close_settings_pressed()
 		get_viewport().set_input_as_handled()
+
+
+func _connect_ui_sounds() -> void:
+	# Connect hover sounds for keyboard/controller (focus_entered)
+	start_button.focus_entered.connect(UISounds.play_hover)
+	settings_button.focus_entered.connect(UISounds.play_hover)
+	quit_button.focus_entered.connect(UISounds.play_hover)
+	music_volume_slider.focus_entered.connect(UISounds.play_hover)
+	sounds_volume_slider.focus_entered.connect(UISounds.play_hover)
+	timer_toggle.focus_entered.connect(UISounds.play_hover)
+	close_settings_button.focus_entered.connect(UISounds.play_hover)
+
+	# Connect hover sounds for mouse (mouse_entered) - uses play_hover_mouse to prevent sound on scene load
+	start_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	settings_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	quit_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	music_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
+	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
+	timer_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
+	close_settings_button.mouse_entered.connect(UISounds.play_hover_mouse)
+
+	# Connect click sounds (pressed)
+	start_button.pressed.connect(UISounds.play_click)
+	settings_button.pressed.connect(UISounds.play_click)
+	quit_button.pressed.connect(UISounds.play_click)
+	timer_toggle.toggled.connect(func(_on): UISounds.play_click())
+	close_settings_button.pressed.connect(UISounds.play_click)

@@ -13,6 +13,11 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 	_populate_level_grid()
 
+	# Connect UI sound signals for back button
+	back_button.focus_entered.connect(UISounds.play_hover)
+	back_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	back_button.pressed.connect(UISounds.play_click)
+
 	# Focus first unlocked level
 	await get_tree().process_frame
 	_focus_first_unlocked()

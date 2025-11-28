@@ -31,6 +31,9 @@ func _ready():
 	level_select_button = get_node("CenterContainer/VBoxContainer/LevelSelectButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 
+	# Connect UI sound signals
+	_connect_ui_sounds()
+
 func show_menu(death_reason: String = "starvation"):
 	visible = true
 	current_button_index = 0
@@ -242,3 +245,23 @@ func _disable_all_fireflies():
 		if "firefly_id" in node:
 			node.monitoring = false
 			node.monitorable = false
+
+
+func _connect_ui_sounds() -> void:
+	# Connect hover sounds for keyboard/controller (focus_entered)
+	play_again_button.focus_entered.connect(UISounds.play_hover)
+	next_level_button.focus_entered.connect(UISounds.play_hover)
+	level_select_button.focus_entered.connect(UISounds.play_hover)
+	exit_button.focus_entered.connect(UISounds.play_hover)
+
+	# Connect hover sounds for mouse (mouse_entered)
+	play_again_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	next_level_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	level_select_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	exit_button.mouse_entered.connect(UISounds.play_hover_mouse)
+
+	# Connect click sounds (pressed)
+	play_again_button.pressed.connect(UISounds.play_click)
+	next_level_button.pressed.connect(UISounds.play_click)
+	level_select_button.pressed.connect(UISounds.play_click)
+	exit_button.pressed.connect(UISounds.play_click)

@@ -27,7 +27,7 @@ var is_alive: bool = true
 var death_material: ShaderMaterial
 
 # Audio
-var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
+var squish_sound: AudioStream = preload("res://Assets/Audio/bug-splat.wav")
 
 func _ready():
 	# Connect stomp detection

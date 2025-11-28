@@ -32,7 +32,7 @@ func _ready():
 		torch_audio_player.bus = &"Sounds"
 
 		# Load and configure the torch sound for looping
-		var torch_stream = load("res://Assets/Audio/fire/fire-torch.mp3")
+		var torch_stream = load("res://Assets/Audio/fire/flames-idle.wav")
 		if torch_stream is AudioStreamMP3:
 			torch_stream.loop = true
 		torch_audio_player.stream = torch_stream

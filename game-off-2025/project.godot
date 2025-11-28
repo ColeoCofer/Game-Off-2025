@@ -30,6 +30,7 @@ CutsceneDirector="*res://Common/CutsceneDirector.gd"
 TutorialManager="*res://Common/TutorialManager.gd"
 DiamondCollectionManager="*res://Common/DiamondCollectionManager.gd"
 InputModeManager="*res://Common/InputModeManager.gd"
+UISounds="*res://Common/UISounds.gd"
 
 [display]
 

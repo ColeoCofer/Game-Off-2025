@@ -47,7 +47,7 @@ var is_invincible: bool = false  # Brief invincibility after hitting player
 var invincibility_timer: float = 0.0
 
 # Audio
-var squish_sound: AudioStream = preload("res://Assets/Audio/squish.mp3")
+var squish_sound: AudioStream = preload("res://Assets/Audio/bug-splat.wav")
 
 func _ready():
 	# Set starting direction

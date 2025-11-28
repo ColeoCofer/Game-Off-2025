@@ -46,6 +46,9 @@ func _ready():
 	# Sync with managers
 	DebugManager.debug_mode = SaveManager.get_debug_mode()
 
+	# Connect UI sound signals
+	_connect_ui_sounds()
+
 func _input(event):
 	# Toggle pause menu when pause is pressed
 	if Input.is_action_just_pressed("pause"):
@@ -217,3 +220,27 @@ func _on_timer_toggle_toggled(toggled_on: bool):
 	var timer_ui = get_tree().current_scene.find_child("TimerUI", true, false)
 	if timer_ui:
 		timer_ui.set_timer_visible(toggled_on)
+
+
+func _connect_ui_sounds() -> void:
+	# Connect hover sounds for keyboard/controller (focus_entered)
+	continue_button.focus_entered.connect(UISounds.play_hover)
+	exit_button.focus_entered.connect(UISounds.play_hover)
+	debug_toggle.focus_entered.connect(UISounds.play_hover)
+	timer_toggle.focus_entered.connect(UISounds.play_hover)
+	music_volume_slider.focus_entered.connect(UISounds.play_hover)
+	sounds_volume_slider.focus_entered.connect(UISounds.play_hover)
+
+	# Connect hover sounds for mouse (mouse_entered)
+	continue_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	exit_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	debug_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
+	timer_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
+	music_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
+	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
+
+	# Connect click sounds (pressed/toggled)
+	continue_button.pressed.connect(UISounds.play_click)
+	exit_button.pressed.connect(UISounds.play_click)
+	debug_toggle.toggled.connect(func(_on): UISounds.play_click())
+	timer_toggle.toggled.connect(func(_on): UISounds.play_click())

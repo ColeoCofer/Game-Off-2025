@@ -55,7 +55,7 @@ script = ExtResource("1_torch_script")
 light_energy = 0.64
 light_flicker_speed = 4.13
 light_flicker_intensity = 0.13
-torch_volume_db = 15.0
+torch_volume_db = 12.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_torch")

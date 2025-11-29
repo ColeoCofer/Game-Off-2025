@@ -38,9 +38,9 @@ func _on_body_entered(body: Node2D):
 		# Emit signal for game manager/UI to track collection
 		bug_eaten.emit()
 
-		# Optional: Play collection sound effect here
-		# if has_node("AudioStreamPlayer2D"):
-		#     $AudioStreamPlayer2D.play()
+		# Play bite sound effect
+		if has_node("BiteSound"):
+			$BiteSound.play()
 
 		# Play collection animation and remove
 		_collect_animation()
@@ -57,4 +57,11 @@ func _collect_animation():
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, fade_out_duration)
 	tween.tween_property(self, "scale", Vector2(1.5, 1.5), fade_out_duration)
+
+	# Wait for sound to finish before freeing (if sound is playing)
+	if has_node("BiteSound") and $BiteSound.stream:
+		var sound_duration = $BiteSound.stream.get_length()
+		var wait_time = max(fade_out_duration, sound_duration)
+		tween.chain().tween_interval(wait_time - fade_out_duration)
+
 	tween.tween_callback(queue_free)

@@ -17,14 +17,20 @@ uniform float echo_radii[10]; // Current expansion radius of each pulse
 // Maximum distance echolocation reveals
 uniform float echo_reveal_distance = 800.0;
 
-// Wave thickness (how thick the expanding ring is)
-uniform float wave_thickness = 60.0;
+// Wave thickness (how thick each expanding ring is)
+uniform float wave_thickness = 20.0;
 
-// Wave brightness (how visible the wave ring is)
-uniform float wave_brightness = 0.4;
+// Wave brightness (how visible the wave rings are)
+uniform float wave_brightness = 1.6;
 
-// How far ahead of the reveal the wave appears
-uniform float wave_offset = 40.0;
+// How far ahead of the reveal the leading wave appears
+uniform float wave_offset = 30.0;
+
+// Number of trailing wave rings (sound wave effect)
+uniform int wave_ring_count = 5;
+
+// Spacing between each concentric ring
+uniform float wave_ring_spacing = 35.0;
 
 // Darkness intensity (0.0 = fully visible, 1.0 = completely dark)
 uniform float darkness_intensity = 0.95;
@@ -104,25 +110,43 @@ void fragment() {
 				echo_alpha = min(echo_alpha, 1.0 - echo_reveal);
 			}
 
-			// Create visible wave ring ahead of the reveal edge
-			// Wave appears at: current_radius + wave_offset
-			float wave_position = echo_radii[i] + wave_offset;
-			float distance_from_wave = abs(dist_from_echo - wave_position);
+			// Create multiple concentric wave rings for sound wave effect
+			// Leading wave appears at: current_radius + wave_offset
+			float leading_edge = echo_radii[i] + wave_offset;
 
-			// Only show wave if we're within the wave thickness
-			if (distance_from_wave < wave_thickness) {
-				// Create smooth falloff from center of wave ring
-				float wave_intensity = smoothstep(wave_thickness, 0.0, distance_from_wave);
+			// Generate multiple trailing rings behind the leading edge
+			for (int ring = 0; ring < 5; ring++) {
+				if (ring >= wave_ring_count) break;
 
-				// Fade the wave with pulse intensity
-				wave_intensity *= echo_intensities[i];
+				// Each ring trails behind the leading edge
+				float ring_position = leading_edge - float(ring) * wave_ring_spacing;
 
-				// Add a subtle pulse effect (brighter at the leading edge)
-				float edge_boost = smoothstep(wave_thickness * 0.5, 0.0, distance_from_wave);
-				wave_intensity += edge_boost * 0.2 * echo_intensities[i];
+				// Don't show rings that would be at negative radius
+				if (ring_position < 0.0) continue;
 
-				// Accumulate wave brightness (in case multiple waves overlap)
-				wave_glow = max(wave_glow, wave_intensity);
+				float distance_from_ring = abs(dist_from_echo - ring_position);
+
+				// Only show wave if we're within the wave thickness
+				if (distance_from_ring < wave_thickness) {
+					// Create smooth falloff from center of wave ring
+					float ring_intensity = smoothstep(wave_thickness, 0.0, distance_from_ring);
+
+					// Each trailing ring is progressively fainter
+					float ring_fade = 1.0 - (float(ring) / float(wave_ring_count)) * 0.7;
+					ring_intensity *= ring_fade;
+
+					// Fade the wave with pulse intensity
+					ring_intensity *= echo_intensities[i];
+
+					// Leading ring (ring 0) gets a brighter edge for emphasis
+					if (ring == 0) {
+						float edge_boost = smoothstep(wave_thickness * 0.5, 0.0, distance_from_ring);
+						ring_intensity += edge_boost * 0.25 * echo_intensities[i];
+					}
+
+					// Accumulate wave brightness (in case multiple waves overlap)
+					wave_glow = max(wave_glow, ring_intensity);
+				}
 			}
 		}
 	}

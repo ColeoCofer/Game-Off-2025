@@ -43,17 +43,17 @@ func show_menu(death_reason: String = "starvation"):
 	match death_reason:
 		"starvation":
 			title_label.text = "YOU STARVED"
-			subtitle_label.text = "The bat ran out of energy..."
+			subtitle_label.text = "Sona ran out of energy..."
 		"fall":
 			title_label.text = "YOU FELL"
-			subtitle_label.text = "The bat plummeted into the void..."
+			subtitle_label.text = "Sona plummeted into the void..."
 		"success":
 			title_label.text = "LEVEL COMPLETE!"
 			title_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3, 1.0))
-			subtitle_label.text = "The bat found its way through the darkness!"
+			subtitle_label.text = "Sona found its way through the darkness!"
 		_:
 			title_label.text = "YOU DIED"
-			subtitle_label.text = "The bat has perished..."
+			subtitle_label.text = "Sona has perished..."
 
 	# Show/hide buttons based on success or failure
 	if is_success:

@@ -27,9 +27,11 @@ var vignette_material: ShaderMaterial
 @export var cooldown_duration: float = 0.3  # Cooldown between echolocation uses (seconds)
 
 # Wave visual settings
-@export var wave_thickness: float = 60.0  # How thick the visible wave ring is
-@export var wave_brightness: float = 0.4  # How visible/bright the wave ring appears (0-1)
-@export var wave_offset: float = 40.0  # How far ahead of the reveal the wave appears
+@export var wave_thickness: float = 20.0  # How thick each wave ring is (thinner = more distinct rings)
+@export var wave_brightness: float = 2.1  # How visible/bright the wave rings appear (0-1)
+@export var wave_offset: float = 30.0  # How far ahead of the reveal the wave appears
+@export var wave_ring_count: int = 5  # Number of concentric sound wave rings
+@export var wave_ring_spacing: float = 35.0  # Spacing between each ring in pixels
 
 # Vision mask style
 @export var use_dithering: bool = true:  # Toggle between dithering (pixelated edge) and smooth fade
@@ -83,6 +85,8 @@ func _ready():
 	shader_material.set_shader_parameter("wave_thickness", wave_thickness)
 	shader_material.set_shader_parameter("wave_brightness", wave_brightness)
 	shader_material.set_shader_parameter("wave_offset", wave_offset)
+	shader_material.set_shader_parameter("wave_ring_count", wave_ring_count)
+	shader_material.set_shader_parameter("wave_ring_spacing", wave_ring_spacing)
 	shader_material.set_shader_parameter("use_dithering", use_dithering)
 
 	# Initialize echo arrays
@@ -244,13 +248,13 @@ func _setup_echo_animation():
 	var sprite_frames = SpriteFrames.new()
 	sprite_frames.add_animation("echo")
 	sprite_frames.set_animation_loop("echo", false)
-	sprite_frames.set_animation_speed("echo", 24.0)
+	sprite_frames.set_animation_speed("echo", 28.0)
 
 	# Create atlas textures for each frame
-	for i in range(6):
+	for i in range(9):
 		var atlas_texture = AtlasTexture.new()
 		atlas_texture.atlas = echo_texture
-		atlas_texture.region = Rect2(i * 128, 0, 128, 128)
+		atlas_texture.region = Rect2(i * 256, 0, 256, 256)
 		sprite_frames.add_frame("echo", atlas_texture)
 
 	# Create the AnimatedSprite2D
@@ -259,6 +263,7 @@ func _setup_echo_animation():
 	echo_animation_sprite.animation = "echo"
 	echo_animation_sprite.visible = false
 	echo_animation_sprite.z_index = 100  # Render above darkness overlay
+	echo_animation_sprite.scale = Vector2(1.5, 1.5)  # Scale up the animation
 
 	# Connect animation finished signal
 	echo_animation_sprite.animation_finished.connect(_on_echo_animation_finished)

@@ -89,9 +89,14 @@ func _boost_bodies_in_area() -> void:
 		# Check if it's the player
 		if body.is_in_group("Player") or body.name == "Player":
 			if body is CharacterBody2D:
-				# Apply consistent upward boost, overriding current vertical velocity
-				body.velocity.y = boost_force
-				print("Steam boost applied to player: ", boost_force)
+				# Use apply_steam_boost method if available for consistent physics
+				if body.has_method("apply_steam_boost"):
+					body.apply_steam_boost(boost_force)
+					print("Steam boost applied to player via method: ", boost_force)
+				else:
+					# Fallback to direct velocity set
+					body.velocity.y = boost_force
+					print("Steam boost applied to player (fallback): ", boost_force)
 			else:
 				print("Player found but not CharacterBody2D: ", body.get_class())
 
@@ -104,6 +109,11 @@ func _on_body_entered(body: Node2D) -> void:
 	# Check if it's the player
 	if body.is_in_group("Player") or body.name == "Player":
 		if body is CharacterBody2D:
-			# Apply consistent upward boost
-			body.velocity.y = boost_force
-			print("Steam boost applied on entry: ", boost_force)
+			# Use apply_steam_boost method if available for consistent physics
+			if body.has_method("apply_steam_boost"):
+				body.apply_steam_boost(boost_force)
+				print("Steam boost applied on entry via method: ", boost_force)
+			else:
+				# Fallback to direct velocity set
+				body.velocity.y = boost_force
+				print("Steam boost applied on entry (fallback): ", boost_force)

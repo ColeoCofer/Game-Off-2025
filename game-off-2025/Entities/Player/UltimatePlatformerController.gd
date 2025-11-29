@@ -205,6 +205,9 @@ var anim
 var col
 var animScaleLock : Vector2
 
+# Steam boost state - forces fall gravity when boosted by steam vents
+var steam_boost_timer: float = 0.0
+
 #Input Variables for the whole script
 var upHold
 var downHold
@@ -588,8 +591,15 @@ func _physics_process(delta):
 		pass
 			
 	#INFO Jump and Gravity (SMB3 Style)
+	# Decrement steam boost timer
+	if steam_boost_timer > 0:
+		steam_boost_timer -= delta
+
 	# SMB3 style: Different gravity when falling vs jumping (5:1 ratio)
 	if velocity.y > 0:
+		appliedGravity = fallGravity
+	elif steam_boost_timer > 0:
+		# Force fall gravity during steam boost to ensure consistent boost height
 		appliedGravity = fallGravity
 	else:
 		# Use reduced gravity while ascending and jump button is held
@@ -952,6 +962,11 @@ func _stopWalkingSound():
 	# Stop any currently playing footstep sound
 	if WalkingAudioPlayer and WalkingAudioPlayer.playing:
 		WalkingAudioPlayer.stop()
+
+func apply_steam_boost(force: float, duration: float = 0.5) -> void:
+	"""Apply a steam vent boost with consistent physics (ignores jump gravity)"""
+	velocity.y = force
+	steam_boost_timer = duration
 
 func _detect_ground_friction():
 	# Reset to normal friction if not on floor

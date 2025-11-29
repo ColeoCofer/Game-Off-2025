@@ -210,7 +210,7 @@ slipperyFrictionMultiplier = 0.4
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_btcbx")
 sprite_frames = SubResource("SpriteFrames_hqtel")
-animation = &"idle"
+animation = &"flap"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1, 3.5)

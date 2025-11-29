@@ -15,7 +15,7 @@ func _ready() -> void:
 
 	# Connect UI sound signals for back button
 	back_button.focus_entered.connect(UISounds.play_hover)
-	back_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	back_button.mouse_entered.connect(UISounds.play_hover)
 	back_button.pressed.connect(UISounds.play_click)
 
 	# Focus first unlocked level

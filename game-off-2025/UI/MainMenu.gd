@@ -16,8 +16,8 @@ var using_keyboard_nav: bool = false
 
 
 func _ready() -> void:
-	# Connect UI sound signals
-	_connect_ui_sounds()
+	# Load settings BEFORE connecting sound signals to prevent toggled from firing
+	_load_settings()
 
 	# Set up focus navigation for settings panel
 	music_volume_slider.focus_neighbor_bottom = music_volume_slider.get_path_to(sounds_volume_slider)
@@ -27,11 +27,11 @@ func _ready() -> void:
 	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(close_settings_button)
 	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(timer_toggle)
 
-	# Load settings
-	_load_settings()
+	# Connect UI sound signals (after settings loaded)
+	_connect_ui_sounds()
 
-	# Ensure main music is playing (resumes after special songs like final cutscene)
-	BackgroundMusic.resume_main_music()
+	# Play menu music
+	BackgroundMusic.play_menu_music()
 
 	# Don't grab focus initially - wait for keyboard input
 	# start_button.grab_focus()
@@ -105,23 +105,21 @@ func _input(event: InputEvent) -> void:
 
 
 func _connect_ui_sounds() -> void:
-	# Connect hover sounds for keyboard/controller (focus_entered)
+	# Connect hover sounds (focus/mouse enter)
 	start_button.focus_entered.connect(UISounds.play_hover)
+	start_button.mouse_entered.connect(UISounds.play_hover)
 	settings_button.focus_entered.connect(UISounds.play_hover)
+	settings_button.mouse_entered.connect(UISounds.play_hover)
 	quit_button.focus_entered.connect(UISounds.play_hover)
+	quit_button.mouse_entered.connect(UISounds.play_hover)
 	music_volume_slider.focus_entered.connect(UISounds.play_hover)
+	music_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	sounds_volume_slider.focus_entered.connect(UISounds.play_hover)
+	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	timer_toggle.focus_entered.connect(UISounds.play_hover)
+	timer_toggle.mouse_entered.connect(UISounds.play_hover)
 	close_settings_button.focus_entered.connect(UISounds.play_hover)
-
-	# Connect hover sounds for mouse (mouse_entered) - uses play_hover_mouse to prevent sound on scene load
-	start_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	settings_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	quit_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	music_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
-	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
-	timer_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
-	close_settings_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	close_settings_button.mouse_entered.connect(UISounds.play_hover)
 
 	# Connect click sounds (pressed)
 	start_button.pressed.connect(UISounds.play_click)

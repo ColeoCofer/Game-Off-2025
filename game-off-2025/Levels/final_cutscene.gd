@@ -526,14 +526,12 @@ func create_final_cutscene_frames() -> Array:
 		[
 			"I let you down...",
 			"I knew I couldn't do it without you here...",
-			"...",
 			"Wait a minute...there's writing on the other side...",
 		],
 		0.0,
 		[
 			"res://Assets/Audio/dialogue/20 i let you down-1.wav",
 			"res://Assets/Audio/dialogue/21+22.wav",
-			"",  # No audio for "..."
 			"res://Assets/Audio/dialogue/23+24.wav"
 		]
 	))

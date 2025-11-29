@@ -2,12 +2,15 @@ extends AudioStreamPlayer
 
 var water_drops_player: AudioStreamPlayer
 var main_music_stream: AudioStream
+var menu_music_stream: AudioStream
 var is_playing_special_song: bool = false
 var loop_special_song: bool = false
+var is_in_menu: bool = false
 
 func _ready():
 	# Load the main background music
 	main_music_stream = load("res://Assets/Audio/sona-main.mp3")
+	menu_music_stream = load("res://Assets/Audio/sona-main-title-song.wav")
 	stream = main_music_stream
 	bus = "Music"  # Use the Music bus
 
@@ -105,6 +108,32 @@ func resume_main_music():
 		if not water_drops_player.playing:
 			water_drops_player.play()
 
+func play_menu_music():
+	"""Switch to menu music and play on loop."""
+	if is_in_menu:
+		return  # Already playing menu music
+	
+	is_in_menu = true
+	stream = menu_music_stream
+	play()
+	
+	# Stop water drops in menus
+	if water_drops_player and water_drops_player.playing:
+		water_drops_player.stop()
+
+func play_game_music():
+	"""Switch back to game music and play on loop."""
+	if not is_in_menu:
+		return  # Already playing game music
+	
+	is_in_menu = false
+	stream = main_music_stream
+	play()
+	
+	# Resume water drops in game
+	if water_drops_player and not water_drops_player.playing:
+		water_drops_player.play()
+
 func set_volume(db_value: float):
 	volume_db = db_value
 
@@ -124,5 +153,5 @@ func set_volume(db_value: float):
 		if water_drops_player:
 			if water_drops_player.playing and water_drops_player.stream_paused:
 				water_drops_player.stream_paused = false
-			elif not water_drops_player.playing:
+			elif not water_drops_player.playing and not is_in_menu:
 				water_drops_player.play()

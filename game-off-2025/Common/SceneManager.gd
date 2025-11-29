@@ -69,6 +69,9 @@ func load_level(level_name: String) -> void:
 	# Start a new diamond collection run (clears temporary collected diamonds)
 	DiamondCollectionManager.start_level_run(level_name)
 
+	# Switch to game music when loading a level
+	BackgroundMusic.play_game_music()
+
 	await _change_scene(level_info["path"])
 
 
@@ -108,6 +111,8 @@ func goto_main_menu() -> void:
 
 	current_level = ""
 	current_level_start_time = 0.0
+	# Switch to menu music when going to main menu
+	BackgroundMusic.play_menu_music()
 	await _change_scene(MAIN_MENU_PATH)
 
 
@@ -118,6 +123,8 @@ func goto_level_select() -> void:
 
 	current_level = ""
 	current_level_start_time = 0.0
+	# Switch to menu music when going to level select
+	BackgroundMusic.play_menu_music()
 	await _change_scene(LEVEL_SELECT_PATH)
 
 

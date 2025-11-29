@@ -248,17 +248,15 @@ func _disable_all_fireflies():
 
 
 func _connect_ui_sounds() -> void:
-	# Connect hover sounds for keyboard/controller (focus_entered)
+	# Connect hover sounds (focus/mouse enter)
 	play_again_button.focus_entered.connect(UISounds.play_hover)
+	play_again_button.mouse_entered.connect(UISounds.play_hover)
 	next_level_button.focus_entered.connect(UISounds.play_hover)
+	next_level_button.mouse_entered.connect(UISounds.play_hover)
 	level_select_button.focus_entered.connect(UISounds.play_hover)
+	level_select_button.mouse_entered.connect(UISounds.play_hover)
 	exit_button.focus_entered.connect(UISounds.play_hover)
-
-	# Connect hover sounds for mouse (mouse_entered)
-	play_again_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	next_level_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	level_select_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	exit_button.mouse_entered.connect(UISounds.play_hover_mouse)
+	exit_button.mouse_entered.connect(UISounds.play_hover)
 
 	# Connect click sounds (pressed)
 	play_again_button.pressed.connect(UISounds.play_click)

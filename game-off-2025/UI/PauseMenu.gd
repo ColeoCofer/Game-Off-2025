@@ -223,21 +223,19 @@ func _on_timer_toggle_toggled(toggled_on: bool):
 
 
 func _connect_ui_sounds() -> void:
-	# Connect hover sounds for keyboard/controller (focus_entered)
+	# Connect hover sounds (focus/mouse enter)
 	continue_button.focus_entered.connect(UISounds.play_hover)
+	continue_button.mouse_entered.connect(UISounds.play_hover)
 	exit_button.focus_entered.connect(UISounds.play_hover)
+	exit_button.mouse_entered.connect(UISounds.play_hover)
 	debug_toggle.focus_entered.connect(UISounds.play_hover)
+	debug_toggle.mouse_entered.connect(UISounds.play_hover)
 	timer_toggle.focus_entered.connect(UISounds.play_hover)
+	timer_toggle.mouse_entered.connect(UISounds.play_hover)
 	music_volume_slider.focus_entered.connect(UISounds.play_hover)
+	music_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	sounds_volume_slider.focus_entered.connect(UISounds.play_hover)
-
-	# Connect hover sounds for mouse (mouse_entered)
-	continue_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	exit_button.mouse_entered.connect(UISounds.play_hover_mouse)
-	debug_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
-	timer_toggle.mouse_entered.connect(UISounds.play_hover_mouse)
-	music_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
-	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover_mouse)
+	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover)
 
 	# Connect click sounds (pressed/toggled)
 	continue_button.pressed.connect(UISounds.play_click)

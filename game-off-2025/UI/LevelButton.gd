@@ -51,7 +51,7 @@ func _ready() -> void:
 
 	# Connect UI sound signals
 	focus_entered.connect(UISounds.play_hover)
-	mouse_entered.connect(UISounds.play_hover_mouse)
+	mouse_entered.connect(UISounds.play_hover)
 	pressed.connect(UISounds.play_click)
 
 

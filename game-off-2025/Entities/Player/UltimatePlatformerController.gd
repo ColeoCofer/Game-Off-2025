@@ -7,6 +7,7 @@ class_name PlatformerController2D
 @export var PlayerCollider: CollisionShape2D
 @export var FlapAudioPlayer: AudioStreamPlayer
 @export var WalkingAudioPlayer: AudioStreamPlayer
+@export var HelloAudioPlayer: AudioStreamPlayer
 
 #INFO HORIZONTAL MOVEMENT
 @export_category("L/R Movement")
@@ -195,6 +196,7 @@ var canFlapNow: bool = true
 var isFlapping: bool = false
 var walkingSoundTimer: float = 0.0
 var walkingSoundInterval: float = 0.3  # Time between footsteps
+var is_saying_hello: bool = false
 
 # Tile-based friction system
 var is_on_slippery_surface: bool = false
@@ -224,6 +226,7 @@ var latchHold
 var dashTap
 var rollTap
 var downTap
+var helloTap
 #var twirlTap
 
 func _ready():
@@ -300,8 +303,8 @@ func _updateData():
 	
 
 func _process(_delta):
-	# Skip animation updates when control is disabled (for cutscenes)
-	if not control_enabled:
+	# Skip animation updates when control is disabled (for cutscenes) or saying hello
+	if not control_enabled or is_saying_hello:
 		return
 
 	#INFO animations
@@ -443,7 +446,12 @@ func _physics_process(delta):
 	#dashTap = Input.is_action_just_pressed("dash")
 	#rollTap = Input.is_action_just_pressed("roll")
 	downTap = Input.is_action_just_pressed("down")
+	helloTap = Input.is_action_just_pressed("hello")
 	#twirlTap = Input.is_action_just_pressed("twirl")
+
+	# Hello greeting (B button) - plays flap animation twice and hello sound
+	if helloTap and not is_saying_hello:
+		_say_hello()
 	
 	
 	#INFO Left and Right Movement (SMB3 Style)
@@ -1017,3 +1025,20 @@ func _detect_ground_friction():
 		# No tile found, use normal friction
 		friction_multiplier = 1.0
 		is_on_slippery_surface = false
+
+func _say_hello():
+	"""Play a cute hello greeting - flaps wings twice and plays hello sound"""
+	is_saying_hello = true
+
+	# Play the hello audio
+	if HelloAudioPlayer:
+		HelloAudioPlayer.play()
+
+	# Play flap animation twice quickly (disabled for now)
+	#if anim and flap:
+	#	anim.play("flap")
+	#	await anim.animation_finished
+	#	anim.play("flap")
+	#	await anim.animation_finished
+
+	is_saying_hello = false

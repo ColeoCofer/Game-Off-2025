@@ -31,6 +31,13 @@ var vignette_material: ShaderMaterial
 @export var wave_brightness: float = 0.4  # How visible/bright the wave ring appears (0-1)
 @export var wave_offset: float = 40.0  # How far ahead of the reveal the wave appears
 
+# Vision mask style
+@export var use_dithering: bool = true:  # Toggle between dithering (pixelated edge) and smooth fade
+	set(value):
+		use_dithering = value
+		if shader_material:
+			shader_material.set_shader_parameter("use_dithering", use_dithering)
+
 # Echo ring animation (sprite-based visual effect)
 @export var enable_echo_animation: bool = false  # Toggle for echo ring sprite animation
 
@@ -76,6 +83,7 @@ func _ready():
 	shader_material.set_shader_parameter("wave_thickness", wave_thickness)
 	shader_material.set_shader_parameter("wave_brightness", wave_brightness)
 	shader_material.set_shader_parameter("wave_offset", wave_offset)
+	shader_material.set_shader_parameter("use_dithering", use_dithering)
 
 	# Initialize echo arrays
 	update_echo_shader_params()

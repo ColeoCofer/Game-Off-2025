@@ -31,6 +31,7 @@ uniform float darkness_intensity = 0.95;
 
 // Dithering settings
 uniform float dither_scale = 1.0; // Scale of dither pattern (higher = larger pixels)
+uniform bool use_dithering = true; // Toggle between dithering and smooth fade
 
 // 4x4 Bayer dithering threshold matrix
 const mat4 BAYER_MATRIX = mat4(
@@ -62,19 +63,27 @@ void fragment() {
 	float dist_from_player = distance(pixel_pos, player_position);
 
 	// Player vision circle (always visible around bat)
-	// Use a wider dither zone for more visibility
-	float dither_zone_width = vision_fade_distance * 0.8; // Dithering covers outer portion
-	float dither_start = vision_radius - dither_zone_width;
+	float vision_alpha;
 
-	// Dithering gradient: 0 at dither_start, 1 at vision_radius
-	float dither_gradient = smoothstep(dither_start, vision_radius, dist_from_player);
+	if (use_dithering) {
+		// DITHERING MODE: Use Bayer dithering for pixelated edge
+		float dither_zone_width = vision_fade_distance * 0.8; // Dithering covers outer portion
+		float dither_start = vision_radius - dither_zone_width;
 
-	// Apply Bayer dithering - creates sharp pixel pattern
-	float vision_alpha_dithered = dither_alpha(dither_gradient, pixel_pos);
+		// Dithering gradient: 0 at dither_start, 1 at vision_radius
+		float dither_gradient = smoothstep(dither_start, vision_radius, dist_from_player);
 
-	// Apply fade to dithered pixels - inner ones are more transparent
-	float fade_factor = dither_gradient * dither_gradient; // Squared for smoother fade
-	float vision_alpha = vision_alpha_dithered * fade_factor;
+		// Apply Bayer dithering - creates sharp pixel pattern
+		float vision_alpha_dithered = dither_alpha(dither_gradient, pixel_pos);
+
+		// Apply fade to dithered pixels - inner ones are more transparent
+		float fade_factor = dither_gradient * dither_gradient; // Squared for smoother fade
+		vision_alpha = vision_alpha_dithered * fade_factor;
+	} else {
+		// SMOOTH FADE MODE: Original smooth gradient fade
+		float vision_visibility = smoothstep(vision_radius, vision_radius - vision_fade_distance, dist_from_player);
+		vision_alpha = 1.0 - vision_visibility;
+	}
 
 	// Check echolocation reveals with expanding wave
 	float echo_alpha = 1.0;

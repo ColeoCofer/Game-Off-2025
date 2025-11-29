@@ -143,7 +143,7 @@ func collect(player: Node2D):
 	# Show dialogue with audio
 	print("PhotoShard: Starting dialogue...")
 	var dialogue_line = DialogueManager.DialogueLine.new(
-		"Huh, I found another photo scrap...",
+		"Huh, another photo scrap...",
 		"",
 		0.0,
 		Callable(),

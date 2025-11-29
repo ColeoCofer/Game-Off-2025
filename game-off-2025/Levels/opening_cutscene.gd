@@ -243,9 +243,6 @@ func go_to_title_screen():
 	"""Fade to black and end cutscene, returning to gameplay"""
 	print("Ending opening cutscene, returning to gameplay...")
 
-	# Start background music (adventurous music)
-	if BackgroundMusic:
-		BackgroundMusic.play()  # Adjust to your music method
-
+	# Music continues playing - no need to restart it
 	# The cutscene will end naturally and return control to player
 	# No need to load main menu - player continues in level-1

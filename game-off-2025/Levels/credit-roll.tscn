@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://b1mxklc00f6rv"]
 
 [ext_resource type="Script" uid="uid://cap2n4jv5diav" path="res://Levels/credit_roll.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Audio/UI/sona-title-no-text.png" id="2_background"]
+[ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Art/ui/sona-title-no-text.png" id="2_background"]
 [ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="3_font"]
 [ext_resource type="Texture2D" uid="uid://bxq5p4pkbgne5" path="res://Assets/Art/sona-sprite-sheet.png" id="5_heart"]
 [ext_resource type="FontFile" uid="uid://ccob884qxxecy" path="res://Assets/Fonts/8-BIT WONDER.TTF" id="11_pihe5"]

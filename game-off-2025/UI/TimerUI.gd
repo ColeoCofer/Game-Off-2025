@@ -41,19 +41,22 @@ func _process(delta: float) -> void:
 	# Check for pause state changes
 	_check_pause_state()
 
-	if not is_running or not visible:
+	if not is_running:
 		return
 
-	# Don't update display while paused or in cutscene
+	# Don't update time while paused or in cutscene
 	if get_tree().paused or is_in_cutscene:
 		return
 
-	# Get time from SceneManager
+	# Always track time from SceneManager, regardless of visibility
 	if SceneManager.current_level != "" and SceneManager.current_level_start_time > 0.0:
 		# Calculate current time minus total pause time
 		var raw_time = (Time.get_ticks_msec() / 1000.0) - SceneManager.current_level_start_time
 		current_time = raw_time - total_pause_time
-		_update_display()
+
+		# Only update display if visible
+		if visible:
+			_update_display()
 
 
 func _check_pause_state() -> void:

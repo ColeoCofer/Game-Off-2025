@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
 [ext_resource type="PackedScene" path="res://Entities/Particles/menu_particles.tscn" id="1_particles"]
-[ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Audio/UI/sona-title-no-text.png" id="2_6vw7e"]
+[ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Art/ui/sona-title-no-text.png" id="2_6vw7e"]
 [ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://2ejioy4fw863" path="res://Assets/Art/ui/start-button-normal.png" id="2_normal"]
 [ext_resource type="FontFile" uid="uid://ccob884qxxecy" path="res://Assets/Fonts/8-BIT WONDER.TTF" id="2_title_font"]

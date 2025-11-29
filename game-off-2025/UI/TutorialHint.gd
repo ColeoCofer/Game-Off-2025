@@ -10,12 +10,14 @@ class_name TutorialHint
 ## 4. Position it where you want the text to display
 
 @export var hint_text: String = "Tutorial Hint"
+@export var hint_text_line2: String = ""  ## Optional second line of text
 @export var trigger_radius: float = 100.0  ## How close player needs to be to trigger
 @export var show_once: bool = true  ## If true, hint disappears permanently after being shown
 @export var fade_in_duration: float = 0.3
 @export var fade_out_duration: float = 0.3
 
 @onready var label: Label = $CanvasLayer/Label
+@onready var label2: Label = $CanvasLayer/Label2
 @onready var canvas_layer: CanvasLayer = $CanvasLayer
 @onready var area: Area2D = $TriggerArea
 @onready var collision_shape: CollisionShape2D = $TriggerArea/CollisionShape2D
@@ -34,6 +36,12 @@ func _ready():
 		_update_label_position()
 	else:
 		push_error("TutorialHint: Label node not found!")
+
+	# Set up second label if text is provided
+	if label2:
+		label2.text = hint_text_line2
+		label2.modulate.a = 0.0  # Start invisible
+		label2.visible = hint_text_line2 != ""  # Only show if text is set
 
 	# Set up trigger area radius
 	var circle_shape = CircleShape2D.new()
@@ -60,9 +68,16 @@ func _update_label_position():
 			# Center the label on this position
 			var label_size = label.size
 			label.position = screen_pos - label_size / 2
+
+			# Position second label right below the first
+			if label2 and label2.visible:
+				var label2_size = label2.size
+				label2.position = label.position + Vector2((label_size.x - label2_size.x) / 2, 24)
 		else:
 			# Fallback if no camera (shouldn't happen in game)
 			label.position = global_position
+			if label2:
+				label2.position = global_position + Vector2(0, 22)
 
 func _on_body_entered(body: Node2D):
 	print("TutorialHint: Body entered - ", body.name, " Groups: ", body.get_groups())
@@ -116,6 +131,12 @@ func show_hint():
 	label.scale = Vector2(0.8, 0.8)
 	fade_tween.parallel().tween_property(label, "scale", Vector2.ONE, fade_in_duration)
 
+	# Animate second label if visible
+	if label2 and label2.visible:
+		label2.scale = Vector2(0.8, 0.8)
+		fade_tween.parallel().tween_property(label2, "modulate:a", 1.0, fade_in_duration)
+		fade_tween.parallel().tween_property(label2, "scale", Vector2.ONE, fade_in_duration)
+
 	print("TutorialHint: Tween started, target alpha: 1.0")
 
 func hide_hint():
@@ -132,6 +153,10 @@ func hide_hint():
 	fade_tween.set_ease(Tween.EASE_IN)
 	fade_tween.set_trans(Tween.TRANS_CUBIC)
 	fade_tween.tween_property(label, "modulate:a", 0.0, fade_out_duration)
+
+	# Fade out second label if visible
+	if label2 and label2.visible:
+		fade_tween.parallel().tween_property(label2, "modulate:a", 0.0, fade_out_duration)
 
 	# If show_once is true, hide the entire node after fading out
 	if show_once:

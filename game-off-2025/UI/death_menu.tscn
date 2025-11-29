@@ -1,9 +1,25 @@
-[gd_scene load_steps=5 format=3 uid="uid://dnfqppqhg1yee"]
+[gd_scene load_steps=6 format=3 uid="uid://dnfqppqhg1yee"]
 
 [ext_resource type="Script" uid="uid://6hg1r05voio2" path="res://UI/DeathMenu.gd" id="1_death_menu"]
 [ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 [ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_nfcsf"]
 [ext_resource type="FontFile" uid="uid://cp1qrv4j0eyiu" path="res://Assets/Fonts/C&C Red Alert [INET].ttf" id="3_qt2re"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats"]
+content_margin_left = 15.0
+content_margin_top = 8.0
+content_margin_right = 15.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.2, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.35, 0.35, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="DeathMenu" type="Control"]
 layout_mode = 3
@@ -33,7 +49,7 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 3
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
@@ -51,8 +67,44 @@ theme_override_font_sizes/font_size = 20
 text = "The bat ran out of energy..."
 horizontal_alignment = 1
 
+[node name="StatsSpacer" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="StatsPanel" type="PanelContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stats")
+
+[node name="StatsContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/StatsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TimeLabel" type="Label" parent="CenterContainer/VBoxContainer/StatsPanel/StatsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_qt2re")
+theme_override_font_sizes/font_size = 16
+text = "Time: 00:00.00"
+horizontal_alignment = 1
+
+[node name="DeathsLabel" type="Label" parent="CenterContainer/VBoxContainer/StatsPanel/StatsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_qt2re")
+theme_override_font_sizes/font_size = 16
+text = "Deaths: 0"
+horizontal_alignment = 1
+
+[node name="DiamondsLabel" type="Label" parent="CenterContainer/VBoxContainer/StatsPanel/StatsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_qt2re")
+theme_override_font_sizes/font_size = 16
+text = "Diamonds: 0/3"
+horizontal_alignment = 1
+
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="PlayAgainButton" type="Button" parent="CenterContainer/VBoxContainer"]
@@ -69,13 +121,6 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "Next Level"
 
-[node name="LevelSelectButton" type="Button" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(250, 50)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
-text = "Level Select"
-
 [node name="ExitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
@@ -85,5 +130,4 @@ text = "Main Menu"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayAgainButton" to="." method="_on_play_again_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/NextLevelButton" to="." method="_on_next_level_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/LevelSelectButton" to="." method="_on_level_select_button_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]

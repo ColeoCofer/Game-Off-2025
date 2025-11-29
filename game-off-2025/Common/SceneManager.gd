@@ -26,6 +26,7 @@ var levels: Array[Dictionary] = [
 var current_level: String = ""
 var current_level_start_time: float = 0.0
 var is_transitioning: bool = false
+var current_level_death_count: int = 0  # Track deaths for current level run
 
 # Fade transition nodes
 var fade_layer: CanvasLayer
@@ -65,6 +66,7 @@ func load_level(level_name: String) -> void:
 
 	current_level = level_name
 	reset_level_timer()
+	reset_death_count()  # Reset death count for fresh level run
 
 	# Start a new diamond collection run (clears temporary collected diamonds)
 	DiamondCollectionManager.start_level_run(level_name)
@@ -241,6 +243,21 @@ func reset_level_timer(preserve_time: bool = false) -> void:
 		# Don't reset the timer - keep it running from before
 		return
 	current_level_start_time = Time.get_ticks_msec() / 1000.0
+
+
+## Increment death count for current level run
+func increment_death_count() -> void:
+	current_level_death_count += 1
+
+
+## Get death count for current level run
+func get_death_count() -> int:
+	return current_level_death_count
+
+
+## Reset death count (called when starting a fresh level run)
+func reset_death_count() -> void:
+	current_level_death_count = 0
 
 
 ## Detect when a level scene is reloaded (after death/restart)

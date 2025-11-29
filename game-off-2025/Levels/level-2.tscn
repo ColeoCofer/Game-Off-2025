@@ -629,6 +629,7 @@ darkness_intensity = 1.0
 echo_fade_duration = 8.0
 echo_expansion_speed = 800.0
 wave_brightness = 0.25
+use_dithering = false
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false

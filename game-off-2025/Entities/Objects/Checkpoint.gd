@@ -40,14 +40,14 @@ func _ready():
 	if audio_player:
 		audio_player.stream = load("res://Assets/Audio/fire/flames-light.wav")
 
-	# Create torch audio player if it doesn't exist
+	# Create torch audio player if it doesn't existj
 	if not torch_audio_player:
 		torch_audio_player = AudioStreamPlayer2D.new()
 		torch_audio_player.name = "TorchAudioPlayer"
 		torch_audio_player.bus = &"Sounds"
 
 		# Load and configure the torch sound for looping
-		var torch_stream = load("res://Assets/Audio/fire/flames-idle.wav")
+		var torch_stream = load("res://Assets/Audio/fire/fire-torch-old.mp3")
 		if torch_stream is AudioStreamMP3:
 			torch_stream.loop = true
 		torch_audio_player.stream = torch_stream

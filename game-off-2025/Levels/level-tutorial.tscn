@@ -503,6 +503,7 @@ vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
 echo_fade_duration = 8.0
+use_dithering = false
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false
@@ -521,33 +522,32 @@ position = Vector2(89, 41)
 
 [node name="HoldJumpHigher2" parent="TutorialText" instance=ExtResource("17_wgnk2")]
 position = Vector2(244, 479)
+scale = Vector2(0.80931634, 1.2441424)
 hint_text = "press Y to echolocate"
 show_once = false
 
 [node name="bugs" parent="TutorialText" instance=ExtResource("17_wgnk2")]
-position = Vector2(448, 505)
+position = Vector2(444.00003, 479.00003)
+scale = Vector2(0.8603496, 1.18959)
 hint_text = "eat bugs to keep Sona full"
 show_once = false
 
 [node name="HoldJumpHigher" parent="TutorialText" instance=ExtResource("17_wgnk2")]
 position = Vector2(627, 439)
+scale = Vector2(0.68268645, 1.95777)
 hint_text = "press A to jump (hold to go higher)"
 show_once = false
 
 [node name="Run" parent="TutorialText" instance=ExtResource("17_wgnk2")]
 position = Vector2(851, 420)
+scale = Vector2(1.2151504, 1.7619935)
 hint_text = "hold X to sprint"
 show_once = false
 
 [node name="RunJumpHigher" parent="TutorialText" instance=ExtResource("17_wgnk2")]
 position = Vector2(1089, 419)
+scale = Vector2(0.77498835, 1.8212092)
 hint_text = "sprinting makes you jump even higher!"
-show_once = false
-
-[node name="Fireflies" parent="TutorialText" instance=ExtResource("17_wgnk2")]
-position = Vector2(1740, 442)
-hint_text = "fireflies protect you!"
-trigger_radius = 150.0
 show_once = false
 
 [node name="Flap" parent="TutorialText" instance=ExtResource("17_wgnk2")]

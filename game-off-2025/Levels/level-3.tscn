@@ -606,6 +606,7 @@ vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
 echo_fade_duration = 8.0
+use_dithering = false
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false

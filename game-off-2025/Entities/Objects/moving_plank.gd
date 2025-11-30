@@ -79,5 +79,3 @@ func _update_position_from_time():
 	# Only apply to vertical mode - horizontal mode was causing the player to be pushed off
 	if movement_direction == MovementDirection.VERTICAL:
 		constant_linear_velocity = Vector2(0, move_speed * direction)
-	else:
-		constant_linear_velocity = Vector2.ZERO

@@ -558,8 +558,7 @@ position = Vector2(264, 237)
 movement_direction = 1
 
 [node name="MovingPlank2" parent="." instance=ExtResource("14_1jtdo")]
-position = Vector2(155, 309)
-movement_direction = 1
+position = Vector2(141, 353)
 
 [node name="MovingPlank3" parent="." instance=ExtResource("14_1jtdo")]
 position = Vector2(-281, 302)

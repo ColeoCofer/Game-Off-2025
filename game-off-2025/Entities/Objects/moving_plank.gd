@@ -75,8 +75,9 @@ func _update_position_from_time():
 		direction = -1 if not reverse_direction else 1
 
 	# Set constant_linear_velocity so CharacterBody2D.get_platform_velocity() works correctly
-	# This allows players to jump normally off moving platforms
-	if movement_direction == MovementDirection.HORIZONTAL:
-		constant_linear_velocity = Vector2(move_speed * direction, 0)
-	else:
+	# This allows players to jump normally off vertical moving platforms
+	# Only apply to vertical mode - horizontal mode was causing the player to be pushed off
+	if movement_direction == MovementDirection.VERTICAL:
 		constant_linear_velocity = Vector2(0, move_speed * direction)
+	else:
+		constant_linear_velocity = Vector2.ZERO

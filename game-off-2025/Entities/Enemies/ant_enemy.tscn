@@ -35,6 +35,7 @@ size = Vector2(34, 12)
 size = Vector2(29.166668, 7.166667)
 
 [node name="AntEnemy" type="CharacterBody2D"]
+modulate = Color(1.6568738, 1.6568738, 1.6568738, 1)
 collision_layer = 2
 script = ExtResource("1")
 walk_speed = 40.0
@@ -43,6 +44,7 @@ squash_duration = 0.2
 squash_amount = Vector2(1.5, 0.3)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(1.3, 1.3, 1.3, 1)
 position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_jhmmj")
 animation = &"walk"

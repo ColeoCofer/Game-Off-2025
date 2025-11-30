@@ -842,28 +842,28 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/end-sona-surprised-face.png",
-		[""],  # Empty for player to advance
+		["Oh! I just knew there were others"],
 		0.0,
-		[""]
+		["17 oh its the last one-1.wav"]
 	))
 
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-1.png",
-		[""],  # Empty for player to advance
+		["we thought we were the only ones"],
 		0.0,
-		[""]
+		["1 i should turn around-1.wav"]
 	))
 	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/end-sona-happy.png",
-		[""],  # Empty for player to advance
+		["I’m… home…"],
 		0.0,
-		[""]
+		["22 without you here-1.wav"]
 	))
 	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-2.png",
-		[""],  # Empty for player to advance
+		[""], 
 		0.0,
 		[""]
 	))

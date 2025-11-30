@@ -9,6 +9,7 @@ extends Control
 @onready var music_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider")
 @onready var sounds_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider")
 @onready var timer_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle")
+@onready var fullscreen_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/FullscreenToggle")
 @onready var reset_cutscenes_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/ResetCutscenesButton")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")
 @onready var confirm_reset_popup: Control = get_node("ConfirmResetPopup")
@@ -28,8 +29,10 @@ func _ready() -> void:
 	sounds_volume_slider.focus_neighbor_top = sounds_volume_slider.get_path_to(music_volume_slider)
 	sounds_volume_slider.focus_neighbor_bottom = sounds_volume_slider.get_path_to(timer_toggle)
 	timer_toggle.focus_neighbor_top = timer_toggle.get_path_to(sounds_volume_slider)
-	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(reset_cutscenes_button)
-	reset_cutscenes_button.focus_neighbor_top = reset_cutscenes_button.get_path_to(timer_toggle)
+	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(fullscreen_toggle)
+	fullscreen_toggle.focus_neighbor_top = fullscreen_toggle.get_path_to(timer_toggle)
+	fullscreen_toggle.focus_neighbor_bottom = fullscreen_toggle.get_path_to(reset_cutscenes_button)
+	reset_cutscenes_button.focus_neighbor_top = reset_cutscenes_button.get_path_to(fullscreen_toggle)
 	reset_cutscenes_button.focus_neighbor_bottom = reset_cutscenes_button.get_path_to(close_settings_button)
 	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(reset_cutscenes_button)
 
@@ -54,6 +57,7 @@ func _load_settings() -> void:
 	music_volume_slider.value = SaveManager.save_data["settings"]["music_volume"]
 	sounds_volume_slider.value = SaveManager.save_data["settings"]["sounds_volume"]
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
+	fullscreen_toggle.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 
 
 func _on_start_pressed() -> void:
@@ -89,6 +93,13 @@ func _on_sounds_volume_changed(value: float) -> void:
 
 func _on_timer_toggle_toggled(toggled_on: bool) -> void:
 	SaveManager.set_show_timer(toggled_on)
+
+
+func _on_fullscreen_toggle_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 
 
 func _on_reset_cutscenes_pressed() -> void:
@@ -155,6 +166,8 @@ func _connect_ui_sounds() -> void:
 	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	timer_toggle.focus_entered.connect(UISounds.play_hover)
 	timer_toggle.mouse_entered.connect(UISounds.play_hover)
+	fullscreen_toggle.focus_entered.connect(UISounds.play_hover)
+	fullscreen_toggle.mouse_entered.connect(UISounds.play_hover)
 	reset_cutscenes_button.focus_entered.connect(UISounds.play_hover)
 	reset_cutscenes_button.mouse_entered.connect(UISounds.play_hover)
 	close_settings_button.focus_entered.connect(UISounds.play_hover)
@@ -169,6 +182,7 @@ func _connect_ui_sounds() -> void:
 	settings_button.pressed.connect(UISounds.play_click)
 	quit_button.pressed.connect(UISounds.play_click)
 	timer_toggle.toggled.connect(func(_on): UISounds.play_click())
+	fullscreen_toggle.toggled.connect(func(_on): UISounds.play_click())
 	reset_cutscenes_button.pressed.connect(UISounds.play_click)
 	close_settings_button.pressed.connect(UISounds.play_click)
 	confirm_button.pressed.connect(UISounds.play_click)

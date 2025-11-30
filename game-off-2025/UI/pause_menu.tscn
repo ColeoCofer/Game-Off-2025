@@ -74,6 +74,12 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 12
 text = "Show Timer"
 
+[node name="FullscreenToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 12
+text = "Fullscreen"
+
 [node name="MusicVolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -127,5 +133,6 @@ horizontal_alignment = 2
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ContinueButton" to="Control" method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Control/CenterContainer/VBoxContainer/ExitButton" to="Control" method="_on_exit_button_pressed"]
 [connection signal="toggled" from="Control/CenterContainer/VBoxContainer/TimerToggle" to="Control" method="_on_timer_toggle_toggled"]
+[connection signal="toggled" from="Control/CenterContainer/VBoxContainer/FullscreenToggle" to="Control" method="_on_fullscreen_toggle_toggled"]
 [connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeSlider" to="Control" method="_on_music_volume_slider_value_changed"]
 [connection signal="value_changed" from="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer/SoundsVolumeSlider" to="Control" method="_on_sounds_volume_slider_value_changed"]

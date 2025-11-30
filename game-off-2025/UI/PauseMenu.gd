@@ -10,6 +10,7 @@ var title_label: Label
 var continue_button: Button
 var exit_button: Button
 var timer_toggle: CheckButton
+var fullscreen_toggle: CheckButton
 var music_volume_slider: HSlider
 var music_volume_value_label: Label
 var sounds_volume_slider: HSlider
@@ -28,6 +29,7 @@ func _ready():
 	continue_button = get_node("CenterContainer/VBoxContainer/ContinueButton")
 	exit_button = get_node("CenterContainer/VBoxContainer/ExitButton")
 	timer_toggle = get_node("CenterContainer/VBoxContainer/TimerToggle")
+	fullscreen_toggle = get_node("CenterContainer/VBoxContainer/FullscreenToggle")
 	music_volume_slider = get_node("CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeSlider")
 	music_volume_value_label = get_node("CenterContainer/VBoxContainer/MusicVolumeContainer/MusicVolumeValueLabel")
 	sounds_volume_slider = get_node("CenterContainer/VBoxContainer/SoundsVolumeContainer/SoundsVolumeSlider")
@@ -35,6 +37,7 @@ func _ready():
 
 	# Load settings from SaveManager
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
+	fullscreen_toggle.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	music_volume_slider.value = SaveManager.get_music_volume()
 	sounds_volume_slider.value = SaveManager.get_sounds_volume()
 	_update_music_volume_label(SaveManager.get_music_volume())
@@ -71,25 +74,25 @@ func _input(event):
 
 	# Navigate between buttons with up/down (using debounced input for analog stick)
 	if InputModeManager.is_ui_action_pressed("ui_down", event) or InputModeManager.is_ui_action_pressed("down", event):
-		current_button_index = (current_button_index + 1) % 5
+		current_button_index = (current_button_index + 1) % 6
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 	elif InputModeManager.is_ui_action_pressed("ui_up", event) or InputModeManager.is_ui_action_pressed("up", event):
-		current_button_index = (current_button_index - 1 + 5) % 5
+		current_button_index = (current_button_index - 1 + 6) % 6
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
 	# Handle left/right for volume sliders (using debounced input for analog stick)
 	elif InputModeManager.is_ui_action_pressed("ui_left", event) or InputModeManager.is_ui_action_pressed("left", event):
-		if current_button_index == 3:  # Music volume slider
+		if current_button_index == 4:  # Music volume slider
 			music_volume_slider.value = max(music_volume_slider.min_value, music_volume_slider.value - 5.0)
-		elif current_button_index == 4:  # Sounds volume slider
+		elif current_button_index == 5:  # Sounds volume slider
 			sounds_volume_slider.value = max(sounds_volume_slider.min_value, sounds_volume_slider.value - 5.0)
 		get_viewport().set_input_as_handled()
 	elif InputModeManager.is_ui_action_pressed("ui_right", event) or InputModeManager.is_ui_action_pressed("right", event):
-		if current_button_index == 3:  # Music volume slider
+		if current_button_index == 4:  # Music volume slider
 			music_volume_slider.value = min(music_volume_slider.max_value, music_volume_slider.value + 5.0)
-		elif current_button_index == 4:  # Sounds volume slider
+		elif current_button_index == 5:  # Sounds volume slider
 			sounds_volume_slider.value = min(sounds_volume_slider.max_value, sounds_volume_slider.value + 5.0)
 		get_viewport().set_input_as_handled()
 
@@ -109,6 +112,7 @@ func show_menu():
 	current_button_index = 0
 
 	timer_toggle.button_pressed = SaveManager.get_show_timer()
+	fullscreen_toggle.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	music_volume_slider.value = SaveManager.get_music_volume()
 	sounds_volume_slider.value = SaveManager.get_sounds_volume()
 
@@ -171,8 +175,10 @@ func _update_button_focus():
 	elif current_button_index == 2:
 		timer_toggle.grab_focus()
 	elif current_button_index == 3:
-		music_volume_slider.grab_focus()
+		fullscreen_toggle.grab_focus()
 	elif current_button_index == 4:
+		music_volume_slider.grab_focus()
+	elif current_button_index == 5:
 		sounds_volume_slider.grab_focus()
 
 func _activate_current_button():
@@ -184,6 +190,10 @@ func _activate_current_button():
 		# Toggle the timer checkbox
 		timer_toggle.button_pressed = !timer_toggle.button_pressed
 		_on_timer_toggle_toggled(timer_toggle.button_pressed)
+	elif current_button_index == 3:
+		# Toggle fullscreen
+		fullscreen_toggle.button_pressed = !fullscreen_toggle.button_pressed
+		_on_fullscreen_toggle_toggled(fullscreen_toggle.button_pressed)
 	# No action needed for volume slider on activate
 
 func _on_music_volume_slider_value_changed(value: float):
@@ -216,6 +226,13 @@ func _on_timer_toggle_toggled(toggled_on: bool):
 		timer_ui.set_timer_visible(toggled_on)
 
 
+func _on_fullscreen_toggle_toggled(toggled_on: bool):
+	if toggled_on:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+
+
 func _connect_ui_sounds() -> void:
 	# Connect hover sounds (focus/mouse enter)
 	continue_button.focus_entered.connect(UISounds.play_hover)
@@ -224,6 +241,8 @@ func _connect_ui_sounds() -> void:
 	exit_button.mouse_entered.connect(UISounds.play_hover)
 	timer_toggle.focus_entered.connect(UISounds.play_hover)
 	timer_toggle.mouse_entered.connect(UISounds.play_hover)
+	fullscreen_toggle.focus_entered.connect(UISounds.play_hover)
+	fullscreen_toggle.mouse_entered.connect(UISounds.play_hover)
 	music_volume_slider.focus_entered.connect(UISounds.play_hover)
 	music_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	sounds_volume_slider.focus_entered.connect(UISounds.play_hover)
@@ -233,3 +252,4 @@ func _connect_ui_sounds() -> void:
 	continue_button.pressed.connect(UISounds.play_click)
 	exit_button.pressed.connect(UISounds.play_click)
 	timer_toggle.toggled.connect(func(_on): UISounds.play_click())
+	fullscreen_toggle.toggled.connect(func(_on): UISounds.play_click())

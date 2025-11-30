@@ -241,6 +241,12 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 12
 text = "Show Timer"
 
+[node name="FullscreenToggle" type="CheckButton" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 12
+text = "Fullscreen"
+
 [node name="ResetCutscenesButton" type="Button" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
@@ -327,6 +333,7 @@ text = "No"
 [connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider" to="Control" method="_on_music_volume_changed"]
 [connection signal="value_changed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider" to="Control" method="_on_sounds_volume_changed"]
 [connection signal="toggled" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle" to="Control" method="_on_timer_toggle_toggled"]
+[connection signal="toggled" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/FullscreenToggle" to="Control" method="_on_fullscreen_toggle_toggled"]
 [connection signal="pressed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/ResetCutscenesButton" to="Control" method="_on_reset_cutscenes_pressed"]
 [connection signal="pressed" from="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton" to="Control" method="_on_close_settings_pressed"]
 [connection signal="pressed" from="Control/ConfirmResetPopup/CenterContainer/Panel/VBoxContainer/HBoxContainer/ConfirmButton" to="Control" method="_on_confirm_reset_cutscenes"]

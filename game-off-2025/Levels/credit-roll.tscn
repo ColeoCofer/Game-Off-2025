@@ -78,7 +78,7 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 8
 text = "Programming, Game Design, Environment Art, Animation"
 horizontal_alignment = 1
 
@@ -102,7 +102,7 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 8
 text = "Story, Cutscene Art, Environment Art, Animation"
 horizontal_alignment = 1
 
@@ -126,7 +126,7 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 8
 text = "Music, Sound Effects"
 horizontal_alignment = 1
 
@@ -150,7 +150,7 @@ theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 8
 text = "Sona Animation, Bug Fixes"
 horizontal_alignment = 1
 
@@ -164,7 +164,7 @@ theme_override_colors/font_color = Color(0.8, 0.8, 0.85, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.15, 1)
 theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 9
 text = "Every member of our team contributed ideas,
 feedback, and creative energy that shaped
 every aspect of this game"

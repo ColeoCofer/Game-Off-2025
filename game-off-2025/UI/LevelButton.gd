@@ -7,9 +7,10 @@ signal level_selected(level_name: String)
 var level_name: String = ""
 var is_unlocked: bool = false
 
-@onready var level_label: Label = $VBoxContainer/HBoxContainer/LevelLabel
-@onready var status_label: Label = $VBoxContainer/HBoxContainer/StatusLabel
-@onready var time_label: Label = $VBoxContainer/HBoxContainer/TimeLabel
+@onready var level_label: Label = $VBoxContainer/LevelLabel
+@onready var time_label: Label = $VBoxContainer/TimeContainer/TimeLabel
+@onready var best_label: Label = $VBoxContainer/TimeContainer/BestLabel
+@onready var time_container: HBoxContainer = $VBoxContainer/TimeContainer
 @onready var diamond_label: Label = $VBoxContainer/DiamondLabel
 
 
@@ -20,23 +21,24 @@ func setup(p_level_name: String, display_name: String, p_is_unlocked: bool, best
 	# Set level name
 	level_label.text = display_name
 
-	# Hide status label (lock/check icon)
-	status_label.visible = false
-
 	# Set lock status
 	if is_unlocked:
 		disabled = false
 	else:
 		disabled = true
 
-	# Set best time if available
-	if best_time > 0.0:
+	# Set best time if available (hide for tutorial)
+	if level_name == "tutorial":
+		time_container.visible = false
+	elif best_time > 0.0:
 		var minutes = int(best_time / 60.0)
 		var seconds = int(best_time) % 60
 		var milliseconds = int((best_time - int(best_time)) * 100)
 		time_label.text = "%d:%02d.%02d" % [minutes, seconds, milliseconds]
+		time_container.visible = true
 	else:
 		time_label.text = "--:--:--"
+		time_container.visible = true
 
 	# Set diamond collection status
 	_update_diamond_display()

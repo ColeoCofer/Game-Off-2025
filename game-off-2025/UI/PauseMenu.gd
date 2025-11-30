@@ -98,6 +98,11 @@ func _input(event):
 		_activate_current_button()
 		get_viewport().set_input_as_handled()
 
+	# Close menu with B button / Escape (ui_cancel)
+	elif event.is_action_pressed("ui_cancel"):
+		_on_continue_button_pressed()
+		get_viewport().set_input_as_handled()
+
 func show_menu():
 	visible = true
 	is_paused = true

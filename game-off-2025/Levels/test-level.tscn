@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://cgu87r4ax1e0n"]
+[gd_scene load_steps=23 format=4 uid="uid://cgu87r4ax1e0n"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_vgx3e"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_cwbgu"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cqjir0lds7bp3" path="res://Entities/Enemies/bird.tscn" id="9_0arkl"]
 [ext_resource type="PackedScene" uid="uid://bqxt2myiyrttg" path="res://Entities/Objects/falling_block.tscn" id="10_tvjfu"]
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="11_hu0y2"]
+[ext_resource type="PackedScene" uid="uid://b73psve87rk1g" path="res://Entities/Objects/moving-plank.tscn" id="14_1jtdo"]
 [ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="16_j5luo"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="17_pixgr"]
 [ext_resource type="PackedScene" uid="uid://d0dm8g5325rmn" path="res://Entities/Bugs/butterfly.tscn" id="19_q1ccs"]
@@ -551,6 +552,18 @@ position = Vector2(219, 370)
 position = Vector2(191, 410)
 
 [node name="Objects" type="Node" parent="."]
+
+[node name="MovingPlank" parent="." instance=ExtResource("14_1jtdo")]
+position = Vector2(264, 237)
+movement_direction = 1
+
+[node name="MovingPlank2" parent="." instance=ExtResource("14_1jtdo")]
+position = Vector2(155, 309)
+movement_direction = 1
+
+[node name="MovingPlank3" parent="." instance=ExtResource("14_1jtdo")]
+position = Vector2(-281, 302)
+movement_direction = 1
 
 [node name="Foreground" type="Node2D" parent="."]
 

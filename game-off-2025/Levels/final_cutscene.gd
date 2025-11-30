@@ -844,21 +844,21 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 		"res://Assets/Art/cut-scenes/end-sona-surprised-face.png",
 		["Oh! I just knew there were others"],
 		0.0,
-		["17 oh its the last one-1.wav"]
+		["res://Assets/Audio/dialogue/17 oh its the last one-1.wav"]
 	))
 
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-1.png",
 		["we thought we were the only ones"],
 		0.0,
-		["1 i should turn around-1.wav"]
+		["res://Assets/Audio/dialogue/1 i should turn around-1.wav"]
 	))
 	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/end-sona-happy.png",
 		["I’m… home…"],
 		0.0,
-		["22 without you here-1.wav"]
+		["res://Assets/Audio/dialogue/22 without you here-1.wav"]
 	))
 	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(

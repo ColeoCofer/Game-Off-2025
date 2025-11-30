@@ -49,8 +49,11 @@ func _input(event):
 	if not visible:
 		return
 
-	# Check for advance input (Space, Enter, or A button on gamepad)
+	# Check for advance input (Space, Enter, A button on gamepad, or left mouse click)
 	if event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
+		get_viewport().set_input_as_handled()
+		_handle_advance_input()
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		get_viewport().set_input_as_handled()
 		_handle_advance_input()
 

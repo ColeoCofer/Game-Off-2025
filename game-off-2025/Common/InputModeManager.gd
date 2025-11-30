@@ -14,7 +14,15 @@ var force_cursor_visible: bool = false  # For menus that need cursor always visi
 
 # UI input debouncing - requires stick to return to center before next input
 var _ui_mode_enabled: bool = false
-var _action_released: Dictionary = {}  # Tracks which actions have been released
+var _direction_held: Dictionary = {
+	"up": false,
+	"down": false,
+	"left": false,
+	"right": false
+}
+
+const STICK_DEADZONE: float = 0.5  # Higher deadzone for UI navigation
+const STICK_RELEASE_THRESHOLD: float = 0.3  # Must return below this to allow next input
 
 func _ready() -> void:
 	# Start with cursor visible
@@ -24,35 +32,72 @@ func set_ui_mode(enabled: bool) -> void:
 	"""Enable/disable UI input debouncing. Call with true when showing menus, false when hiding."""
 	_ui_mode_enabled = enabled
 	if enabled:
-		# Reset all release states when entering UI mode
-		_action_released.clear()
+		# Reset all held states when entering UI mode
+		for dir in _direction_held:
+			_direction_held[dir] = false
 
 func is_ui_action_pressed(action: String, event: InputEvent) -> bool:
 	"""
 	Use this in menus for debounced analog stick input.
-	Requires the action to be released before it can trigger again.
+	Requires the stick to return to center before it can trigger again.
 	Pass the current event from _input().
 	"""
 	if not _ui_mode_enabled:
-		# Not in UI mode, use normal input
 		return event.is_action_pressed(action)
 
-	# Initialize release state if not tracked yet (default to true so first press works)
-	if not _action_released.has(action):
-		_action_released[action] = true
+	# Handle analog stick input specially
+	if event is InputEventJoypadMotion:
+		return _handle_stick_navigation(event, action)
 
-	# Check for release
-	if event.is_action_released(action):
-		_action_released[action] = true
+	# For keyboard/d-pad, use normal behavior
+	return event.is_action_pressed(action)
+
+func _handle_stick_navigation(event: InputEventJoypadMotion, action: String) -> bool:
+	"""Handle analog stick with debouncing - only triggers once per push."""
+	var dominated: String = ""
+	var axis_value: float = event.axis_value
+
+	# Determine direction from axis
+	if event.axis == JOY_AXIS_LEFT_X:
+		if axis_value < -STICK_DEADZONE:
+			dominated = "left"
+		elif axis_value > STICK_DEADZONE:
+			dominated = "right"
+		elif abs(axis_value) < STICK_RELEASE_THRESHOLD:
+			# Stick returned to center - reset horizontal
+			_direction_held["left"] = false
+			_direction_held["right"] = false
+	elif event.axis == JOY_AXIS_LEFT_Y:
+		if axis_value < -STICK_DEADZONE:
+			dominated = "up"
+		elif axis_value > STICK_DEADZONE:
+			dominated = "down"
+		elif abs(axis_value) < STICK_RELEASE_THRESHOLD:
+			# Stick returned to center - reset vertical
+			_direction_held["up"] = false
+			_direction_held["down"] = false
+
+	if dominated == "":
 		return false
 
-	# Check for press
-	if event.is_action_pressed(action):
-		if _action_released[action]:
-			_action_released[action] = false
-			return true
+	# Check if this action matches the direction
+	var action_matches = false
+	match dominated:
+		"up": action_matches = (action == "ui_up" or action == "up")
+		"down": action_matches = (action == "ui_down" or action == "down")
+		"left": action_matches = (action == "ui_left" or action == "left")
+		"right": action_matches = (action == "ui_right" or action == "right")
 
-	return false
+	if not action_matches:
+		return false
+
+	# Check if this direction is already held
+	if _direction_held[dominated]:
+		return false
+
+	# First time pressing this direction - allow it and mark as held
+	_direction_held[dominated] = true
+	return true
 
 func set_force_cursor_visible(force: bool) -> void:
 	"""Force cursor to be visible (for menus) or allow normal input-based behavior"""

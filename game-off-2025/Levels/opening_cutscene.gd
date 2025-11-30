@@ -144,6 +144,14 @@ func show_photo_shard():
 		photo_shard_instance.visible = true
 		print("PhotoShard made visible")
 
+		# Play pop sound
+		var pop_sound = AudioStreamPlayer.new()
+		pop_sound.stream = load("res://Assets/Audio/UI/LightPop.wav")
+		pop_sound.volume_db = -5.0
+		get_tree().current_scene.add_child(pop_sound)
+		pop_sound.play()
+		pop_sound.finished.connect(func(): pop_sound.queue_free())
+
 		# Start the bobbing animation if available
 		if photo_shard_instance.has_method("play_spawn_animation"):
 			photo_shard_instance.play_spawn_animation()
@@ -186,14 +194,18 @@ func create_photo_cutscene_frames() -> Array:
 		["res://Assets/Audio/dialogue/3 this photo-1.wav"]
 	))
 
-	# Audio files 5 and 6 combined for "I think it's of me and my mom...right before..."
+	# Audio files 5 and 7 for "I think it's of me and my mom...right before..."
 	frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-close-up-sad.png",
 		[
-			"I think it's of me and my mom...right before..."
+			"I think it's of me and my mom...",
+			"...right before..."
 		],
 		0.0,
-		["res://Assets/Audio/dialogue/5 its of me and my mom-1.wav"]
+		[
+			"res://Assets/Audio/dialogue/5 its of me and my mom-1.wav",
+			"res://Assets/Audio/dialogue/7 mom bat scream-1.wav"
+		]
 	))
 
 	# Audio files 8 and 9 combined for "It kills me to be so alone..."

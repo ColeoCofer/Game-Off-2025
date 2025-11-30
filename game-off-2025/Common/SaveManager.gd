@@ -234,6 +234,12 @@ func has_cutscene_played(cutscene_id: String) -> bool:
 	"""Check if a cutscene has already been played"""
 	return cutscene_id in save_data["game_data"]["cutscenes_played"]
 
+func reset_cutscenes():
+	"""Reset all cutscene progress - allows player to rewatch all cutscenes"""
+	save_data["game_data"]["cutscenes_played"] = []
+	save_game()
+	print("SaveManager: Reset all cutscene progress")
+
 # ============= TUTORIAL TRACKING FUNCTIONS =============
 
 func mark_tutorial_shown(tutorial_id: String):

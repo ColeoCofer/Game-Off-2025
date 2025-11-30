@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://gu7nxs3k0akq"]
 
 [ext_resource type="Script" uid="uid://bpg5cjvcqlqnj" path="res://UI/PauseMenu.gd" id="1_pause_menu"]
-[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 process_mode = 3

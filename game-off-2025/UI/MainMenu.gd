@@ -9,7 +9,11 @@ extends Control
 @onready var music_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/MusicVolumeSlider")
 @onready var sounds_volume_slider: HSlider = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/SoundsVolumeSlider")
 @onready var timer_toggle: CheckButton = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/TimerToggle")
+@onready var reset_cutscenes_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/ResetCutscenesButton")
 @onready var close_settings_button: Button = get_node("SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer/CloseButton")
+@onready var confirm_reset_popup: Control = get_node("ConfirmResetPopup")
+@onready var confirm_button: Button = get_node("ConfirmResetPopup/CenterContainer/Panel/VBoxContainer/HBoxContainer/ConfirmButton")
+@onready var cancel_button: Button = get_node("ConfirmResetPopup/CenterContainer/Panel/VBoxContainer/HBoxContainer/CancelButton")
 
 # Track whether we're using keyboard/controller or mouse
 var using_keyboard_nav: bool = false
@@ -24,8 +28,14 @@ func _ready() -> void:
 	sounds_volume_slider.focus_neighbor_top = sounds_volume_slider.get_path_to(music_volume_slider)
 	sounds_volume_slider.focus_neighbor_bottom = sounds_volume_slider.get_path_to(timer_toggle)
 	timer_toggle.focus_neighbor_top = timer_toggle.get_path_to(sounds_volume_slider)
-	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(close_settings_button)
-	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(timer_toggle)
+	timer_toggle.focus_neighbor_bottom = timer_toggle.get_path_to(reset_cutscenes_button)
+	reset_cutscenes_button.focus_neighbor_top = reset_cutscenes_button.get_path_to(timer_toggle)
+	reset_cutscenes_button.focus_neighbor_bottom = reset_cutscenes_button.get_path_to(close_settings_button)
+	close_settings_button.focus_neighbor_top = close_settings_button.get_path_to(reset_cutscenes_button)
+
+	# Set up focus navigation for confirm popup
+	confirm_button.focus_neighbor_right = confirm_button.get_path_to(cancel_button)
+	cancel_button.focus_neighbor_left = cancel_button.get_path_to(confirm_button)
 
 	# Connect UI sound signals (after settings loaded)
 	_connect_ui_sounds()
@@ -81,6 +91,22 @@ func _on_timer_toggle_toggled(toggled_on: bool) -> void:
 	SaveManager.set_show_timer(toggled_on)
 
 
+func _on_reset_cutscenes_pressed() -> void:
+	confirm_reset_popup.visible = true
+	cancel_button.grab_focus()
+
+
+func _on_confirm_reset_cutscenes() -> void:
+	SaveManager.reset_cutscenes()
+	confirm_reset_popup.visible = false
+	reset_cutscenes_button.grab_focus()
+
+
+func _on_cancel_reset_cutscenes() -> void:
+	confirm_reset_popup.visible = false
+	reset_cutscenes_button.grab_focus()
+
+
 func _input(event: InputEvent) -> void:
 	# Detect mouse movement and disable keyboard navigation
 	if event is InputEventMouseMotion:
@@ -95,16 +121,22 @@ func _input(event: InputEvent) -> void:
 		if not using_keyboard_nav and (event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion):
 			using_keyboard_nav = true
 			# Grab focus on appropriate button based on which panel is visible
-			if settings_panel.visible:
+			if confirm_reset_popup.visible:
+				if not get_viewport().gui_get_focus_owner():
+					cancel_button.grab_focus()
+			elif settings_panel.visible:
 				if not get_viewport().gui_get_focus_owner():
 					music_volume_slider.grab_focus()
 			else:
 				if not get_viewport().gui_get_focus_owner():
 					start_button.grab_focus()
 
+	# Close confirm popup with Escape key
+	if confirm_reset_popup.visible and event.is_action_pressed("ui_cancel"):
+		_on_cancel_reset_cutscenes()
+		get_viewport().set_input_as_handled()
 	# Close settings with Escape key
-	if settings_panel.visible and event.is_action_pressed("ui_cancel"):
-
+	elif settings_panel.visible and event.is_action_pressed("ui_cancel"):
 		_on_close_settings_pressed()
 		get_viewport().set_input_as_handled()
 
@@ -123,12 +155,21 @@ func _connect_ui_sounds() -> void:
 	sounds_volume_slider.mouse_entered.connect(UISounds.play_hover)
 	timer_toggle.focus_entered.connect(UISounds.play_hover)
 	timer_toggle.mouse_entered.connect(UISounds.play_hover)
+	reset_cutscenes_button.focus_entered.connect(UISounds.play_hover)
+	reset_cutscenes_button.mouse_entered.connect(UISounds.play_hover)
 	close_settings_button.focus_entered.connect(UISounds.play_hover)
 	close_settings_button.mouse_entered.connect(UISounds.play_hover)
+	confirm_button.focus_entered.connect(UISounds.play_hover)
+	confirm_button.mouse_entered.connect(UISounds.play_hover)
+	cancel_button.focus_entered.connect(UISounds.play_hover)
+	cancel_button.mouse_entered.connect(UISounds.play_hover)
 
 	# Connect click sounds (pressed)
 	start_button.pressed.connect(UISounds.play_click)
 	settings_button.pressed.connect(UISounds.play_click)
 	quit_button.pressed.connect(UISounds.play_click)
 	timer_toggle.toggled.connect(func(_on): UISounds.play_click())
+	reset_cutscenes_button.pressed.connect(UISounds.play_click)
 	close_settings_button.pressed.connect(UISounds.play_click)
+	confirm_button.pressed.connect(UISounds.play_click)
+	cancel_button.pressed.connect(UISounds.play_click)

@@ -12,7 +12,7 @@ extends Node2D
 @export var spawn_interval_min: float = 3.0
 @export var spawn_interval_max: float = 6.0
 @export var activation_radius: float = 400.0  # Only spawn when player is within this distance
-@export var bird_fly_speed: float = 125.0  # Speed of spawned birds
+@export var bird_fly_speed: float = 110.0  # Speed of spawned birds
 
 var spawn_timer: float = 0.0
 var next_spawn_time: float = 0.0

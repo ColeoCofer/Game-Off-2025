@@ -546,6 +546,12 @@ position = Vector2(313, 367)
 [node name="FallingBlock4" parent="Enemies" instance=ExtResource("10_tvjfu")]
 position = Vector2(219, 370)
 
+[node name="BirdSpawner2" parent="Enemies" instance=ExtResource("7_ycpix")]
+position = Vector2(233, 296)
+
+[node name="Bird2" parent="Enemies" instance=ExtResource("9_0arkl")]
+position = Vector2(763, 275)
+
 [node name="Hurt Objects" type="Node" parent="."]
 
 [node name="Player" parent="." instance=ExtResource("11_hu0y2")]

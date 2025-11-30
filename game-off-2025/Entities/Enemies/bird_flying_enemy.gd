@@ -96,10 +96,10 @@ func _on_stomp_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Player must be falling (velocity.y > 0)
+		# VERY forgiving velocity check: any downward movement OR very slow (gentle landing)
 		var player_falling = false
 		if body is CharacterBody2D:
-			player_falling = body.velocity.y > 0  # Moving downward
+			player_falling = body.velocity.y >= -10.0  # Even slight upward movement counts!
 
 		# Get player's bottom position
 		var player_bottom_y = body.global_position.y
@@ -111,11 +111,12 @@ func _on_stomp_detector_body_entered(body: Node2D):
 					var shape_height = shape.size.y if shape is RectangleShape2D else shape.height
 					player_bottom_y = body.global_position.y + (shape_height / 2.0)
 
-		# Bird's top position
+		# Bird's top position - MUCH more forgiving tolerance
 		var bird_top_y = global_position.y - 6
-		var player_is_above = player_bottom_y <= bird_top_y + 8
+		var STOMP_TOLERANCE = 12.0  # Very forgiving - increased from 8
+		var player_is_above = player_bottom_y <= bird_top_y + STOMP_TOLERANCE
 
-		# Valid stomp: player is falling AND above the bird
+		# Valid stomp: player is falling AND above the bird (both very forgiving)
 		if player_falling and player_is_above:
 			# Mark as dead immediately
 			is_alive = false
@@ -155,10 +156,10 @@ func _on_damage_detector_body_entered(body: Node2D):
 
 	# Check if it's the player
 	if body.is_in_group("Player"):
-		# Check if this is actually a stomp scenario
+		# Check if this is actually a stomp scenario - VERY forgiving fallback
 		var player_was_falling = false
 		if body is CharacterBody2D:
-			player_was_falling = body.velocity.y > 20.0
+			player_was_falling = body.velocity.y >= -10.0  # Same as stomp detector - very forgiving
 
 		var player_bottom_y = body.global_position.y
 		if body.has_node("CollisionShape2D"):
@@ -170,8 +171,8 @@ func _on_damage_detector_body_entered(body: Node2D):
 					player_bottom_y = body.global_position.y + (shape_height / 2.0)
 
 		var bird_top_y = global_position.y - 6
-		var stomp_tolerance = 6.0
-		var player_is_clearly_above = player_bottom_y <= bird_top_y + stomp_tolerance
+		var STOMP_TOLERANCE = 10.0  # Very forgiving - increased from 6.0
+		var player_is_clearly_above = player_bottom_y <= bird_top_y + STOMP_TOLERANCE
 
 		var is_stomp_scenario = player_was_falling and player_is_clearly_above
 

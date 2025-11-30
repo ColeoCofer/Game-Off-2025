@@ -9,7 +9,6 @@ extends AnimatableBody2D
 @export var shake_intensity: float = 1.5  ## How much the block shakes (in pixels)
 @export var fall_speed: float = 200.0  ## Speed at which the block falls
 @export var solid_fall_duration: float = 1.5  ## Time in seconds the block stays solid while falling
-@export var jump_boost: float = 400.0  ## Extra upward boost when player jumps off falling block
 @export var respawn_time: float = 15.0  ## Time in seconds before the block respawns after falling
 
 @onready var sprite: Sprite2D = $Sprite2D
@@ -72,15 +71,15 @@ func _physics_process(delta: float) -> void:
 	# Handle falling
 	if is_falling:
 		fall_timer += delta
+
+		# Set constant_linear_velocity so CharacterBody2D knows the platform is moving
+		# This allows get_platform_velocity() to return the correct value
+		constant_linear_velocity = Vector2(0, fall_speed)
+		# Actually move the block
 		position.y += fall_speed * delta
 
 		# Continue fading out the sound while falling
 		_update_sound_fade()
-
-		# Help player jump off by counteracting fall velocity when they jump
-		# Don't rely on player_on_block flag since body_exited fires incorrectly when area moves
-		if not collision_disabled:
-			_help_player_jump()
 
 		# Disable collision after solid_fall_duration
 		if not collision_disabled and fall_timer >= solid_fall_duration:
@@ -102,30 +101,6 @@ func _on_player_exited(body: Node2D) -> void:
 	print("FallingBlock: Body exited - ", body.name)
 	if body.is_in_group("Player") or body.name == "Player":
 		player_on_block = false
-
-func _help_player_jump() -> void:
-	# Use the larger jump detection area to track player while falling
-	var bodies = jump_detection_area.get_overlapping_bodies()
-
-	if bodies.size() == 0:
-		return
-
-	# Find the player in the overlapping bodies
-	var player_body = null
-	for body in bodies:
-		if (body.is_in_group("Player") or body.name == "Player") and body is CharacterBody2D:
-			player_body = body
-			break
-
-	if player_body == null:
-		return  # No player found
-
-	# Player is on the block, check for jump input
-	if Input.is_action_just_pressed("jump") or Input.is_action_pressed("jump"):
-		# Apply upward boost to counteract fall velocity and enable normal jumping
-		var boost_amount = fall_speed + jump_boost
-		print("FallingBlock: JUMP PRESSED! APPLYING BOOST of ", boost_amount)
-		player_body.velocity.y -= boost_amount
 
 func _start_shaking() -> void:
 	print("FallingBlock: Starting to shake!")
@@ -204,6 +179,7 @@ func _respawn() -> void:
 	player_on_block = false
 	shake_timer = 0.0
 	fall_timer = 0.0
+	constant_linear_velocity = Vector2.ZERO
 
 	# Re-enable everything
 	visible = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://cgu87r4ax1e0n"]
+[gd_scene load_steps=22 format=4 uid="uid://cgu87r4ax1e0n"]
 
 [ext_resource type="Material" uid="uid://clhbsm0w2x8wn" path="res://Shaders/cave_background_material.tres" id="1_vgx3e"]
 [ext_resource type="Texture2D" uid="uid://dm330wmjoejd6" path="res://Assets/Art/monochrome_tilemap_packed.png" id="2_cwbgu"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://w3pb85y7tvmy" path="res://Entities/Enemies/bird_spawner.tscn" id="7_ycpix"]
 [ext_resource type="PackedScene" uid="uid://c200loqombjgm" path="res://Entities/Enemies/blobby.tscn" id="8_y0n3t"]
 [ext_resource type="PackedScene" uid="uid://cqjir0lds7bp3" path="res://Entities/Enemies/bird.tscn" id="9_0arkl"]
+[ext_resource type="PackedScene" uid="uid://bqxt2myiyrttg" path="res://Entities/Objects/falling_block.tscn" id="10_tvjfu"]
 [ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="11_hu0y2"]
 [ext_resource type="Script" uid="uid://cjwm4avf5pmt" path="res://Entities/Player/EcholocationManager.gd" id="16_j5luo"]
 [ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="17_pixgr"]
@@ -531,6 +532,18 @@ position = Vector2(546, 322)
 position = Vector2(49, -567)
 detection_range = 250.0
 attack_delay_max = 0.1
+
+[node name="FallingBlock" parent="Enemies" instance=ExtResource("10_tvjfu")]
+position = Vector2(263, 396)
+
+[node name="FallingBlock2" parent="Enemies" instance=ExtResource("10_tvjfu")]
+position = Vector2(367, 377)
+
+[node name="FallingBlock3" parent="Enemies" instance=ExtResource("10_tvjfu")]
+position = Vector2(313, 367)
+
+[node name="FallingBlock4" parent="Enemies" instance=ExtResource("10_tvjfu")]
+position = Vector2(219, 370)
 
 [node name="Hurt Objects" type="Node" parent="."]
 

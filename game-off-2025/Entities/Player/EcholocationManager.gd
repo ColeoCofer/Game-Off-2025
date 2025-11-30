@@ -34,7 +34,7 @@ var vignette_material: ShaderMaterial
 @export var wave_ring_spacing: float = 35.0  # Spacing between each ring in pixels
 
 # Vision mask style
-@export var use_dithering: bool = true:  # Toggle between dithering (pixelated edge) and smooth fade
+@export var use_dithering: bool = false:  # Toggle between dithering (pixelated edge) and smooth fade
 	set(value):
 		use_dithering = value
 		if shader_material:

@@ -837,6 +837,12 @@ func _jump():
 			jump_multiplier = walkJumpBoost + (run_speed_ratio * (maxSpeedJumpBoost - walkJumpBoost))
 
 		velocity.y = -jumpMagnitude * jump_multiplier
+
+		# Counteract downward platform velocity so jumping off falling platforms works normally
+		var platform_vel = get_platform_velocity()
+		if platform_vel.y > 0:
+			velocity.y -= platform_vel.y
+
 		jumpCount += -1
 		jumpWasPressed = false
 		if FlapAudioPlayer:

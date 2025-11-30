@@ -53,7 +53,7 @@ theme_override_constants/separation = 3
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_colors/font_color = Color(0.6785967, 0.291592, 0.27826798, 1)
 theme_override_fonts/font = ExtResource("2_nfcsf")
 theme_override_font_sizes/font_size = 38
 text = "YOU STARVED"

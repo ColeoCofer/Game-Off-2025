@@ -816,7 +816,7 @@ func walk_into_cave_and_end():
 	var fade_rect = ColorRect.new()
 	fade_rect.color = Color.BLACK
 	fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fade_rect.size = Vector2(1280, 720)  # Cover full screen
+	fade_rect.size = Vector2(1280, 720)  # Cover full screene
 	fade_rect.modulate.a = 0.0
 	fade_layer.add_child(fade_rect)
 	get_tree().root.add_child(fade_layer)

@@ -486,7 +486,6 @@ tile_set = ExtResource("2_n4bx7")
 
 [node name="CaveEntrance" parent="." instance=ExtResource("22_8m8jd")]
 position = Vector2(2379, -451)
-force_final_cutscene = true
 
 [node name="Enemies" type="Node" parent="."]
 

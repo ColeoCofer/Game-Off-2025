@@ -63,7 +63,7 @@ func show_menu(death_reason: String = "starvation"):
 			subtitle_label.visible = true
 		"success":
 			title_label.text = "LEVEL COMPLETE!"
-			title_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3, 1.0))
+			title_label.add_theme_color_override("font_color", Color("78a179"))
 			subtitle_label.visible = false
 		_:
 			title_label.text = "YOU DIED"

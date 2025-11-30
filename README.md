@@ -1,7 +1,5 @@
 # Sona
 
-**A challenging platformer about a young bat searching for family.**
-
 Orphaned before she could learn how to fly, Sona is all alone and looking for other bats to call family. Using bugs to fuel her, she deploys echolocation to illuminate a sprawling network of treacherous caves. Dodging predators, navigating sheer drops, and uncovering long-hidden pathways lead her to a mysterious den perched high above the cliffs. Can she survive the climb and finally find a place to belong?
 
 **Sona is a challenging platformer. Expect to die a lot!**

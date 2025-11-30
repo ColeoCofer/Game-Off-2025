@@ -80,7 +80,7 @@ stomp_bounce_force = 220.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pdgdj")
 animation = &"flying"
-frame_progress = 0.48467648
+frame_progress = 0.57107496
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)

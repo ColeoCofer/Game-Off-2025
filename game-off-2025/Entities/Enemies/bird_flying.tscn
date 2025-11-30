@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://c8h2vjx3n7rqp"]
 
-[ext_resource type="Script" path="res://Entities/Enemies/bird_flying_enemy.gd" id="1_flying"]
+[ext_resource type="Script" uid="uid://bak372othvssb" path="res://Entities/Enemies/bird_flying_enemy.gd" id="1_flying"]
 [ext_resource type="Texture2D" uid="uid://dtfawlnuqbj5m" path="res://Assets/Art/enemies/Spooky-bird.png" id="2_texture"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_grcue"]
@@ -69,11 +69,10 @@ radius = 5.0
 height = 10.0
 
 [node name="BirdFlying" type="CharacterBody2D"]
+modulate = Color(3.118, 3.804, 4.404, 1)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("1_flying")
-fly_speed = 150.0
-stomp_bounce_force = 220.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pdgdj")

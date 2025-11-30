@@ -2,6 +2,7 @@ extends Node
 
 # InputModeManager - Automatically show/hide cursor based on input device
 # Hides cursor when controller is used, shows when mouse is used
+# Also provides UI input debouncing for analog stick navigation
 
 enum InputMode {
 	KEYBOARD_MOUSE,
@@ -11,9 +12,47 @@ enum InputMode {
 var current_mode: InputMode = InputMode.KEYBOARD_MOUSE
 var force_cursor_visible: bool = false  # For menus that need cursor always visible
 
+# UI input debouncing - requires stick to return to center before next input
+var _ui_mode_enabled: bool = false
+var _action_released: Dictionary = {}  # Tracks which actions have been released
+
 func _ready() -> void:
 	# Start with cursor visible
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func set_ui_mode(enabled: bool) -> void:
+	"""Enable/disable UI input debouncing. Call with true when showing menus, false when hiding."""
+	_ui_mode_enabled = enabled
+	if enabled:
+		# Reset all release states when entering UI mode
+		_action_released.clear()
+
+func is_ui_action_pressed(action: String, event: InputEvent) -> bool:
+	"""
+	Use this in menus for debounced analog stick input.
+	Requires the action to be released before it can trigger again.
+	Pass the current event from _input().
+	"""
+	if not _ui_mode_enabled:
+		# Not in UI mode, use normal input
+		return event.is_action_pressed(action)
+
+	# Initialize release state if not tracked yet (default to true so first press works)
+	if not _action_released.has(action):
+		_action_released[action] = true
+
+	# Check for release
+	if event.is_action_released(action):
+		_action_released[action] = true
+		return false
+
+	# Check for press
+	if event.is_action_pressed(action):
+		if _action_released[action]:
+			_action_released[action] = false
+			return true
+
+	return false
 
 func set_force_cursor_visible(force: bool) -> void:
 	"""Force cursor to be visible (for menus) or allow normal input-based behavior"""

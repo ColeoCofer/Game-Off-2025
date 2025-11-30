@@ -33,6 +33,9 @@ func _ready() -> void:
 	# Play menu music
 	BackgroundMusic.play_menu_music()
 
+	# Enable UI input throttling for main menu (we're always in a menu here)
+	InputModeManager.set_ui_mode(true)
+
 	# Don't grab focus initially - wait for keyboard input
 	# start_button.grab_focus()
 
@@ -44,6 +47,7 @@ func _load_settings() -> void:
 
 
 func _on_start_pressed() -> void:
+	# Level select will enable its own UI mode
 	SceneManager.goto_level_select()
 
 
@@ -58,6 +62,7 @@ func _on_close_settings_pressed() -> void:
 
 
 func _on_quit_pressed() -> void:
+	InputModeManager.set_ui_mode(false)
 	get_tree().quit()
 
 

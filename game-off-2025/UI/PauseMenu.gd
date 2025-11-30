@@ -69,34 +69,32 @@ func _input(event):
 	if not visible or modulate.a < 0.9:
 		return
 
-	# Navigate between buttons with up/down or W/S
-	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
+	# Navigate between buttons with up/down (using debounced input for analog stick)
+	if InputModeManager.is_ui_action_pressed("ui_down", event) or InputModeManager.is_ui_action_pressed("down", event):
 		current_button_index = (current_button_index + 1) % 5
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
-	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
+	elif InputModeManager.is_ui_action_pressed("ui_up", event) or InputModeManager.is_ui_action_pressed("up", event):
 		current_button_index = (current_button_index - 1 + 5) % 5
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
-	# Handle left/right for volume sliders
-	elif Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("left"):
+	# Handle left/right for volume sliders (using debounced input for analog stick)
+	elif InputModeManager.is_ui_action_pressed("ui_left", event) or InputModeManager.is_ui_action_pressed("left", event):
 		if current_button_index == 3:  # Music volume slider
 			music_volume_slider.value = max(music_volume_slider.min_value, music_volume_slider.value - 5.0)
-			get_viewport().set_input_as_handled()
 		elif current_button_index == 4:  # Sounds volume slider
 			sounds_volume_slider.value = max(sounds_volume_slider.min_value, sounds_volume_slider.value - 5.0)
-			get_viewport().set_input_as_handled()
-	elif Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("right"):
+		get_viewport().set_input_as_handled()
+	elif InputModeManager.is_ui_action_pressed("ui_right", event) or InputModeManager.is_ui_action_pressed("right", event):
 		if current_button_index == 3:  # Music volume slider
 			music_volume_slider.value = min(music_volume_slider.max_value, music_volume_slider.value + 5.0)
-			get_viewport().set_input_as_handled()
 		elif current_button_index == 4:  # Sounds volume slider
 			sounds_volume_slider.value = min(sounds_volume_slider.max_value, sounds_volume_slider.value + 5.0)
-			get_viewport().set_input_as_handled()
+		get_viewport().set_input_as_handled()
 
 	# Select button with space, enter, or controller A button
-	elif Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("jump"):
+	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
 		_activate_current_button()
 		get_viewport().set_input_as_handled()
 
@@ -115,6 +113,9 @@ func show_menu():
 	# Force cursor visible for menu navigation
 	InputModeManager.set_force_cursor_visible(true)
 
+	# Enable UI input throttling for analog stick
+	InputModeManager.set_ui_mode(true)
+
 	# Set initial button focus
 	_update_button_focus()
 
@@ -125,6 +126,9 @@ func show_menu():
 func hide_menu():
 	# Restore normal cursor behavior (hide if using controller)
 	InputModeManager.set_force_cursor_visible(false)
+
+	# Disable UI input throttling
+	InputModeManager.set_ui_mode(false)
 
 	# Fade out the menu
 	var tween = create_tween()
@@ -143,6 +147,8 @@ func _on_exit_button_pressed():
 	exit_pressed.emit()
 	# Restore normal cursor behavior
 	InputModeManager.set_force_cursor_visible(false)
+	# Disable UI input throttling
+	InputModeManager.set_ui_mode(false)
 	# Hide the menu immediately to prevent input bleed-through
 	visible = false
 	is_paused = false

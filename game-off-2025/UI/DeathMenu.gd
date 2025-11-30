@@ -92,11 +92,17 @@ func show_menu(death_reason: String = "starvation"):
 	# Set initial button focus
 	_update_button_focus()
 
+	# Enable UI input throttling for death menu
+	InputModeManager.set_ui_mode(true)
+
 	# Fade in the menu
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 1.0, fade_in_duration)
 
 func hide_menu():
+	# Disable UI input throttling
+	InputModeManager.set_ui_mode(false)
+
 	# Fade out the menu
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, fade_out_duration)
@@ -180,18 +186,18 @@ func _input(event):
 	if not visible or modulate.a < 0.9:
 		return
 
-	# Navigate between buttons with up/down or W/S
-	if Input.is_action_just_pressed("ui_down") or Input.is_action_just_pressed("down"):
+	# Navigate between buttons with up/down (using debounced input for analog stick)
+	if InputModeManager.is_ui_action_pressed("ui_down", event) or InputModeManager.is_ui_action_pressed("down", event):
 		current_button_index = (current_button_index + 1) % button_count
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
-	elif Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("up"):
+	elif InputModeManager.is_ui_action_pressed("ui_up", event) or InputModeManager.is_ui_action_pressed("up", event):
 		current_button_index = (current_button_index - 1 + button_count) % button_count
 		_update_button_focus()
 		get_viewport().set_input_as_handled()
 
 	# Select button with space, enter, or controller A button
-	elif Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("jump"):
+	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
 		_activate_current_button()
 		get_viewport().set_input_as_handled()
 

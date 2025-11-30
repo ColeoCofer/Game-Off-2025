@@ -18,6 +18,9 @@ func _ready() -> void:
 	back_button.mouse_entered.connect(UISounds.play_hover)
 	back_button.pressed.connect(UISounds.play_click)
 
+	# Enable UI input throttling for level select menu
+	InputModeManager.set_ui_mode(true)
+
 	# Focus first unlocked level
 	await get_tree().process_frame
 	_focus_first_unlocked()
@@ -57,8 +60,11 @@ func _focus_first_unlocked() -> void:
 
 
 func _on_level_selected(level_name: String) -> void:
+	# Disable UI mode when entering gameplay
+	InputModeManager.set_ui_mode(false)
 	SceneManager.load_level(level_name)
 
 
 func _on_back_pressed() -> void:
+	# Main menu will enable its own UI mode
 	SceneManager.goto_main_menu()

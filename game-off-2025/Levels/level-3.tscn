@@ -520,7 +520,7 @@ position = Vector2(190, 151)
 position = Vector2(184, -552)
 
 [node name="Player" parent="." instance=ExtResource("2_oxkis")]
-position = Vector2(2285, -440)
+position = Vector2(192, 407)
 
 [node name="Objects" type="Node" parent="."]
 
@@ -605,7 +605,6 @@ vision_radius = 150.0
 vision_fade_distance = 100.0
 darkness_intensity = 1.0
 echo_fade_duration = 8.0
-use_dithering = false
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false

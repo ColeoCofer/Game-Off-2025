@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dnfqppqhg1yee"]
+[gd_scene load_steps=5 format=3 uid="uid://dnfqppqhg1yee"]
 
 [ext_resource type="Script" uid="uid://6hg1r05voio2" path="res://UI/DeathMenu.gd" id="1_death_menu"]
-[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
 [ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_nfcsf"]
 [ext_resource type="FontFile" uid="uid://cp1qrv4j0eyiu" path="res://Assets/Fonts/C&C Red Alert [INET].ttf" id="3_qt2re"]
 
@@ -55,7 +54,7 @@ theme_override_constants/separation = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6785967, 0.291592, 0.27826798, 1)
 theme_override_fonts/font = ExtResource("2_nfcsf")
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 26
 text = "YOU STARVED"
 horizontal_alignment = 1
 
@@ -83,7 +82,7 @@ theme_override_constants/separation = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_qt2re")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Time: 00:00.00"
 horizontal_alignment = 1
 
@@ -110,22 +109,22 @@ layout_mode = 2
 [node name="PlayAgainButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("2_nfcsf")
+theme_override_font_sizes/font_size = 16
 text = "Play Again"
 
 [node name="NextLevelButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("2_nfcsf")
+theme_override_font_sizes/font_size = 16
 text = "Next Level"
 
 [node name="ExitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(250, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("2_nfcsf")
+theme_override_font_sizes/font_size = 16
 text = "Main Menu"
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayAgainButton" to="." method="_on_play_again_button_pressed"]

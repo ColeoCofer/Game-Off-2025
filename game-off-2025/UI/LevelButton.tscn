@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://cqxb8g7j8lal0"]
 
 [ext_resource type="Script" path="res://UI/LevelButton.gd" id="1_levelbutton"]
-[ext_resource type="FontFile" uid="uid://djuou5qufqyrh" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.164706, 0.301961, 0.360784, 0.9)
@@ -76,7 +76,7 @@ theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.7, 0.95, 1, 1)
 theme_override_colors/font_disabled_color = Color(0.5, 0.55, 0.6, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 10
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
@@ -105,7 +105,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 9
 text = "✓"
 
 [node name="LeftSpacer" type="Control" parent="VBoxContainer/HBoxContainer"]
@@ -116,14 +116,14 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 9
 text = "Level 1"
 
 [node name="TimeLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 7
 text = "--:--:--"
 
 [node name="RightSpacer" type="Control" parent="VBoxContainer/HBoxContainer"]
@@ -134,6 +134,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 7
 text = "Diamonds 0/3"
 horizontal_alignment = 1

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://gu7nxs3k0akq"]
 
 [ext_resource type="Script" uid="uid://bpg5cjvcqlqnj" path="res://UI/PauseMenu.gd" id="1_pause_menu"]
-[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_font"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 process_mode = 3
@@ -42,7 +42,7 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 28
 text = "PAUSED"
 horizontal_alignment = 1
 
@@ -54,14 +54,14 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 14
 text = "Continue"
 
 [node name="ExitButton" type="Button" parent="Control/CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 14
 text = "Main Menu"
 
 [node name="Spacer2" type="Control" parent="Control/CenterContainer/VBoxContainer"]
@@ -71,7 +71,7 @@ layout_mode = 2
 [node name="TimerToggle" type="CheckButton" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Show Timer"
 
 [node name="MusicVolumeContainer" type="HBoxContainer" parent="Control/CenterContainer/VBoxContainer"]
@@ -81,7 +81,7 @@ theme_override_constants/separation = 10
 [node name="MusicVolumeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/MusicVolumeContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Music:"
 
 [node name="MusicVolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/MusicVolumeContainer"]
@@ -95,7 +95,7 @@ value = -10.0
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "50%"
 horizontal_alignment = 2
 
@@ -106,7 +106,7 @@ theme_override_constants/separation = 10
 [node name="SoundsVolumeLabel" type="Label" parent="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Sounds:"
 
 [node name="SoundsVolumeSlider" type="HSlider" parent="Control/CenterContainer/VBoxContainer/SoundsVolumeContainer"]
@@ -120,7 +120,7 @@ value = -10.0
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "50%"
 horizontal_alignment = 2
 

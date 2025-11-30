@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dgmegvadncxwt" path="res://UI/MainMenu.gd" id="1_1a1a1"]
 [ext_resource type="PackedScene" path="res://Entities/Particles/menu_particles.tscn" id="1_particles"]
 [ext_resource type="Texture2D" uid="uid://oa20ge5fxvjk" path="res://Assets/Art/ui/sona-title-no-text.png" id="2_6vw7e"]
-[ext_resource type="FontFile" uid="uid://honomn3ss3p5" path="res://Assets/Fonts/C&C Red Alert [LAN].ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://fybt46xjo7le" path="res://Assets/Fonts/prstartk.ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://2ejioy4fw863" path="res://Assets/Art/ui/start-button-normal.png" id="2_normal"]
 [ext_resource type="FontFile" uid="uid://ccob884qxxecy" path="res://Assets/Fonts/8-BIT WONDER.TTF" id="2_title_font"]
 [ext_resource type="Texture2D" uid="uid://obshipkw2e4s" path="res://Assets/Art/ui/start-button-hover.png" id="3_hover"]
@@ -202,19 +202,19 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 25
+theme_override_constants/separation = 16
 
 [node name="SettingsTitle" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 22
 text = "Settings"
 horizontal_alignment = 1
 
 [node name="MusicVolumeLabel" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 14
 text = "Music Volume"
 
 [node name="MusicVolumeSlider" type="HSlider" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
@@ -226,7 +226,7 @@ value = -10.0
 [node name="SoundsVolumeLabel" type="Label" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 14
 text = "Sound Effects Volume"
 
 [node name="SoundsVolumeSlider" type="HSlider" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
@@ -238,21 +238,21 @@ value = -10.0
 [node name="TimerToggle" type="CheckButton" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Show Timer"
 
 [node name="ResetCutscenesButton" type="Button" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Reset Cutscenes"
 
 [node name="CloseButton" type="Button" parent="Control/SettingsPanel/CenterContainer/Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 14
 text = "Back"
 
 [node name="ConfirmResetPopup" type="Control" parent="Control"]
@@ -298,7 +298,7 @@ alignment = 1
 [node name="Label" type="Label" parent="Control/ConfirmResetPopup/CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 text = "Reset cutscene progress?"
 horizontal_alignment = 1
 
@@ -311,14 +311,14 @@ alignment = 1
 custom_minimum_size = Vector2(80, 35)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "Yes"
 
 [node name="CancelButton" type="Button" parent="Control/ConfirmResetPopup/CenterContainer/Panel/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(80, 35)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 11
 text = "No"
 
 [connection signal="pressed" from="Control/ButtonContainer/StartButtonContainer/StartButton" to="Control" method="_on_start_pressed"]

@@ -607,7 +607,7 @@ collision_mask = 1
 tile_set = ExtResource("2_n4bx7")
 
 [node name="firefly" parent="Foreground" instance=ExtResource("7_ffstk")]
-position = Vector2(1359, 381)
+position = Vector2(1387, 383)
 firefly_id = 2
 
 [node name="Decor" type="TileMapLayer" parent="Foreground"]
@@ -623,7 +623,6 @@ darkness_intensity = 1.0
 echo_fade_duration = 8.0
 echo_expansion_speed = 800.0
 wave_brightness = 0.25
-use_dithering = false
 
 [node name="DarknessOverlay" type="ColorRect" parent="EcholocationManager"]
 visible = false
@@ -642,6 +641,9 @@ position = Vector2(89, 41)
 
 [node name="Butterfly" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(749, 296)
+
+[node name="Butterfly4" parent="Butterflies" instance=ExtResource("5_n4bx7")]
+position = Vector2(1456, 225)
 
 [node name="Butterfly2" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1883, 228)

@@ -644,11 +644,14 @@ position = Vector2(609, -719)
 [node name="Bug6" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1430, -771)
 
+[node name="Bug10" parent="Butterflies" instance=ExtResource("5_n4bx7")]
+position = Vector2(1327, -514)
+
 [node name="Bug7" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(1918, -561)
 
 [node name="Bug8" parent="Butterflies" instance=ExtResource("5_n4bx7")]
-position = Vector2(1571, -447)
+position = Vector2(1879, -416)
 
 [node name="Bug9" parent="Butterflies" instance=ExtResource("5_n4bx7")]
 position = Vector2(184, -532)

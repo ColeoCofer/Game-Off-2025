@@ -60,10 +60,13 @@ func _on_body_entered(body: Node2D):
 		# Mark as collected (temporarily for this instance only)
 		is_collected = true
 
-		# Restore hunger
+		# Restore hunger (full restore in Simple mode)
 		var hunger_manager = body.get_node_or_null("HungerManager")
 		if hunger_manager:
-			hunger_manager.consume_food(hunger_restore_amount)
+			if GameModeManager and GameModeManager.is_simple_mode():
+				hunger_manager.restore_to_full()
+			else:
+				hunger_manager.consume_food(hunger_restore_amount)
 
 		# Give player the firefly shield companion
 		var firefly_manager = body.get_node_or_null("FireflyManager")

@@ -135,11 +135,14 @@ func activate(player: Node2D = null):
 
 	activated = true
 
-	# Restore player's hunger when checkpoint is first activated
+	# Restore player's hunger when checkpoint is first activated (full restore in Simple mode)
 	if player and player is PlatformerController2D:
 		var hunger_manager = player.get_node_or_null("HungerManager")
 		if hunger_manager:
-			hunger_manager.consume_food(hunger_restore_amount)
+			if GameModeManager and GameModeManager.is_simple_mode():
+				hunger_manager.restore_to_full()
+			else:
+				hunger_manager.consume_food(hunger_restore_amount)
 
 	# Emit signal with checkpoint position
 	checkpoint_activated.emit(global_position)

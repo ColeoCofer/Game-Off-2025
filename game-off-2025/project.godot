@@ -31,6 +31,7 @@ TutorialManager="*res://Common/TutorialManager.gd"
 DiamondCollectionManager="*res://Common/DiamondCollectionManager.gd"
 InputModeManager="*res://Common/InputModeManager.gd"
 UISounds="*res://Common/UISounds.gd"
+GameModeManager="*res://Common/GameModeManager.gd"
 
 [display]
 

@@ -5,7 +5,7 @@ signal hunger_changed(current: float, maximum: float)
 signal hunger_depleted()
 signal food_consumed(amount: float)
 
-# Configuration
+# Configuration (defaults for Regular mode - overridden by GameModeManager)
 @export var max_hunger: float = 100.0
 @export var depletion_rate: float = 3.5  # Hunger lost per second
 @export var min_hunger: float = 0.0
@@ -13,6 +13,7 @@ signal food_consumed(amount: float)
 # State
 var current_hunger: float = 100.0
 var is_depleting: bool = true
+var passive_drain_enabled: bool = true  # Controlled by game mode
 
 # Audio
 var hurt_audio_player: AudioStreamPlayer
@@ -30,6 +31,9 @@ var heartbeat_threshold: float = 20.0  # Play heartbeat below 20% hunger
 var death_manager: Node
 
 func _ready():
+	# Apply game mode settings
+	_apply_game_mode_settings()
+
 	current_hunger = max_hunger
 	hunger_changed.emit(current_hunger, max_hunger)
 
@@ -48,11 +52,24 @@ func _ready():
 	# Get reference to death manager
 	death_manager = get_parent().get_node_or_null("DeathManager")
 
+func _apply_game_mode_settings():
+	"""Apply settings based on current game mode"""
+	if GameModeManager:
+		var config = GameModeManager.get_config()
+		max_hunger = config.max_hunger
+		depletion_rate = config.depletion_rate
+		passive_drain_enabled = config.passive_drain
+		print("HungerManager: Applied game mode settings - max_hunger: ", max_hunger, ", passive_drain: ", passive_drain_enabled)
+
 func _process(delta):
 	if is_depleting:
 		_deplete_hunger(delta)
 
 func _deplete_hunger(delta: float):
+	# Skip passive drain if disabled (Simple mode)
+	if not passive_drain_enabled:
+		return
+
 	if current_hunger > min_hunger:
 		current_hunger -= depletion_rate * delta
 		current_hunger = max(current_hunger, min_hunger)
@@ -74,6 +91,13 @@ func consume_food(amount: float):
 	food_consumed.emit(amount)
 
 	# Update heartbeat after consuming food
+	_update_heartbeat()
+
+func restore_to_full():
+	"""Restores hunger to maximum (used by fireflies and checkpoints in Simple mode)"""
+	current_hunger = max_hunger
+	hunger_changed.emit(current_hunger, max_hunger)
+	food_consumed.emit(max_hunger)
 	_update_heartbeat()
 
 func take_damage(amount: float):

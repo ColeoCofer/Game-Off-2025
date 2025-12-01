@@ -63,6 +63,9 @@ var shader_material: ShaderMaterial
 var vignette_pulse_time: float = 0.0  # Tracks pulse animation
 
 func _ready():
+	# Apply game mode settings for echolocation cost
+	_apply_game_mode_settings()
+
 	# Ensure darkness overlay is visible (in case it was disabled during level editing)
 	darkness_overlay.visible = true
 
@@ -94,6 +97,13 @@ func _ready():
 
 	# Create low hunger vignette overlay
 	# _setup_vignette_overlay()  # DISABLED - user didn't like the effect
+
+func _apply_game_mode_settings():
+	"""Apply settings based on current game mode"""
+	if GameModeManager:
+		var config = GameModeManager.get_config()
+		hunger_cost_percentage = config.hunger_cost_percentage
+		print("EcholocationManager: Applied game mode settings - hunger_cost: ", hunger_cost_percentage, "%")
 
 func _process(delta: float):
 	# Update cooldown timer

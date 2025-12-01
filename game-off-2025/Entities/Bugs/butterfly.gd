@@ -6,7 +6,8 @@ signal bug_eaten()
 @export var hover_amplitude: float = 3.0
 @export var hover_speed: float = 2.0
 @export var fade_out_duration: float = 0.3
-@export var hunger_restore_amount: float = 100.0
+@export var hunger_restore_amount: float = 100.0  # Used in Regular mode
+@export var simple_mode_restore_amount: float = 30.0  # One echolocation charge (30% of 100)
 
 var time_passed: float = 0.0
 var initial_y: float = 0.0
@@ -30,10 +31,13 @@ func _process(delta):
 func _on_body_entered(body: Node2D):
 	# Check if the body that entered is the player
 	if body is PlatformerController2D:
-		# Restore hunger
+		# Restore hunger (amount depends on game mode)
 		var hunger_manager = body.get_node_or_null("HungerManager")
 		if hunger_manager:
-			hunger_manager.consume_food(hunger_restore_amount)
+			var restore_amount = hunger_restore_amount
+			if GameModeManager and GameModeManager.is_simple_mode():
+				restore_amount = simple_mode_restore_amount
+			hunger_manager.consume_food(restore_amount)
 
 		# Emit signal for game manager/UI to track collection
 		bug_eaten.emit()

@@ -98,7 +98,9 @@ func _input(event):
 
 	# Select button with space, enter, or controller A button
 	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
-		_activate_current_button()
+		# Use the actual focused control rather than current_button_index to avoid race conditions
+		# when moving and pressing quickly with a controller
+		_activate_focused_button()
 		get_viewport().set_input_as_handled()
 
 	# Close menu with B button / Escape (ui_cancel)
@@ -195,6 +197,22 @@ func _activate_current_button():
 		fullscreen_toggle.button_pressed = !fullscreen_toggle.button_pressed
 		_on_fullscreen_toggle_toggled(fullscreen_toggle.button_pressed)
 	# No action needed for volume slider on activate
+
+func _activate_focused_button():
+	# Get the currently focused control and activate it
+	# This avoids race conditions between current_button_index and actual focus
+	var focused = get_viewport().gui_get_focus_owner()
+	if focused == continue_button:
+		_on_continue_button_pressed()
+	elif focused == exit_button:
+		_on_exit_button_pressed()
+	elif focused == timer_toggle:
+		timer_toggle.button_pressed = !timer_toggle.button_pressed
+		_on_timer_toggle_toggled(timer_toggle.button_pressed)
+	elif focused == fullscreen_toggle:
+		fullscreen_toggle.button_pressed = !fullscreen_toggle.button_pressed
+		_on_fullscreen_toggle_toggled(fullscreen_toggle.button_pressed)
+	# No action needed for volume sliders on activate
 
 func _on_music_volume_slider_value_changed(value: float):
 	BackgroundMusic.set_volume(value)

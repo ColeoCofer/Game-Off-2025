@@ -198,7 +198,9 @@ func _input(event):
 
 	# Select button with space, enter, or controller A button
 	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
-		_activate_current_button()
+		# Use the actual focused control rather than current_button_index to avoid race conditions
+		# when moving and pressing quickly with a controller
+		_activate_focused_button()
 		get_viewport().set_input_as_handled()
 
 func _update_button_focus():
@@ -230,6 +232,17 @@ func _activate_current_button():
 		match current_button_index:
 			0: _on_play_again_button_pressed()
 			1: _on_exit_button_pressed()
+
+func _activate_focused_button():
+	# Get the currently focused control and activate it
+	# This avoids race conditions between current_button_index and actual focus
+	var focused = get_viewport().gui_get_focus_owner()
+	if focused == play_again_button:
+		_on_play_again_button_pressed()
+	elif focused == next_level_button:
+		_on_next_level_button_pressed()
+	elif focused == exit_button:
+		_on_exit_button_pressed()
 
 func _disable_all_cameras():
 	"""Disable all Camera2D nodes in the scene tree to prevent conflicts during scene transition"""

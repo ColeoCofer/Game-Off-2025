@@ -11,7 +11,7 @@ signal firefly_collected(firefly_id: int)
 
 # Unique ID for this firefly in the level (0, 1, or 2)
 @export var firefly_id: int = 0
-@export var hunger_restore_amount: float = 50.0
+@export var hunger_restore_amount: float = 100.0
 
 var time_passed: float = 0.0
 var initial_y: float = 0.0

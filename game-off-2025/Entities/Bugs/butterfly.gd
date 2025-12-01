@@ -6,7 +6,7 @@ signal bug_eaten()
 @export var hover_amplitude: float = 3.0
 @export var hover_speed: float = 2.0
 @export var fade_out_duration: float = 0.3
-@export var hunger_restore_amount: float = 50.0
+@export var hunger_restore_amount: float = 100.0
 
 var time_passed: float = 0.0
 var initial_y: float = 0.0

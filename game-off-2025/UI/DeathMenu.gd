@@ -16,6 +16,21 @@ var current_button_index: int = 0
 var is_success: bool = false
 var button_count: int = 2
 
+# Random tips shown on death
+const DEATH_TIPS: Array[String] = [
+	"Tip: Echolocating uses energy - use it sparingly!",
+	"Tip: Fireflies sacrifice themselves to restore half your energy.",
+	"Tip: The faster you run, the higher you can jump.",
+	"Tip: Dying resets any diamonds collected during that run.",
+	"Tip: Checkpoints restore all of your energy when activated.",
+	"Tip: Hold the run button to move faster and jump higher.",
+	"Tip: Flapping slows your descent - useful for precise landings.",
+	"Tip: All enemies can be defeated by stomping on them from above.",
+	"Tip: Listen for the heartbeat - it warns you when energy is critically low.",
+	"Tip: Fireflies provide protection from one enemy hit.",
+	"Tip: Try using a controller for more precise platforming.",
+]
+
 # Stats UI elements
 var stats_panel: PanelContainer
 var time_label: Label
@@ -51,24 +66,23 @@ func show_menu(death_reason: String = "starvation"):
 	current_button_index = 0
 	is_success = (death_reason == "success")
 
-	# Death texts lmao
+	# Set title based on death reason, show random tip as subtitle
 	match death_reason:
 		"starvation":
 			title_label.text = "YOU STARVED"
-			subtitle_label.text = "Sona ran out of energy..."
-			subtitle_label.visible = true
 		"fall":
 			title_label.text = "YOU FELL"
-			subtitle_label.text = "Sona plummeted into the void..."
-			subtitle_label.visible = true
 		"success":
 			title_label.text = "LEVEL COMPLETE!"
 			title_label.add_theme_color_override("font_color", Color("78a179"))
 			subtitle_label.visible = false
 		_:
 			title_label.text = "YOU DIED"
-			subtitle_label.text = "Sona has perished..."
-			subtitle_label.visible = true
+
+	# Show random tip on death (not on success)
+	if death_reason != "success":
+		subtitle_label.text = DEATH_TIPS[randi() % DEATH_TIPS.size()]
+		subtitle_label.visible = true
 
 	# Show stats on level completion (but not for tutorial or endscene)
 	_update_stats_display()

@@ -842,16 +842,25 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/end-sona-surprised-face.png",
-		["Oh! I just knew there were others"],
+		["Oh! I just knew there were others",
+		"Hi, I'm Sona"],
 		0.0,
-		["res://Assets/Audio/dialogue/17 oh its the last one-1.wav"]
+		["res://Assets/Audio/dialogue/17 oh its the last one-1.wav",
+		"res://Assets/Audio/dialogue/3 this photo-1.wav"]
 	))
 
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
 		"res://Assets/Art/cut-scenes/sona-gameboy-1.png",
-		["we thought we were the only ones"],
+		["We thought we were the only ones"],
 		0.0,
-		["res://Assets/Audio/dialogue/1 i should turn around-1.wav"]
+		["res://Assets/Audio/dialogue/1 i should turn around-1.wav"],
+	))
+	
+	cutscene_frames.append(CutscenePlayerScript.create_frame(
+		"res://Assets/Art/cut-scenes/sona-gameboy-2.png",
+		["Welcome, Sona"],
+		0.0,
+		["res://Assets/Audio/dialogue/4 it looks familiar-1.wav"]
 	))
 	
 	cutscene_frames.append(CutscenePlayerScript.create_frame(
@@ -860,13 +869,7 @@ func show_ending_sequence(fade_layer: CanvasLayer):
 		0.0,
 		["res://Assets/Audio/dialogue/22 without you here-1.wav"]
 	))
-	
-	cutscene_frames.append(CutscenePlayerScript.create_frame(
-		"res://Assets/Art/cut-scenes/sona-gameboy-2.png",
-		[""], 
-		0.0,
-		[""]
-	))
+
 
 	# Hide the fade layer so we can see the cutscene images
 	if fade_layer and is_instance_valid(fade_layer):

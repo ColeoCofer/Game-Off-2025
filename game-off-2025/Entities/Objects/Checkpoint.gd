@@ -11,7 +11,7 @@ signal checkpoint_activated(checkpoint_position: Vector2)
 @export var max_audio_distance: float = 200.0  ## Distance at which fire sound is inaudible
 @export var min_audio_distance: float = 50.0   ## Distance at which fire sound is at full volume
 @export var torch_volume_db: float = 0.0        ## Volume of the torch fire sound in decibels (-80 to 24)
-@export var hunger_restore_amount: float = 50.0 ## Amount of hunger restored when checkpoint is first activated
+@export var hunger_restore_amount: float = 100.0 ## Amount of hunger restored when checkpoint is first activated
 
 var sprite: Sprite2D
 var animated_sprite: AnimatedSprite2D

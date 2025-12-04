@@ -13,7 +13,7 @@ var save_data = {
 		"sounds_volume": -10.0,  # in dB
 		"debug_mode": false,
 		"show_timer": false,  # Timer display toggle
-		"game_mode": 1  # 0 = Regular, 1 = Simple (default to Simple)
+		"game_mode": 0  # 0 = Regular, 1 = Simple (default to Regular)
 	},
 	"game_data": {
 		"checkpoints": {},
@@ -261,7 +261,7 @@ func reset_save_data():
 			"music_volume": -10.0,
 			"debug_mode": false,
 			"show_timer": false,
-			"game_mode": 1  # 0 = Regular, 1 = Simple (default to Simple)
+			"game_mode": 0  # 0 = Regular, 1 = Simple (default to Regular)
 		},
 		"game_data": {
 			"checkpoints": {},

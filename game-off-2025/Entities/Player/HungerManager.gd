@@ -34,6 +34,10 @@ func _ready():
 	# Apply game mode settings
 	_apply_game_mode_settings()
 
+	# Listen for game mode changes
+	if GameModeManager:
+		GameModeManager.game_mode_changed.connect(_on_game_mode_changed)
+
 	current_hunger = max_hunger
 	hunger_changed.emit(current_hunger, max_hunger)
 
@@ -59,7 +63,14 @@ func _apply_game_mode_settings():
 		max_hunger = config.max_hunger
 		depletion_rate = config.depletion_rate
 		passive_drain_enabled = config.passive_drain
-		print("HungerManager: Applied game mode settings - max_hunger: ", max_hunger, ", passive_drain: ", passive_drain_enabled)
+		print("HungerManager: Applied game mode settings - max_hunger: ", max_hunger, ", depletion_rate: ", depletion_rate, ", passive_drain: ", passive_drain_enabled)
+
+func _on_game_mode_changed(_mode):
+	"""Called when game mode changes - reapply settings"""
+	_apply_game_mode_settings()
+	# Restore hunger to full when mode changes to give player a fresh start
+	current_hunger = max_hunger
+	hunger_changed.emit(current_hunger, max_hunger)
 
 func _process(delta):
 	if is_depleting:

@@ -12,7 +12,7 @@ enum GameMode {
 }
 
 # Current game mode
-var current_mode: GameMode = GameMode.SIMPLE  # Default to Simple for now (toggle later)
+var current_mode: GameMode = GameMode.REGULAR  # Default to Simple for now (toggle later)
 
 # Mode-specific configurations
 const MODE_CONFIG = {
@@ -31,13 +31,13 @@ const MODE_CONFIG = {
 }
 
 func _ready():
-	# Load saved game mode preference
-	_load_game_mode()
+	# Not saving/loading game mode for now - just use the default value
+	print("GameModeManager: Using default game mode: ", get_mode_name())
+	pass
 
 func set_game_mode(mode: GameMode):
 	if current_mode != mode:
 		current_mode = mode
-		_save_game_mode()
 		game_mode_changed.emit(mode)
 		print("GameModeManager: Game mode changed to ", get_mode_name())
 
@@ -68,14 +68,13 @@ func toggle_mode():
 	else:
 		set_game_mode(GameMode.REGULAR)
 
-func _save_game_mode():
-	# Save to SaveManager's settings
-	if SaveManager:
-		SaveManager.save_data["settings"]["game_mode"] = current_mode
-		SaveManager.save_game()
-
-func _load_game_mode():
-	# Load from SaveManager's settings
-	if SaveManager and "game_mode" in SaveManager.save_data["settings"]:
-		current_mode = SaveManager.save_data["settings"]["game_mode"]
-		print("GameModeManager: Loaded game mode: ", get_mode_name())
+# Save/load functions commented out for testing - uncomment when ready to persist
+#func _save_game_mode():
+#	if SaveManager:
+#		SaveManager.save_data["settings"]["game_mode"] = current_mode
+#		SaveManager.save_game()
+#
+#func _load_game_mode():
+#	if SaveManager and "game_mode" in SaveManager.save_data["settings"]:
+#		current_mode = SaveManager.save_data["settings"]["game_mode"]
+#		print("GameModeManager: Loaded game mode: ", get_mode_name())

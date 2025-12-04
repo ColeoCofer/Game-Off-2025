@@ -33,8 +33,10 @@ func _ready():
 	play()
 	water_drops_player.play()
 
-	# Pause if volume is at minimum
+	# Mute and pause if volume is at minimum
 	if volume_db <= -40.0:
+		var music_bus_index = AudioServer.get_bus_index("Music")
+		AudioServer.set_bus_mute(music_bus_index, true)
 		stream_paused = true
 		water_drops_player.stream_paused = true
 
@@ -137,14 +139,19 @@ func play_game_music():
 func set_volume(db_value: float):
 	volume_db = db_value
 
-	# Pause music if volume is at minimum (-40 dB)
+	# Get the Music bus index
+	var music_bus_index = AudioServer.get_bus_index("Music")
+
+	# Mute the Music bus entirely if volume is at minimum (-40 dB)
 	if db_value <= -40.0:
+		AudioServer.set_bus_mute(music_bus_index, true)
 		if playing:
 			stream_paused = true
 		if water_drops_player and water_drops_player.playing:
 			water_drops_player.stream_paused = true
 	else:
-		# Resume music if it was paused
+		# Unmute and resume music if it was paused
+		AudioServer.set_bus_mute(music_bus_index, false)
 		if playing and stream_paused:
 			stream_paused = false
 		elif not playing:

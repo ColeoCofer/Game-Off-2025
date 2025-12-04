@@ -1,0 +1,153 @@
+[gd_scene load_steps=11 format=3 uid="uid://dpkj0sy6aoqml"]
+
+[ext_resource type="Script" path="res://EndlessRunner/endless_runner_level.gd" id="1_level_script"]
+[ext_resource type="Script" path="res://EndlessRunner/ChunkManager.gd" id="2_chunk_manager"]
+[ext_resource type="Script" path="res://EndlessRunner/ButterflySpawner.gd" id="3_butterfly_spawner"]
+[ext_resource type="Script" path="res://EndlessRunner/ScoreManager.gd" id="4_score_manager"]
+[ext_resource type="Script" path="res://EndlessRunner/EndlessRunnerUI.gd" id="5_endless_ui"]
+[ext_resource type="Script" path="res://EndlessRunner/EndlessDeathMenu.gd" id="6_endless_death_menu"]
+[ext_resource type="PackedScene" uid="uid://d0gtwpl0brl74" path="res://Entities/Player/player.tscn" id="7_player"]
+[ext_resource type="TileSet" uid="uid://b5w00fiw4f2v5" path="res://Levels/sona-sprite-sheet.tres" id="8_tileset"]
+[ext_resource type="PackedScene" uid="uid://dpmhxtjak45ff" path="res://UI/heart.tscn" id="9_heart_ui"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_deathzone"]
+size = Vector2(2000, 50)
+
+[node name="EndlessRunnerLevel" type="Node2D"]
+script = ExtResource("1_level_script")
+
+[node name="TileMap" type="Node2D" parent="."]
+
+[node name="Ground" type="TileMapLayer" parent="TileMap"]
+tile_set = ExtResource("8_tileset")
+
+[node name="Player" parent="." instance=ExtResource("7_player")]
+position = Vector2(80, 250)
+
+[node name="ChunkManager" type="Node" parent="."]
+script = ExtResource("2_chunk_manager")
+
+[node name="ButterflySpawner" type="Node" parent="."]
+script = ExtResource("3_butterfly_spawner")
+
+[node name="ScoreManager" type="Node" parent="."]
+script = ExtResource("4_score_manager")
+
+[node name="DeathZone" type="Area2D" parent="."]
+position = Vector2(0, 450)
+
+[node name="DeathZoneShape" type="CollisionShape2D" parent="DeathZone"]
+shape = SubResource("RectangleShape2D_deathzone")
+
+[node name="EndlessRunnerUI" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("5_endless_ui")
+
+[node name="DistanceContainer" type="VBoxContainer" parent="EndlessRunnerUI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 80.0
+grow_horizontal = 0
+
+[node name="DistanceLabel" type="Label" parent="EndlessRunnerUI/DistanceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "0m"
+horizontal_alignment = 2
+
+[node name="HighScoreLabel" type="Label" parent="EndlessRunnerUI/DistanceContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Best: 0m"
+horizontal_alignment = 2
+
+[node name="NewBestLabel" type="Label" parent="EndlessRunnerUI/DistanceContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_font_sizes/font_size = 16
+text = "NEW BEST!"
+horizontal_alignment = 2
+
+[node name="HungerUI" parent="EndlessRunnerUI" instance=ExtResource("9_heart_ui")]
+position = Vector2(95, -26)
+scale = Vector2(0.65, 0.65)
+
+[node name="EndlessDeathMenu" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_endless_death_menu")
+
+[node name="Background" type="ColorRect" parent="EndlessDeathMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="EndlessDeathMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EndlessDeathMenu/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="GameOverLabel" type="Label" parent="EndlessDeathMenu/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="DistanceValue" type="Label" parent="EndlessDeathMenu/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "0m"
+horizontal_alignment = 1
+
+[node name="NewBestContainer" type="HBoxContainer" parent="EndlessDeathMenu/CenterContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+alignment = 1
+
+[node name="NewBestLabel" type="Label" parent="EndlessDeathMenu/CenterContainer/VBoxContainer/NewBestContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "NEW BEST!"
+
+[node name="HighScoreLabel" type="Label" parent="EndlessDeathMenu/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Best: 0m"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="EndlessDeathMenu/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="EndlessDeathMenu/CenterContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Play Again"
+
+[node name="MainMenuButton" type="Button" parent="EndlessDeathMenu/CenterContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Main Menu"

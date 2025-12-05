@@ -194,8 +194,7 @@ var crouching
 var groundPounding
 var canFlapNow: bool = true
 var isFlapping: bool = false
-var flapBufferTimer: float = 0.0  # Time remaining on buffered flap input
-const FLAP_BUFFER_WINDOW: float = 0.15  # How long a flap input stays buffered
+var flapInputBuffered: bool = false  # Buffer flap input during cooldown
 var walkingSoundTimer: float = 0.0
 var walkingSoundInterval: float = 0.3  # Time between footsteps
 var is_saying_hello: bool = false
@@ -753,35 +752,28 @@ func _physics_process(delta):
 			position.x -= correctionAmount
 			
 	#INFO Wing Flap (SMB3 Tail Whip Style)
-	# Use dedicated flap button, or jump button when airborne
+	# Use jump button for flapping when in the air and falling
+	# Check distance to ground - only allow flapping if high enough above ground
 	var flapTap = Input.is_action_just_pressed("flap")
-	var wantsToFlap = flapTap or (jumpTap and !is_on_floor())
+	var wantsToFlap = flapTap or (jumpTap and velocity.y > 0)
 
-	# Decrement flap buffer timer
-	if flapBufferTimer > 0:
-		flapBufferTimer -= delta
-
-	# Buffer flap input when pressed (resets the timer each press for responsiveness)
-	if wantsToFlap and !is_on_floor() and !is_on_wall():
-		flapBufferTimer = FLAP_BUFFER_WINDOW
-
-	# Check if we should flap (either fresh input or buffered)
-	var hasBufferedFlap = flapBufferTimer > 0
-
-	if canFlap and hasBufferedFlap and !is_on_floor() and !is_on_wall() and canFlapNow:
+	if canFlap and wantsToFlap and !is_on_floor() and !is_on_wall():
 		var ground_distance = _get_distance_to_ground()
 		# Allow flap if either no ground detected (falling into void) or high enough above ground
 		var height_ok = ground_distance < 0 or ground_distance >= minimumFlapHeight
 
-		if height_ok:
-			flapBufferTimer = 0.0  # Consume the buffer
-			_flap()
+		if height_ok and velocity.y > 0:
+			if canFlapNow:
+				_flap()
+			else:
+				# Buffer the input - will execute as soon as cooldown ends
+				flapInputBuffered = true
 
 	# Reset flap availability when grounded
 	if is_on_floor():
 		canFlapNow = true
 		isFlapping = false
-		flapBufferTimer = 0.0  # Clear buffer on landing
+		flapInputBuffered = false  # Clear buffer on landing
 
 	#INFO Ground Pound
 	if groundPound and downTap and !is_on_floor() and !is_on_wall():
@@ -957,10 +949,9 @@ func _get_distance_to_ground() -> float:
 		return -1.0  # No ground found
 
 func _flap():
-	# SMB3 tail whip style: gives upward lift
-	# Always set to -flapLift, even if already rising (prevents "wasted" flaps)
-	# This ensures consistent behavior regardless of when in the arc you flap
-	velocity.y = -flapLift
+	# SMB3 tail whip style: reduces fall speed significantly
+	if velocity.y > 0:
+		velocity.y = -flapLift
 
 	# Optional: slight horizontal momentum adjustment like SMB3
 	if flapAffectsHorizontalSpeed:
@@ -979,7 +970,18 @@ func _flapCooldownReset():
 	await get_tree().create_timer(flapCooldown).timeout
 	canFlapNow = true
 	isFlapping = false
-	# Buffered flap will be handled in _physics_process on the next frame
+
+	# Check for buffered flap input - execute immediately if player still wants to flap
+	if flapInputBuffered and !is_on_floor() and !is_on_wall() and velocity.y > 0:
+		var ground_distance = _get_distance_to_ground()
+		var height_ok = ground_distance < 0 or ground_distance >= minimumFlapHeight
+		if height_ok:
+			flapInputBuffered = false
+			_flap()
+		else:
+			flapInputBuffered = false
+	else:
+		flapInputBuffered = false
 
 func _playWalkingSound():
 	if WalkingAudioPlayer:

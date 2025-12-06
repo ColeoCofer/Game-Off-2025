@@ -488,9 +488,8 @@ position = Vector2(230, 543)
 move_speed = 70.0
 
 [node name="MovingPlank3" parent="Objects" instance=ExtResource("9_hlawa")]
-position = Vector2(387, 519)
+position = Vector2(333, 518)
 move_speed = 80.0
-move_distance = 80.0
 time_offset = 0.65
 
 [node name="FallingBlock" parent="Objects" instance=ExtResource("10_ncgnw")]
